@@ -2,9 +2,9 @@
 API to return part of a string based on number of characters passed into the API
 
 Endpoints:
-https://substring-api.herokuapp.com/getfirst
-https://substring-api.herokuapp.com/getlast
-https://substring-api.herokuapp.com/getsubstring
+https://substring-api.herokuapp.com/getfirst /n
+https://substring-api.herokuapp.com/getlast /n
+https://substring-api.herokuapp.com/getsubstring /n
 
 HTTP Method: POST
 Content-Type application/json
