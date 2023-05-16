@@ -25,6 +25,6 @@ app.post('/getsubstring', (req, res) => {
     res.json({ result });
   });
 
-app.listen(3000, () => {
+app.listen(443, () => {
   console.log('Server is running on port 3000');
 });
