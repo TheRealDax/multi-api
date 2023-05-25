@@ -17,7 +17,7 @@ You will need to append one of the endpoints to the end of the URL and provide t
 
 #### Getfirst
 
-```http
+```
   POST /getfirst
 ```
 
@@ -26,7 +26,7 @@ You will need to append one of the endpoints to the end of the URL and provide t
 | `string` | `string` | **Required**. The string to manipulate |
 | `count` | `integer` | **Required**. How many characters of the string to return starting from the start of the string |
 
-```http
+```
   Example:
   string = "This is a test"
   count = 4
@@ -36,7 +36,7 @@ You will need to append one of the endpoints to the end of the URL and provide t
 
 #### Getlast
 
-```http
+```
   POST /getlast
 ```
 
@@ -45,7 +45,7 @@ You will need to append one of the endpoints to the end of the URL and provide t
 | `string` | `string` | **Required**. The string to manipulate |
 | `count` | `integer` | **Required**. How many characters of the string to return starting from the end of the string |
 
-```http
+```
   Example:
   string = "This is a test"
   count = 4
@@ -54,7 +54,7 @@ You will need to append one of the endpoints to the end of the URL and provide t
 ```
 #### Removelast
 
-```http
+```
   POST /removelast
 ```
 
@@ -63,7 +63,7 @@ You will need to append one of the endpoints to the end of the URL and provide t
 | `string` | `string` | **Required**. The string to manipulate |
 | `count` | `integer` | **Required**. How many characters of the string to omit from the end of the string |
 
-```http
+```
   Example:
   string = "This is a test"
   count = 4
@@ -72,7 +72,7 @@ You will need to append one of the endpoints to the end of the URL and provide t
 ```
 #### Getsubstring
 
-```http
+```
   POST /getsubstring
 ```
 
@@ -82,7 +82,7 @@ You will need to append one of the endpoints to the end of the URL and provide t
 | `start` | `integer` | **Required**. Specifies the start of the string to return |
 | `end` | `integer` | **Required**. Specifies the end of the string to return |
 
-```http
+```
   Example:
   string = "This is a test"
   start = 6
