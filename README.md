@@ -6,6 +6,8 @@ https://substring-api.herokuapp.com/getfirst
 
 https://substring-api.herokuapp.com/getlast
 
+https://substring-api.herokuapp.com/removelast
+
 https://substring-api.herokuapp.com/getsubstring
 
 HTTP Method: POST
@@ -13,7 +15,7 @@ Content-Type application/json
 No authentication required
 
 
-For getfirst and getlast:
+For getfirst, getlast and removelast:
 
 
 Valid request body example for getfirst and getlast:
@@ -23,7 +25,7 @@ Valid request body example for getfirst and getlast:
 "count": 4
 
 
-The result of the above example would be "This" for getfirst and "last" for getlast
+The result of the above example would be "This" for getfirst and "last" for getlast and "This is a test st" for removelast.
 
 
 Valid request body example for getsubstring:
