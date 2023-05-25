@@ -1,39 +1,92 @@
-# Substring-API
-API to return part of a string based on number of characters passed into the API
+# Substring API
 
-Endpoints:
-https://substring-api.herokuapp.com/getfirst
+This API is designed for string manipulation.
 
-https://substring-api.herokuapp.com/getlast
-
-https://substring-api.herokuapp.com/removelast
-
-https://substring-api.herokuapp.com/getsubstring
-
-HTTP Method: POST
-Content-Type application/json
-No authentication required
+It can return a part of a string, remove part of a string or return a part of the string
 
 
-For getfirst, getlast and removelast:
 
 
-Valid request body example for getfirst and getlast:
+## API Reference
 
+The API base URL is https://substring-api.herokuapp.com  
 
-"string": "This is a test string",
-"count": 4
+No Authentication required.
 
+You will need to append one of the endpoints to the end of the URL and provide the correct parameters in the request body.
 
-The result of the above example would be "This" for getfirst and "last" for getlast and "This is a test st" for removelast.
+#### Getfirst
 
+```http
+  POST /getfirst
+```
 
-Valid request body example for getsubstring:
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `string` | `string` | **Required**. The string to manipulate |
+| `count` | `integer` | **Required**. How many characters of the string to return starting from the start of the string |
 
+```http
+  Example:
+  string = "This is a test"
+  count = 4
 
-"string": "This is a test string",
-"start": 11,
-"end": 14
+  Result = "This
+```
 
+#### Getlast
 
-The result of the above would be "test"
+```http
+  POST /getlast
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `string` | `string` | **Required**. The string to manipulate |
+| `count` | `integer` | **Required**. How many characters of the string to return starting from the end of the string |
+
+```http
+  Example:
+  string = "This is a test"
+  count = 4
+
+  Result = "test"
+```
+#### Removelast
+
+```http
+  POST /removelast
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `string` | `string` | **Required**. The string to manipulate |
+| `count` | `integer` | **Required**. How many characters of the string to omit from the end of the string |
+
+```http
+  Example:
+  string = "This is a test"
+  count = 4
+
+  Result = "This is a "
+```
+#### Getsubstring
+
+```http
+  POST /getsubstring
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `string` | `string` | **Required**. The string to manipulate |
+| `start` | `integer` | **Required**. Specifies the start of the string to return |
+| `end` | `integer` | **Required**. Specifies the end of the string to return |
+
+```http
+  Example:
+  string = "This is a test"
+  start = 6
+  end = 9
+
+  Result = "is a"
+```
