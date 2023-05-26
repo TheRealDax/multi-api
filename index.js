@@ -27,10 +27,17 @@ app.post('/removelast', (req, res) => {
 
 //gets the specified characters in a string from a start point and end point using start, end
 app.post('/getsubstring', (req, res) => {
-    const { string, start, end } = req.body;
-    const result = string.substring(start, end);
-    res.json({ result });
-  });
+  const { string, start, end } = req.body;
+  let result;
+  
+  if (end !== undefined) {
+    result = string.substring(start, end);
+  } else {
+    result = string.substring(start);
+  }
+  
+  res.json({ result });
+});
 
 app.listen(process.env.PORT || 3000, () => {
   console.log('Server is running');
