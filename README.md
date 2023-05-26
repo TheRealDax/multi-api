@@ -2,10 +2,12 @@
 
 This API is designed for string manipulation.
 
-It can return a part of a string, remove part of a string or return a part of the string
+It can do the following depending on the endpoint used:
 
-
-
+Return the first part of a string
+Return the last part of a string
+Remove the last part of a string and return the rest 
+Return a part of the string in the middle specified by start and end points
 
 ## API Reference
 
