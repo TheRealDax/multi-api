@@ -85,6 +85,7 @@ You will need to append one of the endpoints to the end of the URL and provide t
 | `string` | `string` | **Required**. The string to manipulate |
 | `start` | `integer` | **Required**. Specifies the start of the string to return |
 | `end` | `integer` | **Optional**. Specifies the end of the string to return. If not used, will return until the end of the string |
+| `numonly` | `string` | **Optional**. If "yes", will omit any non-number characters |
 
 ```
   Example:
