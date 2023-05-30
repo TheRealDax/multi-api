@@ -40,19 +40,36 @@ app.post('/getsubstring', (req, res) => {
   res.json({ result });
 });
 
-//converts a time and date string into unix formatted timestamp
+//generate a unix timestamp based on a specific date and time or days in the future
 app.post('/timestamp', (req, res) => {
-  const { time, date } = req.body;
-  const dateTimeString = `${date} ${time}`;
-  const parsedDateTime = moment(dateTimeString, ['DD/MM/YYYY h:mmA', 'DD/MM/YYYY HH:mm']);
-  
-  if (parsedDateTime.isValid()) {
-    const result = parsedDateTime.unix();
-    res.json({ result });
+  const { date, time, days, format } = req.body;
+
+  let timestamp;
+
+  if (date && time) {
+    const datetime = `${date} ${time}`;
+    const dateFormat = getDateFormat(format);
+    timestamp = moment(datetime, dateFormat).unix();
+  } else if (days) {
+    const futureDate = moment().add(days, 'days');
+    timestamp = futureDate.unix();
   } else {
-    res.status(400).json({ error: 'Invalid input' });
+    return res.status(400).json({ error: 'Invalid request. Please provide either date and time or days parameter.' });
   }
+
+  res.json({ timestamp });
 });
+
+//funtion to decide the date/time format. Default is EU if format parameter is not passed.
+function getDateFormat(format) {
+  switch (format) {
+    case 'US':
+      return ['MM/DD/YYYY h:mmA', 'MM/DD/YYYY HH:mm'];
+    case 'EU':
+    default:
+      return ['DD/MM/YYYY h:mmA', 'DD/MM/YYYY HH:mm'];
+  }
+}
 
 app.listen(process.env.PORT || 3000, () => {
   console.log('Server is running');
