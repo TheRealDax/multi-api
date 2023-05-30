@@ -102,8 +102,10 @@ You will need to append one of the endpoints to the end of the URL and provide t
 
 | Parameter | Type     | Description                |
 | :-------- | :------- | :------------------------- |
-| `date` | `string` | **Required**. The date in DD/MM/YYYY format |
-| `time` | `string` | **Required**. The time in format of 13:00 OR 1PM. Both will work |
+| `date` | `string` | **Required**. **Do not use if passing days parameter.** The date in EU or US format (US format requires the format parameter) |
+| `time` | `string` | **Required**. **Do not use if passing days parameter.** The time in format of 13:00 OR 1PM. Both will work |
+| `format` | `string` | **Optional**. Specifies the format to recognise the date, either US or EU (defaults to EU if not passed) |
+| `days` | `string` | **Required**. **Do not use if passing date and time parameter.** Specifies the days in the future to generate the timestamp. |
 
 ```
   Example:
@@ -111,4 +113,9 @@ You will need to append one of the endpoints to the end of the URL and provide t
   time = 13:00
 
   Result = "1686571200"
+
+  Example:
+  days = 4
+
+  Result = "1685801791" (4 days in the future)
 ```
