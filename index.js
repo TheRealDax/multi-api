@@ -39,6 +39,20 @@ app.post('/getsubstring', (req, res) => {
   res.json({ result });
 });
 
+//converts a time and date string into unix formatted timestamp
+app.post('/timestamp', (req, res) => {
+  const { time, date } = req.body;
+  const dateTimeString = `${date} ${time}`;
+  const parsedDateTime = moment(dateTimeString, ['DD/MM/YYYY h:mmA', 'DD/MM/YYYY HH:mm']);
+  
+  if (parsedDateTime.isValid()) {
+    const result = parsedDateTime.unix();
+    res.json({ result });
+  } else {
+    res.status(400).json({ error: 'Invalid input' });
+  }
+});
+
 app.listen(process.env.PORT || 3000, () => {
   console.log('Server is running');
 });
