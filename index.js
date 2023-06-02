@@ -73,7 +73,21 @@ function getDateFormat(format) {
     default:
       return ['DD/MM/YYYY h:mmA', 'DD/MM/YYYY HH:mm'];
   }
+  
 }
+app.post('/currencyformat', (req, res) => {
+  const { number } = req.body;
+
+  // Check if the input is a valid number
+  if (isNaN(number)) {
+    return res.status(400).json({ error: 'Invalid number provided. Please provide a valid number.' });
+  }
+
+  // Convert the number to currency format
+  const currencyFormat = Number(number).toLocaleString();
+
+  res.json({ result: currencyFormat });
+});
 
 app.listen(process.env.PORT || 3000, () => {
   console.log('Server is running');
