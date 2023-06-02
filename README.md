@@ -120,3 +120,19 @@ You will need to append one of the endpoints to the end of the URL and provide t
 
   Result = "1685801791" (4 days in the future)
 ```
+#### Currencyformat
+
+```
+  POST /currencyformat
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `number` | `string` or `int` | **Required**. The number to convert to a currency format |
+
+```
+  Example:
+  number = 1000000
+
+  Result = 1,000,000
+```
