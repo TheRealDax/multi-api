@@ -1,6 +1,6 @@
-# Substring API
+# Substring API (Now a multipurpose API)
 
-This API is designed for string manipulation.
+This API was designed for string manipulation, but now has multiple endpoints for different use cases.
 
 It can do the following depending on the endpoint used:
 
@@ -8,8 +8,8 @@ Return the first part of a string
 Return the last part of a string  
 Remove the last part of a string and return the rest  
 Return a part of the string in the middle specified by start and end points
-
-Although not a substring endpoint, this API also supports converting a date and time to the Unix formatted timestamp
+Convert a date and time to the Unix formatted timestamp
+Convert a number to it's currency formatted equivalent
 
 ## API Reference
 
