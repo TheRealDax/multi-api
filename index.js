@@ -2,34 +2,48 @@ const express = require('express');
 const moment = require('moment');
 const app = express();
 
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 //gets the first X characters in a string, where X is the number passed to count
 app.post('/getfirst', (req, res) => {
   const { string, count } = req.body;
+  let charcount;
+
   const result = string.substring(0, count);
-  res.json({ result });
+  charcount = result.length;
+
+  res.json({ result, charcount });
 });
 
 //gets the last X characters in a string, where X is the number passed to count
 app.post('/getlast', (req, res) => {
   const { string, count } = req.body;
+  let charcount;
+
   const result = string.substring(string.length - count);
-  res.json({ result });
+  charcount = result.length;
+
+  res.json({ result, charcount });
 });
 
 // Removes the last X characters from a string, where X is the number passed to count
 app.post('/removelast', (req, res) => {
   const { string, count } = req.body;
+  let charcount;
+
   const result = string.substring(0, string.length - count);
-  res.json({ result });
+  charcount = result.length;
+
+  res.json({ result, charcount });
 });
 
 //gets the specified characters in a string from a start point and end point using start, end
 app.post('/getsubstring', (req, res) => {
   const { string, start, end, numonly } = req.body;
   let result;
+  let charcount;
 
   if (end !== undefined) {
     result = string.substring(start, end);
@@ -41,7 +55,9 @@ app.post('/getsubstring', (req, res) => {
     result = result.replace(/[\D#&]/g, '');
   }
 
-  res.json({ result });
+  charcount = result.length;
+
+  res.json({ result, charcount });
 });
 
 //generate a unix timestamp based on a specific date and time or days in the future
@@ -73,14 +89,14 @@ function getDateFormat(format) {
     default:
       return ['DD/MM/YYYY h:mmA', 'DD/MM/YYYY HH:mm'];
   }
-  
 }
+
 app.post('/currencyformat', (req, res) => {
   const { number } = req.body;
 
   // Check if the input is a valid number
   if (isNaN(number)) {
-    return res.status(400).json({ error: 'Invalid number provided. Please provide a valid number.' });
+    return res.status(400).json({ error: 'Invalid number provided' });
   }
 
   // Convert the number to currency format
@@ -89,6 +105,6 @@ app.post('/currencyformat', (req, res) => {
   res.json({ result: currencyFormat });
 });
 
-app.listen(process.env.PORT || 3000, () => {
-  console.log('Server is running');
+app.listen(3000, () => {
+  console.log('Server is running on port 3000');
 });
