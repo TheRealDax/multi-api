@@ -136,3 +136,24 @@ You will need to append one of the endpoints to the end of the URL and provide t
 
   Result = 1,000,000
 ```
+#### Convertnum
+
+```
+  POST /convertnum
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `number` | `string` | **Required**. The number to convert |
+
+```
+  Example 1:
+  number = "1000"
+
+  Result = "1k"
+
+  Example 2:
+  number = "1k"
+
+  Result = "1000"
+```
