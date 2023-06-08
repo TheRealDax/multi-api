@@ -1,4 +1,4 @@
-# Substring API (Now a multipurpose API)
+# A Multi Purpose API Built for Simple Tasks
 
 This API was designed for string manipulation, but now has multiple endpoints for different use cases.
 
@@ -10,6 +10,7 @@ Remove the last part of a string and return the rest
 Return a part of the string in the middle specified by start and end points
 Convert a date and time to the Unix formatted timestamp
 Convert a number to it's currency formatted equivalent
+Convert a number from long to short or short to long (eg: 1000 > 1k OR 1k > 1000)
 
 ## API Reference
 
