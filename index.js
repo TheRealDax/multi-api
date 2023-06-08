@@ -51,6 +51,8 @@ app.post('/getsubstring', (req, res) => {
     result = string.substring(start);
   }
 
+  result = result.trim();
+  
   if (numonly === 'yes') {
     result = result.replace(/[\D#&]/g, '');
   }
