@@ -1,7 +1,10 @@
 const express = require('express');
 const moment = require('moment');
+const AWS = require('aws-sdk');
 const app = express();
 
+AWS.config.update({ region: process.env.BUCKETEER_AWS_REGION });
+const S3 = new AWS.S3();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -162,6 +165,41 @@ app.post('/convertnum', (req, res) => {
     }
 
     res.json({ result });
+  }
+});
+
+// Endpoint to add content to transcripts
+app.post('/transcript', async (req, res) => {
+  const { serverid, channelid, content, close } = req.body;
+
+  const bucketName = process.env.BUCKETEER_BUCKET_NAME;
+  const s3Key = `transcripts/${serverid}-${channelid}.html`;
+
+  try {
+    // Retrieve the existing transcript file from S3 or create a new one if it doesn't exist
+    const existingObject = await S3.getObject({ Bucket: bucketName, Key: s3Key }).promise();
+    const existingContent = existingObject.Body.toString();
+
+    // Update the content
+    const updatedContent = existingContent + content;
+
+    // Upload the updated content to S3
+    await S3.putObject({ Bucket: bucketName, Key: s3Key, Body: updatedContent }).promise();
+
+    if (close) {
+      res.json({ message: 'Transcript closed and updated on S3.' });
+    } else {
+      res.json({ message: 'Transcript updated on S3.' });
+    }
+  } catch (error) {
+    // Create a new transcript file if it doesn't exist
+    if (error.code === 'NoSuchKey') {
+      await S3.putObject({ Bucket: bucketName, Key: s3Key, Body: content }).promise();
+      res.json({ message: 'Transcript created on S3.' });
+    } else {
+      console.error(`Error updating transcript on S3: ${error}`);
+      res.status(500).json({ error: 'Failed to update transcript on S3.' });
+    }
   }
 });
 
