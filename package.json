@@ -9,6 +9,8 @@
   "author": "Dax",
   "license": "ISC",
   "dependencies": {
+    "aws-sdk": "^2.102.0",
+    "dotenv": "^16.1.4",
     "express": "^4.18.2",
     "moment": "^2.29.4"
   }
