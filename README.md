@@ -14,7 +14,7 @@ Convert a number from long to short or short to long (eg: 1000 > 1k OR 1k > 1000
 
 ## API Reference
 
-The API base URL is https://substring-api.herokuapp.com  
+The API base URL is https://www.multi-api.xyz
 
 No Authentication required.
 
