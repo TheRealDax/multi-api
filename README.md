@@ -10,7 +10,7 @@ Remove the last part of a string and return the rest
 Return a part of the string in the middle specified by start and end points
 Convert a date and time to the Unix formatted timestamp
 Convert a number to it's currency formatted equivalent
-Convert a number from long to short or short to long (eg: 1000 > 1k OR 1k > 1000)
+Convert a number from long to short or short to long (eg: 1000 > 1k OR 1k > 1000)  
 Generates HTML transcripts from messages in Discord
 
 ## API Reference
