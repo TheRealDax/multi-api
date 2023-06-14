@@ -11,6 +11,7 @@ Return a part of the string in the middle specified by start and end points
 Convert a date and time to the Unix formatted timestamp
 Convert a number to it's currency formatted equivalent
 Convert a number from long to short or short to long (eg: 1000 > 1k OR 1k > 1000)
+Generates HTML transcripts from messages in Discord
 
 ## API Reference
 
@@ -158,3 +159,19 @@ You will need to append one of the endpoints to the end of the URL and provide t
 
   Result = "1000"
 ```
+#### Transcript
+
+```
+  POST /transcript
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `serverid` | `string` | **Required**. The Discord server id. Used in file generation and transcript matching. In BotGhost use {server_id} as the value |
+| `channelid` | `string` | **Required**. The Discord channel id. Used in file generation and transcript matching. In BotGhost use {channel_id} as the value |
+| `content` | `string` | **Required**. The message content to add to the transcript. In BotGhost use {event_message_content} as the value  |
+| `channelname` | `string` | **Required**. The Discord channel name. Used as a variable to include the channel name in the transcript logs. In BotGhost use {channel_name} as the value |
+| `user` | `string` | **Required**. The Discord user sending the message. In BotGhost use {user_name} as the value |
+| `usericon` | `string` | **Required**. The Discord users profile icon. Used as a variable to include the icon in the transcript logs. In BotGhost use {user_icon} as the value |
+| `close` | `string` | **Optional**. Used to "close" the transcript and generate the URL to the HTML file. Do not pass content if you are closing the transcript |
+
