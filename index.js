@@ -204,8 +204,10 @@ app.post('/transcript', async (req, res) => {
 </div>`;
 
     // Upload the updated content to S3
+    if (content && !close) {
     const putObjectCommand = new PutObjectCommand({ Bucket: bucketName, Key: s3Key, Body: updatedContent, ContentType: 'text/html' });
     await s3Client.send(putObjectCommand);
+    }
 
     if (close) {
       const url = `https://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/${s3Key}`;
