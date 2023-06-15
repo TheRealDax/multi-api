@@ -205,7 +205,7 @@ app.post('/transcript', async (req, res) => {
 
       if (match) {
         // If messageid exists, append the edited content below the previous edit
-        const editedContent = `${match[2]} <p><strong><font color="#fcba03">Message was edited:</font></strong> ${content}</p>`;
+        const editedContent = `<p><strong><font color="#fcba03">Message was edited:</font></strong> ${content}</p>`;
         updatedContent = existingContent.replace(match[0], match[0] + editedContent);
       }
     } else if (eventtype === 'delete') {
@@ -222,14 +222,16 @@ app.post('/transcript', async (req, res) => {
 
     // Combine the existing content and new content if no match found
     if (!match) {
-      updatedContent += `<div class='msg'>
-        <div class='left'><img src='${usericon}'></div>
-        <div class='right'>
-          <div><a>${user}</a><a>${timeNow}</a></div>
-          <p>${content}</p>
-          <span class='hidden'>${messageid}</span>
-        </div>
-      </div>`;
+      updatedContent = `${existingContent}<div class='msg'>
+    <div class='left'><img
+        src='${usericon}'>
+    </div>
+    <div class='right'>
+        <div><a>${user}</a><a>${timeNow}</a></div>
+        <p>${content}</p>
+        <span class='hidden'>${messageid}</span>
+    </div>
+</div>`;
     }
 
     // Upload the updated content to S3
