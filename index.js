@@ -173,12 +173,12 @@ app.post('/convertnum', (req, res) => {
 
 // Endpoint to add content to transcripts
 app.post('/transcript', async (req, res) => {
-  const { serverid, channelid, content, close, channelname, user, usericon } = req.body;
+  const { serverid, channelid, messageid, content, close, channelname, user, usericon, eventtype } = req.body;
   const bucketName = process.env.BUCKET_NAME;
   const s3Key = `transcripts/${serverid}-${channelid}.html`;
   const timeNow = new Date();
 
-  try {
+   try {
     // Retrieve the existing transcript file from S3 or create a new one if it doesn't exist
     const getObjectCommand = new GetObjectCommand({ Bucket: bucketName, Key: s3Key });
     const existingObject = await s3Client.send(getObjectCommand);
@@ -192,16 +192,35 @@ app.post('/transcript', async (req, res) => {
     existingObject.Body.on('end', async () => {
       const existingContent = Buffer.concat(chunks).toString();
 
+     // Check if messageid exists in the existing content
+     const messageRegex = new RegExp(`<span class='hidden'>${messageid}<\\/span>([^<]*)`, 'g');
+     const match = messageRegex.exec(existingContent);
+
+     let updatedContent;
+
+     if (match && !eventtype) {
+      // If messageid exists, replace the existing content with edited content
+      const editedContent = `${match[1]} <p><strong><font color="#fcba03">Message edited:</font></strong> ${content}</p>`;
+      updatedContent = existingContent.replace(match[0], editedContent);
+
+    } else if (match && eventtype == 'delete') {
+      // If messageid exists and eventtype = delete, mark the message as deleted
+      const editedContent = `${match[1]} <p><strong><font color="#f0210a">This message was deleted.</font></strong></p>`;
+      updatedContent = existingContent.replace(match[0], editedContent);
+
+    } else {
     // Combine the existing content and new content
-    const updatedContent = `${existingContent}<div class='msg'>
+    updatedContent = `${existingContent}<div class='msg'>
     <div class='left'><img
         src='${usericon}'>
     </div>
     <div class='right'>
         <div><a>${user}</a><a>${timeNow}</a></div>
         <p>${content}</p>
+        <span class='hidden'>${messageid}</span>
     </div>
 </div>`;
+  }
 
     // Upload the updated content to S3
     if (content && !close) {
@@ -216,8 +235,9 @@ app.post('/transcript', async (req, res) => {
       res.json({ message: 'Transcript updated.' });
     }
   });
+  }
 
-  } catch (error) {
+  catch (error) {
     // Create a new transcript file if it doesn't exist
     if (error.name === 'NoSuchKey') {
       const fileContent = `<ticket-info>
@@ -225,7 +245,7 @@ app.post('/transcript', async (req, res) => {
       Ticket Name    | ${channelname}
       Created        | ${timeNow}
   </ticket-info>
-          <!DOCTYPE html><html><head><style>@import url(https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;600;700&display=swap);ticket-info{display:none}body{background-color:#181d23;color:#fff;font-family:Rajdhani,sans-serif;margin:50px}.header h2{font-weight:400;text-transform:capitalize;margin-bottom:0;color:#fff}.header p{font-size:14px}.header .header-container .header-item{margin-right:25px;display:flex;align-items:center}.header .header-container{display:flex}.header .header-container .header-item a{margin-right:7px;padding:6px 10px 5px;background-color:#f45142;border-radius:3px;font-size:12px}.messages{margin-top:30px;display:flex;flex-direction:column}.messages .msg{display:flex;margin-bottom:31px}.messages .msg .left img{border-radius:100%;height:50px}.messages .msg .left{margin-right:20px}.messages .msg .right a:first-child{font-weight:400;margin:0 15px 0 0;font-size:19px;color:#fff}.messages .msg .right a:nth-child(2){text-transform:capitalize;color:#fff;font-size:12px}.messages .msg .right div{display:flex;align-items:center;margin-top:5px}.messages .msg .right p{margin:10px 0 0;white-space:normal;line-height:2;color:#fff;font-size:15px;max-width:700px}@media only screen and (max-width:600px){body{margin:0;padding:25px;width:calc(100% - 50px)}.ticket-header h2{margin-top:0}.ticket-header .children{display:flex;flex-wrap:wrap}}</style><title>Transcript | ticket-225647195771240448</title><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta charset="UTF-8"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet"></head><body><div class='header'>
+          <!DOCTYPE html><html><head><style>@import url(https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;600;700&display=swap);ticket-info{display:none}body{background-color:#181d23;color:#fff;font-family:Rajdhani,sans-serif;margin:50px}.header h2{font-weight:400;text-transform:capitalize;margin-bottom:0;color:#fff}.header p{font-size:14px}.header .header-container .header-item{margin-right:25px;display:flex;align-items:center}.header .header-container{display:flex}.header .header-container .header-item a{margin-right:7px;padding:6px 10px 5px;background-color:#f45142;border-radius:3px;font-size:12px}.messages{margin-top:30px;display:flex;flex-direction:column}.messages .msg{display:flex;margin-bottom:31px}.messages .msg .left img{border-radius:100%;height:50px}.messages .msg .left{margin-right:20px}.messages .msg .right a:first-child{font-weight:400;margin:0 15px 0 0;font-size:19px;color:#fff}.messages .msg .right a:nth-child(2){text-transform:capitalize;color:#fff;font-size:12px}.messages .msg .right div{display:flex;align-items:center;margin-top:5px}.messages .msg .right p{margin:10px 0 0;white-space:normal;line-height:2;color:#fff;font-size:15px;max-width:700px}@media only screen and (max-width:600px){body{margin:0;padding:25px;width:calc(100% - 50px)}.ticket-header h2{margin-top:0}.ticket-header .children{display:flex;flex-wrap:wrap}} .hidden {display: none;}</style><title>Transcript | ticket-225647195771240448</title><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta charset="UTF-8"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet"></head><body><div class='header'>
               <h2>Transcript for <b>${channelname}</b></h2>
               <div class='header-container'>
                   <div class='header-item'><a>Created: </a><p>${timeNow}</p></div>
@@ -238,6 +258,7 @@ app.post('/transcript', async (req, res) => {
                   <div class='right'>
                       <div><a>${user}</a><a>${timeNow}</a></div>
                       <p>${content}</p>
+                      <span class='hidden'>${messageid}</span>
                   </div>
               </div>`;
 
@@ -254,4 +275,3 @@ app.post('/transcript', async (req, res) => {
 app.listen(process.env.PORT || 3000, () => {
   console.log('Server is running');
 });
-
