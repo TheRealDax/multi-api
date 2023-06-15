@@ -168,10 +168,12 @@ You will need to append one of the endpoints to the end of the URL and provide t
 | Parameter | Type     | Description                |
 | :-------- | :------- | :------------------------- |
 | `serverid` | `string` | **Required**. The Discord server id. Used in file generation and transcript matching. In BotGhost use {server_id} as the value |
-| `channelid` | `string` | **Required**. The Discord channel id. Used in file generation and transcript matching. In BotGhost use {channel_id} as the value |
+| `channelid` | `string` | **Required**. The Discord channel id. Used in file generation and transcript matching. In BotGhost use {event_channel_id} as the value |
+| `messageid` | `string` | **Required**. The Discord message id. Used for identifying edited and deleted messages. In BotGhost use {event_message_id} as the value |
 | `content` | `string` | **Required**. The message content to add to the transcript. In BotGhost use {event_message_content} as the value  |
-| `channelname` | `string` | **Required**. The Discord channel name. Used as a variable to include the channel name in the transcript logs. In BotGhost use {channel_name} as the value |
-| `user` | `string` | **Required**. The Discord user sending the message. In BotGhost use {user_name} as the value |
+| `channelname` | `string` | **Required**. The Discord channel name. Used as a variable to include the channel name in the transcript logs. In BotGhost use {event_channel_name} as the value |
+| `user` | `string` | **Required**. The Discord user sending the message. In BotGhost use {event_user_name} as the value |
 | `usericon` | `string` | **Required**. The Discord users profile icon. Used as a variable to include the icon in the transcript logs. In BotGhost use {user_icon} as the value |
-| `close` | `string` | **Optional**. Used to "close" the transcript and generate the URL to the HTML file. Do not pass content if you are closing the transcript |
+| `close` | `string` | **Optional**. Used to "close" the transcript and generate the URL to the HTML file. Must be used in conjunction with serverid and channelid. **Do not pass content if you are closing the transcript** |
+| `eventtype` | `string` | **Optional**. Used to inform the API the message was deleted and not edited. Use "delete" as the value. **Should only be used in the "When a message is deleted" event in BotGhost.** |
 
