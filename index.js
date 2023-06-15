@@ -194,33 +194,43 @@ app.post('/transcript', async (req, res) => {
 
      // Check if messageid exists in the existing content
      const messageRegex = new RegExp(`<span class='hidden'>${messageid}<\\/span>([^<]*)`, 'g');
-     const match = messageRegex.exec(existingContent);
-
+    
      let updatedContent;
+     let match;
 
-     if (match && !eventtype) {
-      // If messageid exists, replace the existing content with edited content
-      const editedContent = `${match[1]} <p><strong><font color="#fcba03">Message edited:</font></strong> ${content}</p>`;
-      updatedContent = existingContent.replace(match[0], editedContent);
+     if (!eventtype) {
+      // Check if messageid exists in the existing content
+      const messageRegex = new RegExp(`<span class='hidden'>(${messageid})<\\/span>([^<]*)`, 'g');
+      match = messageRegex.exec(existingContent);
 
-    } else if (match && eventtype == 'delete') {
-      // If messageid exists and eventtype = delete, mark the message as deleted
-      const editedContent = `${match[1]} <p><strong><font color="#f0210a">This message was deleted.</font></strong></p>`;
-      updatedContent = existingContent.replace(match[0], editedContent);
+      if (match) {
+        // If messageid exists, append the edited content below the previous edit
+        const editedContent = `${match[2]} <p><strong><font color="#fcba03">Message was edited:</font></strong> ${content}</p>`;
+        updatedContent = existingContent.replace(match[0], match[0] + editedContent);
+      }
+    } else if (eventtype === 'delete') {
+      // Check if messageid exists in the existing content
+      const messageRegex = new RegExp(`<span class='hidden'>(${messageid})<\\/span>([^<]*)`, 'g');
+      match = messageRegex.exec(existingContent);
 
-    } else {
-    // Combine the existing content and new content
-    updatedContent = `${existingContent}<div class='msg'>
-    <div class='left'><img
-        src='${usericon}'>
-    </div>
-    <div class='right'>
-        <div><a>${user}</a><a>${timeNow}</a></div>
-        <p>${content}</p>
-        <span class='hidden'>${messageid}</span>
-    </div>
-</div>`;
-  }
+      if (match) {
+        // If messageid exists and eventtype = delete, mark the message as deleted
+        const editedContent = `${match[2]} <p><strong><font color="#f0210a">This message was deleted.</font></strong></p>`;
+        updatedContent = existingContent.replace(match[0], match[0] + editedContent);
+      }
+    }
+
+    // Combine the existing content and new content if no match found
+    if (!match) {
+      updatedContent += `<div class='msg'>
+        <div class='left'><img src='${usericon}'></div>
+        <div class='right'>
+          <div><a>${user}</a><a>${timeNow}</a></div>
+          <p>${content}</p>
+          <span class='hidden'>${messageid}</span>
+        </div>
+      </div>`;
+    }
 
     // Upload the updated content to S3
     if (content && !close) {
@@ -275,3 +285,4 @@ app.post('/transcript', async (req, res) => {
 app.listen(process.env.PORT || 3000, () => {
   console.log('Server is running');
 });
+
