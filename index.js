@@ -12,6 +12,27 @@ app.use(express.urlencoded({ extended: true }));
 
 const s3Client = new S3Client({ region: process.env.AWS_REGION });
 
+// Returns a string based on a regular expression
+app.post('/regex', (req, res) => {
+  const string = req.body.string;
+  const regex = req.body.regex;
+
+  const regexString = new RegExp(regex);
+  const matchedString = regexString.exec(string);
+
+  if (matchedString) {
+    const matchedGroups = matchedString.slice(0);
+    const responses = matchedGroups.reduce((result, group, index) => {
+      result[`match${index + 1}`] = group;
+      return result;
+    }, {});
+
+    res.json({ responses });
+  } else {
+    res.status(500).json({ error: 'No match found. If you are having trouble, visit https://regex101.com/ to test your regular expression before trying again.' });
+  }
+});
+
 //gets the first X characters in a string, where X is the number passed to count
 app.post('/getfirst', (req, res) => {
   const { string, count } = req.body;
