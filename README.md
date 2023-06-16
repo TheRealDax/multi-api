@@ -12,6 +12,7 @@ Convert a date and time to the Unix formatted timestamp
 Convert a number to it's currency formatted equivalent
 Convert a number from long to short or short to long (eg: 1000 > 1k OR 1k > 1000)  
 Generates HTML transcripts from messages in Discord
+Returns a result (results) based on a regular expression
 
 ## API Reference
 
@@ -176,4 +177,16 @@ You will need to append one of the endpoints to the end of the URL and provide t
 | `usericon` | `string` | **Required**. The Discord users profile icon. Used as a variable to include the icon in the transcript logs. In BotGhost use {user_icon} as the value |
 | `close` | `string` | **Optional**. Used to "close" the transcript and generate the URL to the HTML file. Must be used in conjunction with serverid and channelid. **Do not pass content if you are closing the transcript** |
 | `eventtype` | `string` | **Optional**. Used to inform the API the message was deleted and not edited. Use "delete" as the value. **Should only be used in the "When a message is deleted" event in BotGhost.** |
+
+#### Regex
+
+```
+  POST /regex
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `string` | `string` | **Required**. The string that the regular expression should evaluate |
+| `regex` | `string` | **Required**. The regular expression to use |
+
 
