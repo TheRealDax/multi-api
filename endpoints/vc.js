@@ -1,6 +1,8 @@
 const { Client, GatewayIntentBits, ChannelType } = require('discord.js');
 const { joinVoiceChannel, getVoiceConnection } = require('@discordjs/voice');
 
+const TOKEN_REGEX = /^Bot\s[a-zA-Z0-9_.-]+$/; // Regular expression pattern for token validation
+
 const intents = [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates, GatewayIntentBits.GuildMessages];
 const client = new Client({ intents });
 
@@ -31,14 +33,19 @@ const connectToVoiceChannel = async (channel) => {
 
 const vc = async (req, res) => {
   const { channelid, serverid, deleteafter = false, disconnect = false } = req.body;
+  const { authorization: token } = req.headers;
 
   if (!channelid || !serverid) {
     res.status(400).json({ error: 'Missing required parameters. Please ensure you are using token, serverid, and channelid parameters.' });
     return;
   }
 
+  if (!TOKEN_REGEX.test(token)) {
+    res.status(400).json({ error: 'Invalid token format. Please provide a valid Discord bot token.' });
+    return;
+  }
+
   try {
-    const token = req.headers.authorization;
     await client.login(token);
     console.log('Bot logged in successfully.');
 
