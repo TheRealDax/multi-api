@@ -30,14 +30,15 @@ const connectToVoiceChannel = async (channel) => {
 };
 
 const vc = async (req, res) => {
-  const { token, channelid, serverid, deleteafter = false, disconnect = false } = req.body;
+  const { channelid, serverid, deleteafter = false, disconnect = false } = req.body;
 
-  if (!token || !channelid || !serverid) {
+  if (!channelid || !serverid) {
     res.status(400).json({ error: 'Missing required parameters. Please ensure you are using token, serverid, and channelid parameters.' });
     return;
   }
 
   try {
+    const token = req.headers.authorization;
     await client.login(token);
     console.log('Bot logged in successfully.');
 
