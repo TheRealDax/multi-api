@@ -32,7 +32,7 @@ const connectToVoiceChannel = async (channel) => {
 };
 
 const vc = async (req, res) => {
-  const { channelid, serverid, deleteafter = false, disconnect = false } = req.body;
+  const { channelid, serverid, deleteafter = false, disconnect = false, killall } = req.body;
   const { authorization: token } = req.headers;
 
   if (!channelid || !serverid) {
@@ -43,6 +43,12 @@ const vc = async (req, res) => {
   if (!TOKEN_REGEX.test(token)) {
     res.status(400).json({ error: 'Invalid token format. Please provide a valid Discord bot token.' });
     return;
+  }
+
+  if (killall){
+    connection.destroy();
+    client.destroy();
+    console.log("All connections destroyed.")
   }
 
   try {
