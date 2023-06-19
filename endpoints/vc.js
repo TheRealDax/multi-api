@@ -32,7 +32,7 @@ const connectToVoiceChannel = async (channel) => {
 };
 
 const vc = async (req, res) => {
-  const { channelid, serverid, deleteafter = false, disconnect = false } = req.body;
+  let { channelid, serverid, deleteafter = false, disconnect = false } = req.body;
   const { authorization: token } = req.headers;
 
   channelid = String(channelid);
