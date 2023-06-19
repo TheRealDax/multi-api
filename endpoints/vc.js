@@ -35,9 +35,6 @@ const vc = async (req, res) => {
   let { channelid, serverid, deleteafter = false, disconnect = false } = req.body;
   const { authorization: token } = req.headers;
 
-  channelid = String(channelid);
-  serverid = String(serverid);
-
   if (!channelid || !serverid) {
     res.status(400).json({ error: 'Missing required parameters. Please ensure you are using token, serverid, and channelid parameters.' });
     return;
