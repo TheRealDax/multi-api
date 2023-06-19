@@ -45,12 +45,6 @@ const vc = async (req, res) => {
     return;
   }
 
-  if (killall){
-    connection.destroy();
-    client.destroy();
-    console.log("All connections destroyed.")
-  }
-
   try {
     await client.login(token);
     console.log('Bot logged in successfully.');
@@ -79,6 +73,12 @@ const vc = async (req, res) => {
         res.json({ message: 'Disconnected from voice channel successfully' });
         return;
       }
+    }
+
+    if (killall){
+      connection.destroy();
+      client.destroy();
+      console.log("All connections destroyed.")
     }
 
     connection = await connectToVoiceChannel(channel);
