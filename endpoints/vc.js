@@ -10,19 +10,18 @@ const client = new Client({ intents });
 const connectToVoiceChannel = async (channel) => {
     try {
         console.log('Connecting to voice channel...');
-        console.log('Bot logged in successfully.');
     const voiceConnection = joinVoiceChannel({
         channelId: channel.id,
         guildId: channel.guild.id,
         adapterCreator: channel.guild.voiceAdapterCreator,
     });
 
-    /* Log the connection status at different points
-    console.log('Connecting state:', voiceConnection.state.status);
-     Add stateChange event listener
-    voiceConnection.on('stateChange', (newState) => {
-        console.log('Connection state changed. New state:', newState.status);
-    });*/
+    //Log the connection status at different points
+    //console.log('Connecting state:', voiceConnection.state.status);
+     //Add stateChange event listener
+    //voiceConnection.on('stateChange', (newState) => {
+    //    console.log('Connection state changed. New state:', newState.status);
+    //});
     
     return voiceConnection;
     } catch (error) {
@@ -69,7 +68,6 @@ const vc = async (req, res) => {
       connection = getVoiceConnection(channel.guild.id);
       if (connection && connection.joinConfig.channelId == channel.id) {
         connection.destroy();
-        client.destroy();
         console.log('Disconnected from voice channel successfully.');
         res.json({ message: 'Disconnected from voice channel successfully' });
         return;
@@ -113,7 +111,6 @@ const vc = async (req, res) => {
 
           clearInterval(checkInterval);
           clearInterval(timeoutInterval);
-          client.destroy();
           console.log("Client destroyed.")
       }
     }
@@ -123,7 +120,6 @@ const vc = async (req, res) => {
     if (!connection || connection.state.status === 'destroyed') {
       clearInterval(checkInterval);
       clearInterval(timeoutInterval);
-      client.destroy(); // Log out the Discord bot
       return;
     }
   
@@ -135,7 +131,6 @@ const vc = async (req, res) => {
   
     clearInterval(checkInterval);
     clearInterval(timeoutInterval);
-    client.destroy(); // Log out the Discord bot
   };
   
   if (!disconnect) {
