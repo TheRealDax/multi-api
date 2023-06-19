@@ -1,5 +1,5 @@
 const { Client, GatewayIntentBits, ChannelType } = require('discord.js');
-const { joinVoiceChannel } = require('@discordjs/voice');
+const { joinVoiceChannel, getVoiceConnection } = require('@discordjs/voice');
 
 const intents = [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates, GatewayIntentBits.GuildMessages];
 const client = new Client({ intents });
@@ -56,9 +56,11 @@ const vc = async (req, res) => {
       return;
     }
 
+    let connection;
+
     if (disconnect) {
-      const connection = client.voice.connections.get(guild.id);
-      if (connection && connection.joinConfig.channelid == channel.id) {
+      connection = getVoiceConnection(channel.guild.id);
+      if (connection && connection.joinConfig.channelId === channel.id) {
         connection.destroy();
         client.destroy();
         res.json({ message: 'Disconnected from voice channel successfully' });
@@ -66,7 +68,7 @@ const vc = async (req, res) => {
       }
     }
 
-    const connection = await connectToVoiceChannel(channel, token);
+    connection = await connectToVoiceChannel(channel);
     console.log('Bot joined voice channel successfully.');
 
     res.json({ message: 'Joined voice channel successfully' });
@@ -127,8 +129,10 @@ const vc = async (req, res) => {
     client.destroy(); // Log out the Discord bot
   };
   
+  if (!disconnect) {
   checkInterval = setInterval(checkAloneInChannel, 5 * 60 * 1000); // 5 minutes check users in channel
   timeoutInterval = setInterval(timeoutFunction, 60 * 60 * 1000); // 1 hour timeout
+    }
   
   } catch (error) {
     console.error(error);
