@@ -4,7 +4,9 @@ const { joinVoiceChannel, getVoiceConnection } = require('@discordjs/voice');
 const TOKEN_REGEX = /^Bot\s[a-zA-Z0-9_.-]+$/; // Regular expression pattern for token validation
 
 const intents = [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates, GatewayIntentBits.GuildMessages];
-const client = new Client({ intents });
+const clients = {};
+
+let connection;
 
 // Join voice channel
 const connectToVoiceChannel = async (channel) => {
@@ -45,8 +47,16 @@ const vc = async (req, res) => {
   }
 
   try {
-    await client.login(token);
-    console.log('Bot logged in successfully.');
+    let client = clients[serverid];
+
+    if (!client) {
+      client = new Client({ intents });
+      clients[serverid] = client;
+      await client.login(token);
+      console.log('Bot logged in successfully for server', serverid);
+  } else {
+      console.log('Bot is already logged in for server', serverid);
+  }
 
     const guild = await client.guilds.fetch(serverid);
     const channel = await guild.channels.fetch(channelid);
@@ -62,13 +72,17 @@ const vc = async (req, res) => {
       return;
     }
 
-    let connection;
-
     if (disconnect) {
       connection = getVoiceConnection(channel.guild.id);
       if (connection.joinConfig.channelId == channel.id) {
         connection.disconnect();
         console.log('Disconnected from voice channel successfully.');
+
+        if (deleteafter) {
+          channel.delete();
+          console.log('Deleting channel...')
+        }
+        
         res.json({ message: 'Disconnected from voice channel successfully' });
         return;
       }
