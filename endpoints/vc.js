@@ -66,8 +66,8 @@ const vc = async (req, res) => {
 
     if (disconnect) {
       connection = getVoiceConnection(channel.guild.id);
-      if (connection && connection.joinConfig.channelId == channel.id) {
-        connection.destroy();
+      if (connection.joinConfig.channelId == channel.id) {
+        connection.disconnect();
         console.log('Disconnected from voice channel successfully.');
         res.json({ message: 'Disconnected from voice channel successfully' });
         return;
@@ -101,7 +101,7 @@ const vc = async (req, res) => {
       console.log("Checking Usercount: " + userCount);
 
       if (userCount <= 1) {
-        connection.destroy();
+        connection.disconnect();
         console.log("Alone in channel detected, disconnecting...")
 
           if (deleteafter) {
@@ -123,7 +123,7 @@ const vc = async (req, res) => {
       return;
     }
   
-    connection.destroy();
+    connection.disconnect();
   
     if (deleteafter) {
       channel.delete();
