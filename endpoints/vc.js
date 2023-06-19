@@ -32,8 +32,11 @@ const connectToVoiceChannel = async (channel) => {
 };
 
 const vc = async (req, res) => {
-  const { channelid, serverid, deleteafter = false, disconnect = false, killall } = req.body;
+  const { channelid, serverid, deleteafter = false, disconnect = false } = req.body;
   const { authorization: token } = req.headers;
+
+  channelid = String(channelid);
+  serverid = String(serverid);
 
   if (!channelid || !serverid) {
     res.status(400).json({ error: 'Missing required parameters. Please ensure you are using token, serverid, and channelid parameters.' });
@@ -67,18 +70,12 @@ const vc = async (req, res) => {
 
     if (disconnect) {
       connection = getVoiceConnection(channel.guild.id);
-      if (connection && connection.joinConfig.channelId === channel.id) {
+      if (connection && connection.joinConfig.channelId == channel.id) {
         connection.destroy();
         client.destroy();
         res.json({ message: 'Disconnected from voice channel successfully' });
         return;
       }
-    }
-
-    if (killall){
-      connection.destroy();
-      client.destroy();
-      console.log("All connections destroyed.")
     }
 
     connection = await connectToVoiceChannel(channel);
