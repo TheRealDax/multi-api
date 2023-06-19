@@ -126,7 +126,7 @@ const vc = async (req, res) => {
     client.destroy(); // Log out the Discord bot
   };
   
-  checkInterval = setInterval(checkAloneInChannel, 10000); // 10 seconds to check if alone in the channel
+  checkInterval = setInterval(checkAloneInChannel, 5 * 60 * 1000); // 5 minutes check users in channel
   timeoutInterval = setInterval(timeoutFunction, 60 * 60 * 1000); // 1 hour timeout
   
   } catch (error) {
