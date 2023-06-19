@@ -73,13 +73,14 @@ const vc = async (req, res) => {
       if (connection && connection.joinConfig.channelId == channel.id) {
         connection.destroy();
         client.destroy();
+        console.log('Disconnected from voice channel successfully.');
         res.json({ message: 'Disconnected from voice channel successfully' });
         return;
       }
     }
 
     connection = await connectToVoiceChannel(channel);
-    console.log('Bot joined voice channel successfully.');
+    console.log('Joined voice channel successfully.');
 
     res.json({ message: 'Joined voice channel successfully' });
 
@@ -106,10 +107,11 @@ const vc = async (req, res) => {
 
       if (userCount <= 1) {
         connection.destroy();
-        console.log("Alone in channel detected: " + connection.state.status)
+        console.log("Alone in channel detected, disconnecting...")
 
           if (deleteafter) {
             channel.delete();
+            console.log('Deleting channel...')
           }
 
           clearInterval(checkInterval);
