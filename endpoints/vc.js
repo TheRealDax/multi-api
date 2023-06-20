@@ -24,15 +24,8 @@ const connectToVoiceChannel = async (channel) => {
     };
 
     connections.push(connection);
-
-    //Log the connection status at different points
-    //console.log('Connecting state:', voiceConnection.state.status);
-     //Add stateChange event listener
-    //voiceConnection.on('stateChange', (newState) => {
-    //    console.log('Connection state changed. New state:', newState.status);
-    //});
-    
     return voiceConnection;
+
     } catch (error) {
     console.error('Failed to join voice channel', error);
     throw new Error('Failed to join voice channel');
@@ -73,6 +66,7 @@ const vc = async (req, res) => {
       clients[serverid] = client;
       await client.login(token);
       console.log('Bot logged in successfully for server', serverid);
+
   } else {
       console.log('Bot is already logged in for server', serverid);
   }
