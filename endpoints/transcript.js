@@ -68,7 +68,7 @@ const transcript = async (req, res) => {
   
         if (messageElement.length > 0) {
           // If messageid exists and eventtype = reaction, mark the message as being reacted to
-          const editedContent = `<p><strong><font color="#72d92e">A reaction was added to this message: ${emoji}</font></strong></p>`;
+          const editedContent = `<p><strong><font color="#72d92e">A reaction was added by ${user}: ${emoji}</font></strong></p>`;
           messageElement.after(editedContent);
           match = true;
         }
