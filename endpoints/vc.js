@@ -5,8 +5,7 @@ const TOKEN_REGEX = /^Bot\s[a-zA-Z0-9_.-]+$/; // Regular expression pattern for 
 
 const intents = [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates, GatewayIntentBits.GuildMessages];
 const clients = {};
-
-let connection;
+const connections = [];
 
 // Join voice channel
 const connectToVoiceChannel = async (channel) => {
@@ -17,6 +16,14 @@ const connectToVoiceChannel = async (channel) => {
         guildId: channel.guild.id,
         adapterCreator: channel.guild.voiceAdapterCreator,
     });
+
+    const connection = {
+      serverId: channel.guild.id,
+      channelId: channel.id,
+      voiceConnection,
+    };
+
+    connections.push(connection);
 
     //Log the connection status at different points
     //console.log('Connecting state:', voiceConnection.state.status);
@@ -30,6 +37,18 @@ const connectToVoiceChannel = async (channel) => {
     console.error('Failed to join voice channel', error);
     throw new Error('Failed to join voice channel');
     }
+};
+
+// Disconnect from voice channel
+const disconnectFromVoiceChannel = (channel, serverId) => {
+  const index = connections.findIndex((connection) => connection.serverId === serverId && connection.channelId === channel.id);
+
+  if (index !== -1) {
+    const connection = connections[index];
+    connection.voiceConnection.disconnect();
+    connections.splice(index, 1);
+    console.log('Disconnected from voice channel successfully.');
+  }
 };
 
 const vc = async (req, res) => {
@@ -73,22 +92,18 @@ const vc = async (req, res) => {
     }
 
     if (disconnect) {
-      connection = getVoiceConnection(channel.guild.id);
-      if (connection.joinConfig.channelId == channel.id) {
-        connection.disconnect();
-        console.log('Disconnected from voice channel successfully.');
+      disconnectFromVoiceChannel(channel, serverid);
 
         if (deleteafter) {
           channel.delete();
           console.log('Deleting channel...')
         }
-        
+
         res.json({ message: 'Disconnected from voice channel successfully' });
         return;
       }
-    }
 
-    connection = await connectToVoiceChannel(channel);
+    connectToVoiceChannel(channel, serverid);
     console.log('Joined voice channel successfully.');
 
     res.json({ message: 'Joined voice channel successfully' });
@@ -98,24 +113,20 @@ const vc = async (req, res) => {
 
     // Check if the bot is alone in the voice channel every 5 minutes
     const checkAloneInChannel = () => {
-        if (!connection || connection.state.status == 'destroyed') {
+      const connection = connections.find((connection) => connection.serverId === serverid && connection.channelId === channelid);
+        if (!connection || connection.voiceConnection.state.status == 'destroyed') {
             clearInterval(checkInterval);
             clearInterval(timeoutInterval);
             return;
           }   
 
-        if (
-            connection.joinConfig.channelId == channel.id &&
-            (connection.state.status == 'connecting' || connection.state.status == 'ready')
-          ) {
-            const membersInChannel = channel.members.filter((member) =>
-            member.voice.channelId == connection.joinConfig.channelId
+        const membersInChannel = channel.members.filter((member) => member.voice.channelId == connection.voiceConnection.joinConfig.channelId
       );
       const userCount = membersInChannel.size;
       console.log("Checking Usercount: " + userCount);
 
       if (userCount <= 1) {
-        connection.disconnect();
+        disconnectFromVoiceChannel(channel, serverid);
         console.log("Alone in channel detected, disconnecting...")
 
           if (deleteafter) {
@@ -127,17 +138,17 @@ const vc = async (req, res) => {
           clearInterval(timeoutInterval);
           console.log("Client destroyed.")
       }
-    }
-  };
+    };
 
   const timeoutFunction = () => {
-    if (!connection || connection.state.status === 'destroyed') {
+    const connection = connections.find((connection) => connection.serverId === serverid && connection.channelId === channelid);
+    if (!connection || connection.voiceConnection.state.status === 'destroyed') {
       clearInterval(checkInterval);
       clearInterval(timeoutInterval);
       return;
     }
-  
-    connection.disconnect();
+
+    disconnectFromVoiceChannel(channel, serverid);
   
     if (deleteafter) {
       channel.delete();
