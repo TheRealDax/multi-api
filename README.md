@@ -1,5 +1,5 @@
 # A Multi Purpose API
-Built primarily for users of ![BotGhost](https://i.imgur.com/UwAaDMK.png)](https://www.botghost.com)
+Built primarily for users of [![BotGhost](https://i.imgur.com/UwAaDMK.png)](https://www.botghost.com)
 
 This API was designed for string manipulation, but now has multiple endpoints for different use cases.
 
