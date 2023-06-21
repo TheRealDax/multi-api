@@ -20,11 +20,11 @@ It can do the following depending on the endpoint used:
 ## ⚙️API Reference
 
 API URL: `https://www.multi-api.xyz`  
-Authentication: `None (at the moment)`  
+Authentication: `None` (at the moment)  
   
 You will need to append one of the endpoints to the end of the URL and provide the correct parameters in the request body.
 
-#### Getfirst
+### Getfirst
 `Return the first part of a string`  
 ```
   POST /getfirst
@@ -43,7 +43,7 @@ You will need to append one of the endpoints to the end of the URL and provide t
   Result = "This
 ```
 
-#### Getlast
+### Getlast
 
 ```
   POST /getlast
@@ -61,7 +61,7 @@ You will need to append one of the endpoints to the end of the URL and provide t
 
   Result = "test"
 ```
-#### Removelast
+### Removelast
 
 ```
   POST /removelast
@@ -79,7 +79,7 @@ You will need to append one of the endpoints to the end of the URL and provide t
 
   Result = "This is a "
 ```
-#### Getsubstring
+### Getsubstring
 
 ```
   POST /getsubstring
@@ -100,7 +100,7 @@ You will need to append one of the endpoints to the end of the URL and provide t
 
   Result = "is a"
 ```
-#### Timestamp
+### Timestamp
 
 ```
   POST /timestamp
@@ -125,7 +125,7 @@ You will need to append one of the endpoints to the end of the URL and provide t
 
   Result = "1685801791" (4 days in the future)
 ```
-#### Currencyformat
+### Currencyformat
 
 ```
   POST /currencyformat
@@ -141,7 +141,7 @@ You will need to append one of the endpoints to the end of the URL and provide t
 
   Result = 1,000,000
 ```
-#### Convertnum
+### Convertnum
 
 ```
   POST /convertnum
@@ -162,7 +162,7 @@ You will need to append one of the endpoints to the end of the URL and provide t
 
   Result = "1000"
 ```
-#### Transcript
+### Transcript
 
 ```
   POST /transcript
@@ -180,7 +180,7 @@ You will need to append one of the endpoints to the end of the URL and provide t
 | `close` | `string` | **Optional**. Used to "close" the transcript and generate the URL to the HTML file. Must be used in conjunction with serverid and channelid. **Do not pass content if you are closing the transcript** |
 | `eventtype` | `string` | **Optional**. Used to inform the API the message was deleted and not edited. Use "delete" as the value. **Should only be used in the "When a message is deleted" event in BotGhost.** |
 
-#### Regex
+### Regex
 
 ```
   POST /regex
