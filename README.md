@@ -1,22 +1,12 @@
 # A Multi Purpose API Built primarily for users of [BotGhost](https://www.botghost.com)![BotGhost](https://i.imgur.com/UwAaDMK.png)
-![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E) ![AWS](https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white) ![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white)
+![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E) ![AWS](https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white) ![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white)  
+
+![Discord Banner 2](https://discordapp.com/api/guilds/[SERVER ID]/widget.png?style=banner2)  
 
 This API is designed to perform a variety of functions in order to assist users in creating or enhancing their commands and events in BotGhost.  
-It is possible to use the API outside of BotGhost, although some endpoints may not function correctly.
+It is possible to use the API outside of BotGhost, although some endpoints may not function correctly.  
 
-It can do the following depending on the endpoint used:
-
-`Return the first part of a string`  
-`Return the last part of a string`  
-`Remove the last part of a string and return the rest`  
-`Return a part of the string in the middle specified by start and end points`  
-`Convert a date and time to the Unix formatted timestamp`  
-`Convert a number to it's currency formatted equivalent`  
-`Convert a number from long to short or short to long (eg: 1000 > 1k OR 1k > 1000)`  
-`Generates HTML transcripts from messages in Discord`  
-`Returns a result (results) based on a regular expression`  
-`Joins the bot to a voice channel and will disconnect and delete the channel after 5 minutes or when the API receives a disconnect request`  
-
+ I can be contacted via Discord: 
 ## ⚙️API Reference
 
 API URL: `https://www.multi-api.xyz`  
@@ -25,7 +15,7 @@ Authentication: `None` (at the moment)
 You will need to append one of the endpoints to the end of the URL and provide the correct parameters in the request body.
 
 ### Getfirst
-`Return the first part of a string`  
+`Returns the first part of a string`  
 ```
   POST /getfirst
 ```
@@ -44,7 +34,7 @@ You will need to append one of the endpoints to the end of the URL and provide t
 ```
 
 ### Getlast
-
+`Returns the last part of a string`  
 ```
   POST /getlast
 ```
@@ -62,7 +52,7 @@ You will need to append one of the endpoints to the end of the URL and provide t
   Result = "test"
 ```
 ### Removelast
-
+`Removes the last part of a string and returns the rest`  
 ```
   POST /removelast
 ```
@@ -80,7 +70,7 @@ You will need to append one of the endpoints to the end of the URL and provide t
   Result = "This is a "
 ```
 ### Getsubstring
-
+`Returns a part of the string in the middle specified by start and end points`  
 ```
   POST /getsubstring
 ```
@@ -101,7 +91,7 @@ You will need to append one of the endpoints to the end of the URL and provide t
   Result = "is a"
 ```
 ### Timestamp
-
+`Converts a date and time to the Unix formatted timestamp`  
 ```
   POST /timestamp
 ```
@@ -126,7 +116,7 @@ You will need to append one of the endpoints to the end of the URL and provide t
   Result = "1685801791" (4 days in the future)
 ```
 ### Currencyformat
-
+`Converts a number to it's currency formatted equivalent`  
 ```
   POST /currencyformat
 ```
@@ -142,7 +132,7 @@ You will need to append one of the endpoints to the end of the URL and provide t
   Result = 1,000,000
 ```
 ### Convertnum
-
+`Convert a number from long to short or short to long (eg: 1000 > 1k OR 1k > 1000)`  
 ```
   POST /convertnum
 ```
@@ -163,7 +153,7 @@ You will need to append one of the endpoints to the end of the URL and provide t
   Result = "1000"
 ```
 ### Transcript
-
+`Generates HTML transcripts from messages in Discord`  
 ```
   POST /transcript
 ```
@@ -181,7 +171,7 @@ You will need to append one of the endpoints to the end of the URL and provide t
 | `eventtype` | `string` | **Optional**. Used to inform the API the message was deleted and not edited. Use "delete" as the value. **Should only be used in the "When a message is deleted" event in BotGhost.** |
 
 ### Regex
-
+`Returns a result (results) based on a regular expression`  
 ```
   POST /regex
 ```
@@ -190,5 +180,12 @@ You will need to append one of the endpoints to the end of the URL and provide t
 | :-------- | :------- | :------------------------- |
 | `string` | `string` | **Required**. The string that the regular expression should evaluate |
 | `regex` | `string` | **Required**. The regular expression to use |
+
+### Vc
+`Joins the bot to a voice channel and will disconnect and delete the channel after 5 minutes or when the API receives a disconnect request`  
+```
+  POST /vc
+```
+`If you would like to use this endpoint, please contact me on Discord`
 
 
