@@ -1,4 +1,4 @@
-# A Multi Purpose API - Built primarily for users of [BotGhost](https://www.botghost.com)
+# A Multi Purpose API - Built primarily for users of ![BotGhost](https://imgur.com/a/Wlywvcp)](https://www.botghost.com)
 
 This API was designed for string manipulation, but now has multiple endpoints for different use cases.
 
