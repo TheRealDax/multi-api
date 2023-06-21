@@ -1,7 +1,8 @@
 # A Multi Purpose API Built primarily for users of [BotGhost](https://www.botghost.com)![BotGhost](https://i.imgur.com/UwAaDMK.png)
 ![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E) ![AWS](https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white) ![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white)
 
-This API was designed for string manipulation, but now has multiple endpoints for different use cases.
+This API is designed to perform a variety of functions in order to assist users in creating or enhancing their commands and events in BotGhost.  
+It is possible to use the API outside of BotGhost, although some endpoints may not function correctly.
 
 It can do the following depending on the endpoint used:
 
@@ -18,9 +19,9 @@ It can do the following depending on the endpoint used:
 
 ## ⚙️API Reference
 
-The API base URL is https://www.multi-api.xyz
+The API URL is `https://www.multi-api.xyz`
 
-No Authentication required.
+No Authentication is required (at the moment).
 
 You will need to append one of the endpoints to the end of the URL and provide the correct parameters in the request body.
 
