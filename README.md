@@ -19,10 +19,9 @@ It can do the following depending on the endpoint used:
 
 ## ⚙️API Reference
 
-The API URL is `https://www.multi-api.xyz`
-
-No Authentication is required (at the moment).
-
+API URL: `https://www.multi-api.xyz`  
+Authentication: `None (at the moment)`  
+  
 You will need to append one of the endpoints to the end of the URL and provide the correct parameters in the request body.
 
 #### Getfirst
