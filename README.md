@@ -17,7 +17,7 @@ Authentication: `None` (at the moment)
 You will need to append one of the endpoints to the end of the URL and provide the correct parameters in the request body.
 
 ## Getfirst
->Returns the first part of a string  
+**Returns the first part of a string**  
 ```
   POST /getfirst
 ```
