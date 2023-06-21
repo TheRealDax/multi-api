@@ -7,11 +7,11 @@ It can do the following depending on the endpoint used:
 `Return the first part of a string`  
 `Return the last part of a string`  
 `Remove the last part of a string and return the rest`  
-`Return a part of the string in the middle specified by start and end points`
-`Convert a date and time to the Unix formatted timestamp`
-`Convert a number to it's currency formatted equivalent`
+`Return a part of the string in the middle specified by start and end points`  
+`Convert a date and time to the Unix formatted timestamp`  
+`Convert a number to it's currency formatted equivalent`  
 `Convert a number from long to short or short to long (eg: 1000 > 1k OR 1k > 1000)`  
-`Generates HTML transcripts from messages in Discord`
+`Generates HTML transcripts from messages in Discord`  
 `Returns a result (results) based on a regular expression`  
 `Joins the bot to a voice channel and will disconnect and delete the channel after 5 minutes or when the API receives a disconnect request`  
 
