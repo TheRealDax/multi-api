@@ -11,13 +11,13 @@ Join the BotGhost Discord: [**Here**](https%3A%2F%2Fdiscord.com%2Finvite%2F9UPM6
 
 # ⚙️API Reference
 
->API URL: `https://www.multi-api.xyz`  
->Authentication: `None` (at the moment)  
+API URL: `https://www.multi-api.xyz`  
+Authentication: `None` (at the moment)  
   
 You will need to append one of the endpoints to the end of the URL and provide the correct parameters in the request body.
 
 ## Getfirst
-`Returns the first part of a string`  
+>Returns the first part of a string  
 ```
   POST /getfirst
 ```
