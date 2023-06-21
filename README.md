@@ -78,7 +78,7 @@ You will need to append one of the endpoints to the end of the URL and provide t
 ```
 
 | Parameter | Type     | Description                |
-| :-------- | :------- | :------------------------- |
+| :----: | :----: | :------------------------- |
 | `string` | `string` | **Required**. The string to manipulate |
 | `start` | `integer` | **Required**. Specifies the start of the string to return |
 | `end` | `integer` | **Optional**. Specifies the end of the string to return. If not used, will return until the end of the string |
@@ -99,7 +99,7 @@ You will need to append one of the endpoints to the end of the URL and provide t
 ```
 
 | Parameter | Type     | Description                |
-| :-------- | :------- | :------------------------- |
+| :----: | :----: | :------------------------- |
 | `date` | `string` | **Required**. **Do not use if passing days parameter.** The date in EU or US format (US format requires the format parameter) |
 | `time` | `string` | **Required**. **Do not use if passing days parameter.** The time in format of 13:00 OR 1PM. Both will work |
 | `format` | `string` | **Optional**. Specifies the format to recognise the date, either US or EU (defaults to EU if not passed) |
@@ -124,7 +124,7 @@ You will need to append one of the endpoints to the end of the URL and provide t
 ```
 
 | Parameter | Type     | Description                |
-| :-------- | :------- | :------------------------- |
+| :----: | :----: | :------------------------- |
 | `number` | `string` or `int` | **Required**. The number to convert to a currency format |
 
 ```
@@ -140,7 +140,7 @@ You will need to append one of the endpoints to the end of the URL and provide t
 ```
 
 | Parameter | Type     | Description                |
-| :-------- | :------- | :------------------------- |
+| :----: | :----: | :------------------------- |
 | `number` | `string` | **Required**. The number to convert |
 
 ```
@@ -161,7 +161,7 @@ You will need to append one of the endpoints to the end of the URL and provide t
 ```
 
 | Parameter | Type     | Description                |
-| :-------- | :------- | :------------------------- |
+| :----: | :----: | :------------------------- |
 | `serverid` | `string` | **Required**. The Discord server id. Used in file generation and transcript matching. In BotGhost use {server_id} as the value |
 | `channelid` | `string` | **Required**. The Discord channel id. Used in file generation and transcript matching. In BotGhost use {event_channel_id} as the value |
 | `messageid` | `string` | **Required**. The Discord message id. Used for identifying edited and deleted messages. In BotGhost use {event_message_id} as the value |
@@ -179,7 +179,7 @@ You will need to append one of the endpoints to the end of the URL and provide t
 ```
 
 | Parameter | Type     | Description                |
-| :-------- | :------- | :------------------------- |
+| :----: | :----: | :------------------------- |
 | `string` | `string` | **Required**. The string that the regular expression should evaluate |
 | `regex` | `string` | **Required**. The regular expression to use |
 
