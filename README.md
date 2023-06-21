@@ -4,8 +4,8 @@ This API was designed for string manipulation, but now has multiple endpoints fo
 
 It can do the following depending on the endpoint used:
 
-Return the first part of a string  
-Return the last part of a string  
+`Return the first part of a string`  
+`Return the last part of a string`  
 Remove the last part of a string and return the rest  
 Return a part of the string in the middle specified by start and end points
 Convert a date and time to the Unix formatted timestamp
