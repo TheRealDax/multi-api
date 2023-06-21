@@ -5,6 +5,7 @@ This API is designed to perform a variety of functions in order to assist users 
 It is possible to use the API outside of BotGhost, although some endpoints may not function correctly.  
 
 I can be contacted via Discord: `@therealdax`  
+
 Join the BotGhost Discord: [Here](https%3A%2F%2Fdiscord.com%2Finvite%2F9UPM6S4xyA)  
 ![Discord](https://img.shields.io/discord/822426820447567872?logo=discord&label=BotGhost%20Discord&color=blue&link=https%3A%2F%2Fdiscord.com%2Finvite%2F9UPM6S4xyA)
 
