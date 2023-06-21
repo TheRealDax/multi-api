@@ -16,7 +16,7 @@ It can do the following depending on the endpoint used:
 `Returns a result (results) based on a regular expression`  
 `Joins the bot to a voice channel and will disconnect and delete the channel after 5 minutes or when the API receives a disconnect request`  
 
-## API Reference
+## ⚙️API Reference
 
 The API base URL is https://www.multi-api.xyz
 
