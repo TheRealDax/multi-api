@@ -34,8 +34,7 @@ You will need to append one of the endpoints to the end of the URL and provide t
   Result = "This
 ```
 
-## Getlast
-`Returns the last part of a string`  
+## Getlast - Returns the last part of a string  
 ```
   POST /getlast
 ```
@@ -52,8 +51,7 @@ You will need to append one of the endpoints to the end of the URL and provide t
 
   Result = "test"
 ```
-## Removelast
-`Removes the last part of a string and returns the rest`  
+## Removelast - Removes the last part of a string and returns the rest  
 ```
   POST /removelast
 ```
@@ -70,8 +68,7 @@ You will need to append one of the endpoints to the end of the URL and provide t
 
   Result = "This is a "
 ```
-## Getsubstring
-`Returns a part of the string in the middle specified by start and end points`  
+## Getsubstring - Returns a part of the string in the middle specified by start and end points  
 ```
   POST /getsubstring
 ```
@@ -91,8 +88,7 @@ You will need to append one of the endpoints to the end of the URL and provide t
 
   Result = "is a"
 ```
-## Timestamp
-`Converts a date and time to the Unix formatted timestamp`  
+## Timestamp - Converts a date and time to the Unix formatted timestamp  
 ```
   POST /timestamp
 ```
@@ -116,8 +112,7 @@ You will need to append one of the endpoints to the end of the URL and provide t
 
   Result = "1685801791" (4 days in the future)
 ```
-## Currencyformat
-`Converts a number to it's currency formatted equivalent`  
+## Currencyformat - Converts a number to it's currency formatted equivalent  
 ```
   POST /currencyformat
 ```
@@ -132,8 +127,7 @@ You will need to append one of the endpoints to the end of the URL and provide t
 
   Result = 1,000,000
 ```
-## Convertnum
-`Convert a number from long to short or short to long (eg: 1000 > 1k OR 1k > 1000)`  
+## Convertnum - Convert a number from long to short or short to long (eg: 1000 > 1k OR 1k > 1000)  
 ```
   POST /convertnum
 ```
@@ -153,8 +147,7 @@ You will need to append one of the endpoints to the end of the URL and provide t
 
   Result = "1000"
 ```
-## Transcript
-`Generates HTML transcripts from messages in Discord`  
+## Transcript - Generates HTML transcripts from messages in Discord  
 ```
   POST /transcript
 ```
@@ -171,8 +164,7 @@ You will need to append one of the endpoints to the end of the URL and provide t
 | `close` | `string` | **Optional**. Used to "close" the transcript and generate the URL to the HTML file. Must be used in conjunction with serverid and channelid. **Do not pass content if you are closing the transcript** |
 | `eventtype` | `string` | **Optional**. Used to inform the API the message was deleted and not edited. Use "delete" as the value. **Should only be used in the "When a message is deleted" event in BotGhost.** |
 
-## Regex
-`Returns a result (results) based on a regular expression`  
+## Regex - Returns a result (results) based on a regular expression  
 ```
   POST /regex
 ```
@@ -182,8 +174,7 @@ You will need to append one of the endpoints to the end of the URL and provide t
 | `string` | `string` | **Required**. The string that the regular expression should evaluate |
 | `regex` | `string` | **Required**. The regular expression to use |
 
-## Vc
-`Joins the bot to a voice channel and will disconnect and delete the channel after 5 minutes or when the API receives a disconnect request`  
+## Vc - Joins the bot to a voice channel and will disconnect and delete the channel after 5 minutes or when the API receives a disconnect request  
 ```
   POST /vc
 ```
