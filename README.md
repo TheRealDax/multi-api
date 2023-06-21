@@ -23,7 +23,7 @@ You will need to append one of the endpoints to the end of the URL and provide t
 ```
 
 | Parameter | Type     | Description                |
-| :-------- | :------- | :------------------------- |
+| :--- | :----: | :------------------------- |
 | `string` | `string` | **Required**. The string to manipulate |
 | `count` | `integer` | **Required**. How many characters of the string to return starting from the start of the string |
 
