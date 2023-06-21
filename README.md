@@ -16,7 +16,7 @@ Authentication: `None` (at the moment)
   
 You will need to append one of the endpoints to the end of the URL and provide the correct parameters in the request body.
 
-### Getfirst
+## Getfirst
 `Returns the first part of a string`  
 ```
   POST /getfirst
@@ -35,7 +35,7 @@ You will need to append one of the endpoints to the end of the URL and provide t
   Result = "This
 ```
 
-### Getlast
+## Getlast
 `Returns the last part of a string`  
 ```
   POST /getlast
