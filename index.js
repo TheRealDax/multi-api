@@ -10,6 +10,7 @@ const transcript = require('./endpoints/transcript');
 const regex = require('./endpoints/regex');
 const vc = require('./endpoints/vc');
 const getRoleCount = require('./endpoints/getRoleCount');
+const getMemberRoles = require('./endpoints/getMemberRoles');
 
 //Load in the modules
 const dotenv = require('dotenv');
@@ -53,6 +54,9 @@ app.post('/getrolecount', getRoleCount);
 
 // Will join a voice channel and check if it's alone
 app.post('/vc', vc);
+
+// List the roles of a member
+app.post('/getmemberroles', getMemberRoles);
 
 
 app.listen(process.env.PORT || 3000, () => {
