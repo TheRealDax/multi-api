@@ -12,6 +12,9 @@ const getRoleCount = async (req, res) => {
   }
 
   const { serverid, roleid } = req.body;
+  const serveridS = serverid.toString();
+  const roleidS = roleid.toString();
+
   if (!serverid || !roleid) {
     return res.status(400).json({ error: 'Missing serverid or roleid' });
   }
@@ -24,7 +27,7 @@ const getRoleCount = async (req, res) => {
       console.log("Logging in...")
     }
 
-    const guild = await client.guilds.fetch(serverid);
+    const guild = await client.guilds.fetch(serveridS);
     if (!guild) {
       return res.status(404).json({ error: 'Guild not found' });
     }
@@ -34,7 +37,7 @@ const getRoleCount = async (req, res) => {
     await guild.roles.fetch();
 
     // Get the role
-    const role = await guild.roles.cache.get(roleid);
+    const role = await guild.roles.cache.get(roleidS);
     if (!role) {
       return res.status(404).json({ error: 'Role not found' });
     }
