@@ -28,7 +28,7 @@ const transcript = async (req, res) => {
   
       existingObject.Body.on('end', async () => {
       const existingContent = Buffer.concat(chunks).toString();
-      const $ = cheerio.load(existingContent);
+      const $ = cheerio.load(existingContent, { decodeEntities: false });
   
       let updatedContent;
       let match = false;
@@ -96,7 +96,7 @@ const transcript = async (req, res) => {
             Bucket: bucketName,
             Key: s3Key,
             Body: updatedContent,
-            ContentType: 'text/html'
+            ContentType: 'text/html; charset=utf-8'
           });
           await s3Client.send(putObjectCommand);
         }
@@ -108,6 +108,7 @@ const transcript = async (req, res) => {
           res.json({ message: 'Transcript updated.' });
         }
       });
+
     } catch (error) {
       // Create a new transcript file if it doesn't exist
       if (error.name === 'NoSuchKey') {
@@ -135,6 +136,7 @@ const transcript = async (req, res) => {
   
         const putObjectCommand = new PutObjectCommand({ Bucket: bucketName, Key: s3Key, Body: fileContent, ContentType: 'text/html' });
         await s3Client.send(putObjectCommand);
+
         res.json({ message: 'Transcript created.' });
       } else {
         console.error(`Error updating transcript: ${error.message}`);
