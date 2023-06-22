@@ -12,8 +12,8 @@ const getRoleCount = async (req, res) => {
   }
 
   const { serverid, roleid } = req.body;
-  const serveridS = serverid.toString();
-  const roleidS = roleid.toString();
+  const serveridS = BigInt(serverid).toString();
+  const roleidS = BigInt(roleid).toString();
 
   if (!serverid || !roleid) {
     return res.status(400).json({ error: 'Missing serverid or roleid' });
