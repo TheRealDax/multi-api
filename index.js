@@ -9,6 +9,7 @@ const convertNum = require('./endpoints/convertNum');
 const transcript = require('./endpoints/transcript');
 const regex = require('./endpoints/regex');
 const vc = require('./endpoints/vc');
+const getRoleCount = require('./endpoints/getRoleCount');
 
 //Load in the modules
 const dotenv = require('dotenv');
@@ -46,6 +47,9 @@ app.post('/convertnum', convertNum);
 
 // Add content to transcripts
 app.post('/transcript', transcript);
+
+// Gets the number of members who have a role
+app.post('/getrolecount', getRoleCount);
 
 // Will join a voice channel and check if it's alone
 app.post('/vc', vc);
