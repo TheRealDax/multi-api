@@ -11,6 +11,7 @@ const currencyFormat = async (req, res) => {
     const currencyFormat = Number(number).toLocaleString();
   
     res.json({ result: currencyFormat });
+    console.log(result);
   };
 
   module.exports = currencyFormat;

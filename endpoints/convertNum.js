@@ -34,6 +34,7 @@ const convertNum = async (req, res) => {
       }
   
       res.json({ result });
+      console.log(result);
     }
     
     // Conversion from shortened format to number
@@ -52,6 +53,7 @@ const convertNum = async (req, res) => {
       }
   
       res.json({ result });
+      console.log(result);
     }
   };
 

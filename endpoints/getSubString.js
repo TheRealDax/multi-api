@@ -19,6 +19,7 @@ const getSubString = async (req, res) => {
     charcount = result.length;
   
     res.json({ result, charcount });
+    console.log(result);
   };
 
   module.exports = getSubString;
