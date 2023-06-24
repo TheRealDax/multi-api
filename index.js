@@ -11,6 +11,7 @@ const regex = require('./endpoints/regex');
 const vc = require('./endpoints/vc');
 const getRoleCount = require('./endpoints/getRoleCount');
 const getMemberRoles = require('./endpoints/getMemberRoles');
+const tempRole = require('./endpoints/tempRole');
 
 //Load in the modules
 const dotenv = require('dotenv');
@@ -57,6 +58,9 @@ app.post('/vc', vc);
 
 // List the roles of a member
 app.post('/getmemberroles', getMemberRoles);
+
+// Temporarily add a role to a user
+app.post('/temprole', tempRole);
 
 
 app.listen(process.env.PORT || 3000, () => {

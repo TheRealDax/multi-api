@@ -34,7 +34,7 @@ const getMemberRoles = async (req, res) => {
     await guild.members.fetch();
     await guild.roles.fetch();
 
-    // Get the role
+    // Get the user
     const member = guild.members.cache.get(userid);
     if (!member) {
       return res.status(404).json({ error: 'Member not found' });
