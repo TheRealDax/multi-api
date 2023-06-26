@@ -1,8 +1,7 @@
 // Non-functional test endpoint - don't bother.
 const test = async (req, res) => {
-    const serverid = req.body.serverid.toString();
-    const userid = req.body.userid.toString();
-
+    const { serverid, userid } = req.body;
+    
     console.log(serverid);
     console.log(userid);
   
