@@ -24,7 +24,7 @@ dotenv.config();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.post('test', test);
+app.post('/test', test);
 
 // Returns a string based on a regular expression
 app.post('/regex', regex);
