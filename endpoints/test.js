@@ -1,16 +1,14 @@
 // Non-functional test endpoint - don't bother.
 const test = async (req, res) => {
-    const { serverid, userid } = req.body;
-    
-    const serverIdString = String(serverid);
-    const userIdString = String(userid);
-    
-    console.log(serverIdString);
-    console.log(userIdString);
+    const serverid = req.body.serverid.toString();
+    const userid = req.body.userid.toString();
+
+    console.log(serverid);
+    console.log(userid);
   
     // Perform operations on the serverIdString and userIdString values as needed
     
-    res.json({ serverid: serverIdString, userid: userIdString });
+    res.json({ serverid, userid });
   };
 
   module.exports = test;
