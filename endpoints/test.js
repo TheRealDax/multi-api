@@ -2,13 +2,13 @@
 const test = async (req, res) => {
     const { serverid, userid } = req.body;
     
-    //const payload = { serverid: `${serverid}`, userid: `${userid}` }
+    const payload = { serverid: `${serverid}`, userid: `${userid}` }
 
     console.log(serverid);
     console.log(userid);
 
   
-    res.json({ serverid: `${serverid}`, userid: `${userid}` });
+    res.json({ payload });
   };
 
   module.exports = test;
