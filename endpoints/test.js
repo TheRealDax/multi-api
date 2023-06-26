@@ -9,7 +9,7 @@ const test = async (req, res) => {
   
     // Perform operations on the serverIdString and userIdString values as needed
     
-    res.json({ serverId, userid });
+    res.json({ serverid, userid });
   };
 
   module.exports = test;
