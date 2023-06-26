@@ -2,13 +2,15 @@
 const test = async (req, res) => {
     const { serverid, userid } = req.body;
     
-    const payload = { serverid: `${serverid}`, userid: `${userid}` }
-
-    console.log(serverid);
-    console.log(userid);
-
+    const serverIdString = String(serverid);
+    const userIdString = String(userid);
+    
+    console.log(serverIdString);
+    console.log(userIdString);
   
-    res.json({ payload });
+    // Perform operations on the serverIdString and userIdString values as needed
+    
+    res.json({ serverid: serverIdString, userid: userIdString });
   };
 
   module.exports = test;
