@@ -7,7 +7,7 @@ const s3Client = new S3Client({ region: process.env.AWS_REGION });
 const transcript = async (req, res) => {
     const { serverid, channelid, messageid, content, close, channelname, user, usericon, eventtype, emoji } = req.body;
     const bucketName = process.env.BUCKET_NAME;
-    const s3Key = `transcripts/${serverid}-${channelid}.html`;
+    const s3Key = `transcripts/'${serverid}'-'${channelid}'.html`;
     const timeNow = new Date();
   
     if (!serverid || !channelid) {
@@ -35,7 +35,7 @@ const transcript = async (req, res) => {
       
       if (!eventtype) {
           // Check if messageid exists in the existing content
-          const messageSelector = `.messages .msg:has(.hidden:contains(${messageid}))`;
+          const messageSelector = `.messages .msg:has(.hidden:contains('${messageid}'))`;
           const messageElement = $(messageSelector);
   
           if (messageElement.length > 0) {
@@ -52,7 +52,7 @@ const transcript = async (req, res) => {
     }
         } else if (eventtype === 'delete') {
           // Check if messageid exists in the existing content
-          const messageSelector = `.hidden:contains(${messageid})`;
+          const messageSelector = `.hidden:contains('${messageid}')`;
           const messageElement = $(messageSelector);
   
           if (messageElement.length > 0) {
@@ -63,7 +63,7 @@ const transcript = async (req, res) => {
           }
         } else if (eventtype === 'reaction') {
         // Check if messageid exists in the existing content
-        const messageSelector = `.hidden:contains(${messageid})`;
+        const messageSelector = `.hidden:contains('${messageid}')`;
         const messageElement = $(messageSelector);
   
         if (messageElement.length > 0) {
@@ -81,7 +81,7 @@ const transcript = async (req, res) => {
               <div class='right'>
                 <div><a>${user}</a><a>${timeNow}</a></div>
                 <p>${content}</p>
-                <span class='hidden'>${messageid}</span>
+                <span class='hidden'>'${messageid}'</span>
               </div>
             </div>
           `;
@@ -130,7 +130,7 @@ const transcript = async (req, res) => {
                     <div class='right'>
                         <div><a>${user}</a><a>${timeNow}</a></div>
                         <p>${content}</p>
-                        <span class='hidden'>${messageid}</span>
+                        <span class='hidden'>'${messageid}'</span>
                     </div>
                 </div>`;
   
