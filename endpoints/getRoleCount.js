@@ -16,6 +16,9 @@ const getRoleCount = async (req, res) => {
   if (!serverid || !roleid) {
     return res.status(400).json({ error: 'Missing serverid or roleid' });
   }
+  else if (typeof serverid == 'number' || typeof roleid == 'number'){
+    return res.status(400).json({ error: 'Serverid or roleid missing \"\" (quotes) in value.' });
+  }
 
   try {
     // Check if the bot is already logged in

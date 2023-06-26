@@ -52,6 +52,9 @@ const vc = async (req, res) => {
     res.status(400).json({ error: 'Missing required parameters. Please ensure you are using token, serverid, and channelid parameters.' });
     return;
   }
+  else if (typeof serverid == 'number' || typeof channelid == 'number'){
+    return res.status(400).json({ error: 'Serverid or channelid missing \"\" (quotes) in value.' });
+  }
 
   if (!TOKEN_REGEX.test(token)) {
     res.status(400).json({ error: 'Invalid token format. Please provide a valid Discord bot token.' });

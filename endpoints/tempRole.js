@@ -38,6 +38,9 @@ const tempRole = async (req, res) => {
   if (!serverid || !userid || !roleid) {
     return res.status(400).json({ error: 'Missing serverid or userid or roleid' });
   }
+  else if (typeof serverid == 'number' || typeof roleid == 'number' || typeof userid == 'number'){
+    return res.status(400).json({ error: 'Serverid or roleid or userid missing \"\" (quotes) in value.' });
+  }
 
   try {
     // Check if the bot is already logged in

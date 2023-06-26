@@ -16,6 +16,9 @@ const getMemberRoles = async (req, res) => {
   if (!serverid || !userid) {
     return res.status(400).json({ error: 'Missing serverid or userid' });
   }
+  else if (typeof serverid == 'number' || typeof userid == 'number'){
+    return res.status(400).json({ error: 'Serverid or userid missing \"\" (quotes) in value.' });
+  }
 
   try {
     // Check if the bot is already logged in

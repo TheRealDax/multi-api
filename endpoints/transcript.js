@@ -14,6 +14,9 @@ const transcript = async (req, res) => {
       res.status(400).json({ error: 'Missing required parameters. Please ensure you are using serverid and channelid parameters in all requests' });
       return;
     }
+    else if (typeof serverid == 'number' || typeof channelid == 'number' || typeof messageid == 'number'){
+      return res.status(400).json({ error: 'Serverid or channelid or messageid missing \"\" (quotes) in value.' });
+    }
   
      try {
       // Retrieve the existing transcript file from S3 or create a new one if it doesn't exist
