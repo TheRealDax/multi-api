@@ -21,12 +21,8 @@ const express = require('express');
 const app = express();
 dotenv.config();
 
-const Options = {
-  type: 'application/json',
-};
-
-app.use(express.text(Options));
-//app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.post('/test', test);
 
