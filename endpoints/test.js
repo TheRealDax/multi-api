@@ -2,12 +2,12 @@
 const test = async (req, res) => {
     let { serverid, userid } = req.body;
 
-    JSON.stringify({ serverid, userid });
+    if(typeof serverid == "number" || typeof userid == "number"){
+        res.status(400).json({ error: "You have not enclosed the id variables in \"\" (quotes)." });
+    }
 
     console.log(serverid);
     console.log(userid);
-  
-    // Perform operations on the serverIdString and userIdString values as needed
     
     res.json({ serverid, userid });
   };
