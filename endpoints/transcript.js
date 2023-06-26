@@ -15,6 +15,7 @@ const transcript = async (req, res) => {
       return;
     }
     else if (typeof serverid == 'number' || typeof channelid == 'number' || typeof messageid == 'number'){
+      console.log(`User attempted to transcript without quotes - ServerID: ${serverid}`)
       return res.status(400).json({ error: 'Serverid or channelid or messageid missing \"\" (quotes) in value.' });
     }
   
