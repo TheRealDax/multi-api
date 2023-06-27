@@ -18,8 +18,8 @@ const regex = async (req, res) => {
         return result;
       }, {});
   
-      res.json({ result });
-      console.log(result);
+      res.json({ responses });
+      console.log( responses );
     } else {
       res.status(500).json({ error: 'No match found. If you are having trouble, visit https://regex101.com/ to test your regular expression before trying again.' });
     }
