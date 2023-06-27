@@ -3,6 +3,11 @@ const getSubString = async (req, res) => {
     const { string, start, end, numonly } = req.body;
     let result;
     let charcount;
+
+    if (string == undefined || start == undefined){
+      res.status(400).json({ error: 'string and start must be declared and have a value' });
+      return;
+    }
   
     if (end !== undefined) {
       result = string.substring(start, end);

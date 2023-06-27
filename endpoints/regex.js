@@ -2,7 +2,12 @@
 const regex = async (req, res) => {
     const string = req.body.string;
     const regex = req.body.regex;
-  
+
+    if (string == undefined || regex == undefined){
+      res.status(400).json({ error: 'string and regex must be declared and have a value' });
+      return;
+    }
+
     const regexString = new RegExp(regex);
     const matchedString = regexString.exec(string);
   
