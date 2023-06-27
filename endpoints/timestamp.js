@@ -18,9 +18,9 @@ const timestamp = async (req, res) => {
     } else if (!date && !time && timestamp) {
       if (offset) {
         const offsetTimestamp = moment(timestamp).add(offset, 'hours');
-        convertedTimestamp = offsetTimestamp.format('YYYY-MM-DD HH:mm:ss');
+        convertedTimestamp = offsetTimestamp.format('DD-MM-YYYY HH:mm:ss');
       } else {
-        convertedTimestamp = moment(timestamp).format('YYYY-MM-DD HH:mm:ss');
+        convertedTimestamp = moment(timestamp).format('DD-MM-YYYY HH:mm:ss');
       }
 
     } else {
