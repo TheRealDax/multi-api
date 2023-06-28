@@ -13,6 +13,7 @@ const vc = require('./endpoints/vc');
 const getRoleCount = require('./endpoints/getRoleCount');
 const getMemberRoles = require('./endpoints/getMemberRoles');
 const tempRole = require('./endpoints/tempRole');
+const random = require('./endpoints/random');
 
 //Load in the modules
 const dotenv = require('dotenv');
@@ -64,6 +65,9 @@ app.post('/getmemberroles', getMemberRoles);
 
 // Temporarily add a role to a user
 app.post('/temprole', tempRole);
+
+// Generate random characters based on customisations
+app.get('/random', random);
 
 
 app.listen(process.env.PORT || 3000, () => {
