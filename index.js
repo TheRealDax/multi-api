@@ -61,7 +61,7 @@ app.post('/getrolecount', getRoleCount);
 app.post('/vc', vc);
 
 // List the roles of a member
-//app.post('/getmemberroles', getMemberRoles);
+app.post('/getmemberroles', getMemberRoles);
 
 // Temporarily add a role to a user
 app.post('/temprole', tempRole);
