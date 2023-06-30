@@ -107,6 +107,14 @@ const transcript = async (req, res) => {
   
         if (close) {
           const url = `https://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/${s3Key}`;
+          const putObjectCommand = new PutObjectCommand({
+            Bucket: bucketName,
+            Key: s3Key,
+            Body: updatedContent,
+            ContentType: 'text/html; charset=utf-8'
+          });
+          await s3Client.send(putObjectCommand);
+
           res.json({ message: 'Transcript closed and updated.', url });
         } else {
           res.json({ message: 'Transcript updated.' });
