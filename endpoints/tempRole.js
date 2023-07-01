@@ -35,6 +35,8 @@ const tempRole = async (req, res) => {
 
   const { serverid, userid, roleid, time } = req.body;
 
+  console.log(serverid, userid, roleid, time);
+
   if (!serverid || !userid || !roleid) {
     return res.status(400).json({ error: 'Missing serverid or userid or roleid' });
   }
