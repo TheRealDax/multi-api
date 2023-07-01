@@ -16,10 +16,21 @@ const getMemberRoles = async (req, res) => {
   if (!serverid || !userid) {
     return res.status(400).json({ error: 'Missing serverid or userid' });
   }
+
+let serverId = serverid;
+let userId = userid;
+
+if (typeof serverid === 'string') {
+  serverId = serverid.replace(/^['"]|['"]$/g, '');
+}
+
+if (typeof userid === 'string') {
+  userId = userid.replace(/^['"]|['"]$/g, '');
+}
   /*else if (typeof serverid == 'number' || typeof userid == 'number'){
     return res.status(400).json({ error: 'Serverid or userid missing \"\" (quotes) in value.' });
   }*/
-  console.log({ serverid, userid });
+  console.log({ serverId, userId });
   try {
     // Check if the bot is already logged in
     if (!client.readyAt) {
@@ -28,7 +39,7 @@ const getMemberRoles = async (req, res) => {
       console.log("Logging in...")
     }
 
-    const guild = await client.guilds.fetch(serverid);
+    const guild = await client.guilds.fetch(serverId);
     if (!guild) {
       return res.status(404).json({ error: 'Guild not found' });
     }
@@ -38,7 +49,7 @@ const getMemberRoles = async (req, res) => {
     await guild.roles.fetch();
 
     // Get the user
-    const member = guild.members.cache.get(userid);
+    const member = guild.members.cache.get(userId);
     if (!member) {
       return res.status(404).json({ error: 'Member not found' });
     }
