@@ -1,4 +1,9 @@
-//Load in the endpoints
+const dotenv = require('dotenv');
+const express = require('express');
+
+const app = express();
+dotenv.config();
+
 //const test = require('./endpoints/test');
 const getFirst = require('./endpoints/getFirst');
 const getLast = require('./endpoints/getLast');
@@ -11,16 +16,11 @@ const transcript = require('./endpoints/transcript');
 const regex = require('./endpoints/regex');
 const vc = require('./endpoints/vc');
 const getRoleCount = require('./endpoints/getRoleCount');
-const getMemberRoles = require('./endpoints/getMemberRoles');
+//const getMemberRoles = require('./endpoints/getMemberRoles');
 const tempRole = require('./endpoints/tempRole');
 const random = require('./endpoints/random');
-
-//Load in the modules
-const dotenv = require('dotenv');
-const express = require('express');
-
-const app = express();
-dotenv.config();
+const memberRoles = require('./endpoints/memberRoles');
+const globalChat = require('./endpoints/globalChat');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -61,13 +61,17 @@ app.post('/getrolecount', getRoleCount);
 app.post('/vc', vc);
 
 // List the roles of a member
-app.post('/getmemberroles', getMemberRoles);
+//app.post('/getmemberroles', getMemberRoles);
 
 // Temporarily add a role to a user
 app.post('/temprole', tempRole);
 
 // Generate random characters based on customisations
 app.get('/random', random);
+
+app.get('/memberroles', memberRoles);
+
+app.get('/globalchat', globalChat);
 
 
 app.listen(process.env.PORT || 3000, () => {
