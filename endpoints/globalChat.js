@@ -17,31 +17,32 @@ const globalChat = async (req, res) => {
     
     if (register && serverid) {
         const collections = await db.listCollections().toArray();
-      
+        let existingCollectionName = null;
+
         for (let i = 0; i < collections.length; i++) {
-          const collectionName = collections[i].name;
-      
-          const collection = db.collection(collectionName);
-          const existingDocument = await collection.findOne({ server: serverid });
-      
-          if (existingDocument) {
-            return res.status(200).send({ message: 'A token for this server already exists.', token: collectionName });
-          }
-        
-        else if (!existingDocument){
-            const mToken = crypto.randomBytes(8).toString('hex');
-            const newCollection = db.collection(mToken);
-    
-            await newCollection.insertOne({ server: serverid });
-          
-            res.status(201).send({ message: 'Your token has been generated. You will need this token for ALL future requests, so please keep it safe.', mToken });
-        }}
+    const collectionName = collections[i].name;
 
-    }else if (register && !serverid){
-        
-        res.status(400).send({ message: 'You need to specify serverid when registering.' });
+    const collection = db.collection(collectionName);
+    const existingDocument = await collection.findOne({ server: serverid });
 
-        } else if (token && !register) {
+    if (existingDocument) {
+      existingCollectionName = collectionName;
+      break;
+    }
+  }
+  if (existingCollectionName) {
+    res.status(200).send({ message: 'A token for this server already exists.', token: existingCollectionName });
+  } else {
+    const mToken = crypto.randomBytes(8).toString('hex');
+    const newCollection = db.collection(mToken);
+
+    await newCollection.insertOne({ server: serverid });
+
+    res.status(201).send({ message: 'Your token has been generated. You will need this token for ALL future requests, so please keep it safe.', mToken });
+  }
+} else if (register && !serverid) {
+  res.status(400).send({ message: 'You need to specify serverid when registering.' });
+} else if (token && !register) {
         const collections = await db.listCollections().toArray();
         const collectionExists = collections.some(collection => collection.name === token);
     
