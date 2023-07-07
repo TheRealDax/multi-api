@@ -1,3 +1,54 @@
+/**
+ * @swagger
+ * /memberroles:
+ *   get:
+ *     summary: Returns the roles of a user in a specific Discord server
+ *     tags: [Discord]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: serverid
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The server ID of the Discord server
+ *       - in: query
+ *         name: userid
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the Discord user
+ *     responses:
+ *       200:
+ *         description: Successful Request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 roles:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                 roleids:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                 roletags:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *       400:
+ *         description: Missing serverid or userid
+ *       401:
+ *         description: Missing Authorization header
+ *       404:
+ *         description: Guild or Member not found
+ *       500:
+ *         description: Internal server error
+ */
+
 const { Client, GatewayIntentBits } = require('discord.js');
 const intents = [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers];
 

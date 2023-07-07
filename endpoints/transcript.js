@@ -1,3 +1,30 @@
+/**
+ * @swagger
+ * /transcript:
+ *   post:
+ *     summary: Generates HTML transcripts for Discord tickets. - Contact @therealdax on Discord for more information and for setup instructions
+ *     tags: [Discord]
+ *     description: |
+ *       This endpoint is reserved for special use cases. Please contact @therealdax on Discord for more information on how to use this endpoint effectively.
+ *
+ *       **Note**: The details of this endpoint are not provided in the Swagger documentation. Reach out to @therealdax for assistance and guidance.
+ *
+ *
+ *       **Important**: Use this endpoint with caution and ensure you have the necessary knowledge and understanding before utilizing it.
+ *     responses:
+ *       200:
+ *         description: Successful request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Placeholder response
+ *                   example: "This is a placeholder response"
+ */
+
 const cheerio = require('cheerio');
 const { S3Client, PutObjectCommand, GetObjectCommand } = require('@aws-sdk/client-s3');
 

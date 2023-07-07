@@ -1,3 +1,58 @@
+/**
+ * @swagger
+ * /timestamp:
+ *   post:
+ *     summary: Generate a UNIX timestamp based on a specific date and time OR days in the future
+ *     tags: [Time]
+ *     description: Generates a UNIX timestamp based on a specific date and time OR days in the future.
+ *     produces:
+ *       - application/json
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               date:
+ *                 type: string
+ *                 description: The specific date (format&#58 DD/MM/YYYY)
+ *                 example: 01/01/2023
+ *               time:
+ *                 type: string
+ *                 description: The specific time (format&#58 HH:mm)
+ *                 example: 12:00
+ *               days:
+ *                 type: integer
+ *                 description: The number of days in the future
+ *                 example: 7
+ *               format:
+ *                 type: string
+ *                 description: The desired date/time format (options&#58 US, EU, ISO)
+ *                 example: EU
+ *               timestamp:
+ *                 type: string
+ *                 description: The specific timestamp (format&#58 DD-MM-YYYY HH&#58mm&#58ss)
+ *                 example: 01-01-2023 12&#5800&#5800
+ *               offset:
+ *                 type: integer
+ *                 description: The number of hours to offset the timestamp (positive or negative)
+ *                 example: 2
+ *     responses:
+ *       200:
+ *         description: Successful request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 convertedTimestamp:
+ *                   type: number
+ *                   description: The generated UNIX timestamp
+ *       400:
+ *         description: Invalid request
+ */
+
 const moment = require('moment');
 
 //generate a unix timestamp based on a specific date and time or days in the future

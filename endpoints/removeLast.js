@@ -1,4 +1,47 @@
-// Removes the last X characters from a string, where X is the number passed to count
+/**
+ * @swagger
+ * /removelast:
+ *   post:
+ *     summary: Remove the last n characters from a string
+ *     tags: [String Manipulation]
+ *     description: Removes the last n characters from a given string, where n is the number passed to `count`.
+ *     produces:
+ *       - application/json
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               string:
+ *                 type: string
+ *                 description: The input string
+ *                 example: Hello, world!
+ *               count:
+ *                 type: integer
+ *                 description: The number of characters to remove from the end of the string
+ *                 example: 7
+ *     responses:
+ *       200:
+ *         description: Successful request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 result:
+ *                   type: string
+ *                   description: The resulting string after removing the last n characters
+ *                 charcount:
+ *                   type: integer
+ *                   description: The number of characters in the resulting string
+ *       400:
+ *         description: Missing or invalid parameters
+ */
+
+
+// Removes the last n characters from a given string, where n is the number passed to `count`.
 const removeLast = async (req, res) => {
     const { string, count } = req.body;
     let charcount;

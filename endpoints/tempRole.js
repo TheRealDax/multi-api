@@ -1,4 +1,60 @@
-const {Client, GatewayIntentBits, User} = require('discord.js');
+/**
+ * @swagger
+ * /temprole:
+ *   get:
+ *     summary: Assign a temporary role to a user for a specified duration
+ *     tags: [Discord]
+ *     description: Assigns a temporary role to a user in a specified guild for a specified duration.
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: serverid
+ *         in: query
+ *         description: The ID of the Discord server
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: 335777177704595467
+ *       - name: userid
+ *         in: query
+ *         description: The ID of the Discord user
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: 225647195771240448
+ *       - name: roleid
+ *         in: query
+ *         description: The ID of the role to assign temporarily
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: 1104723387034636318
+ *       - name: time
+ *         in: query
+ *         description: The duration of the temporary role (format&#58 Xs, Xm, Xh)
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: 20s
+ *     responses:
+ *       200:
+ *         description: Successful request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: string
+ *               description: Role added to user for n seconds/minutes/hours
+ *       400:
+ *         description: Missing or invalid parameters
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Guild not found
+ *       500:
+ *         description: Internal server error
+ */
+
+const {Client, GatewayIntentBits} = require('discord.js');
 const intents = [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers];
 
 const client = new Client({ intents });
@@ -33,15 +89,12 @@ const tempRole = async (req, res) => {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
-  const { serverid, userid, roleid, time } = req.body;
+  const { serverid, userid, roleid, time } = req.query;
 
   console.log(serverid, userid, roleid, time);
 
   if (!serverid || !userid || !roleid) {
     return res.status(400).json({ error: 'Missing serverid or userid or roleid' });
-  }
-  else if (typeof serverid == 'number' || typeof roleid == 'number' || typeof userid == 'number'){
-    return res.status(400).json({ error: 'Serverid or roleid or userid missing \"\" (quotes) in value.' });
   }
 
   try {

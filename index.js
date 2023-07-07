@@ -1,10 +1,18 @@
 const dotenv = require('dotenv');
 const express = require('express');
+const swaggerui = require('swagger-ui-express');
+const specs = require('./docs/swagger')
 
 const app = express();
+const PORT = process.env.PORT || 3000;
+
 dotenv.config();
 
-//const test = require('./endpoints/test');
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use('/doc', swaggerui.serve, swaggerui.setup(specs));
+
+// Endpoints
 const getFirst = require('./endpoints/getFirst');
 const getLast = require('./endpoints/getLast');
 const removeLast = require('./endpoints/removeLast');
@@ -16,64 +24,35 @@ const transcript = require('./endpoints/transcript');
 const regex = require('./endpoints/regex');
 const vc = require('./endpoints/vc');
 const getRoleCount = require('./endpoints/getRoleCount');
-//const getMemberRoles = require('./endpoints/getMemberRoles');
 const tempRole = require('./endpoints/tempRole');
 const random = require('./endpoints/random');
 const memberRoles = require('./endpoints/memberRoles');
 const globalChat = require('./endpoints/globalChat');
+const genTally = require('./Genbot/genTally');
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
-//app.post('/test', test);
-
-// Returns a string based on a regular expression
+// POST requests
 app.post('/regex', regex);
-
-// Gets the first X characters in a string, where X is the number passed to count
 app.post('/getfirst', getFirst);
-
-// Gets the last X characters in a string, where X is the number passed to count
 app.post('/getlast', getLast);
-
-// Removes the last X characters from a string, where X is the number passed to count
 app.post('/removelast', removeLast);
-
-// Gets the specified characters in a string from a start point and end point using start, end
 app.post('/getsubstring', getSubString);
-
-// Generate a unix timestamp based on a specific date and time or days in the future
 app.post('/timestamp', timestamp);
-
-// formats the number into a currency format, eg: 1000 = 1,000
-app.post('/currencyformat', currencyFormat);
-
-// Converts numbers from full to short or vice versa, eg: 1000 = 1k OR 1k = 1000
-app.post('/convertnum', convertNum);
-
-// Add content to transcripts
 app.post('/transcript', transcript);
-
-// Gets the number of members who have a role
-app.post('/getrolecount', getRoleCount);
-
-// Will join a voice channel and check if it's alone
 app.post('/vc', vc);
 
-// List the roles of a member
-//app.post('/getmemberroles', getMemberRoles);
-
-// Temporarily add a role to a user
-app.post('/temprole', tempRole);
-
-// Generate random characters based on customisations
+// GET requests
+app.get('/temprole', tempRole);
+app.get('/getrolecount', getRoleCount);
+app.get('/convertnum', convertNum);
+app.get('/currencyformat', currencyFormat);
 app.get('/random', random);
-
 app.get('/memberroles', memberRoles);
-
 app.get('/globalchat', globalChat);
 
+// Event listeners
+app.post('/gentally', genTally);
 
-app.listen(process.env.PORT || 3000, () => {
-  console.log('Server is running');
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });

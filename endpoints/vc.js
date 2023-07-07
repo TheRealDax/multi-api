@@ -1,3 +1,30 @@
+/**
+ * @swagger
+ * /vc:
+ *   post:
+ *     summary: Joins a bot to a voicechannel and will disconnect after 5 minutes of no activity. Optionally deletes the voice channel after disconnecting.
+ *     tags: [Discord]
+ *     description: |
+ *       This endpoint is reserved for special use cases. Please contact @therealdax on Discord for more information on how to use this endpoint effectively.
+ *
+ *       **Note**: The details of this endpoint are not provided in the Swagger documentation. Reach out to @therealdax for assistance and guidance.
+ *
+ *
+ *       **Important**: Use this endpoint with caution and ensure you have the necessary knowledge and understanding before utilizing it.
+ *     responses:
+ *       200:
+ *         description: Successful request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Placeholder response
+ *                   example: "This is a placeholder response"
+ */
+
 const { Client, GatewayIntentBits, ChannelType } = require('discord.js');
 const { joinVoiceChannel, getVoiceConnection } = require('@discordjs/voice');
 

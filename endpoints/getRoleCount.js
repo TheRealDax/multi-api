@@ -1,3 +1,67 @@
+/**
+ * @swagger
+ * /getrolecount:
+ *   get:
+ *     summary: Get the number of members who have a role
+ *     tags: [Discord]
+ *     description: Retrieves the count and details of members who have a specific role in a Discord server.
+ *     produces:
+ *       - application/json
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: serverid
+ *         description: The ID of the Discord server
+ *         in: query
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: '225647195771240448'
+ *       - name: roleid
+ *         description: The ID of the role
+ *         in: query
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: '1085199531081220136'
+ *     responses:
+ *       200:
+ *         description: Successful request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 members:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       displayname:
+ *                         type: string
+ *                         description: The display name of the member
+ *                       userid:
+ *                         type: string
+ *                         description: The ID of the member
+ *                 count:
+ *                   type: integer
+ *                   description: The total count of members with the specified role
+ *                 memberlist:
+ *                   type: string
+ *                   description: The comma-separated list of display names of members with the specified role
+ *                 membertags:
+ *                   type: string
+ *                   description: The comma-separated list of member tags (`<@userID>`) with the specified role
+ *       400:
+ *         description: Missing or invalid parameters
+ *       401:
+ *         description: Unauthorized request
+ *       404:
+ *         description: Guild or role not found
+ *       500:
+ *         description: Internal server error
+ */
+
 const {Client, GatewayIntentBits} = require('discord.js');
 const intents = [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers];
 
@@ -11,13 +75,10 @@ const getRoleCount = async (req, res) => {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
-  const { serverid, roleid } = req.body;
+  const { serverid, roleid } = req.query;
 
   if (!serverid || !roleid) {
     return res.status(400).json({ error: 'Missing serverid or roleid' });
-  }
-  else if (typeof serverid == 'number' || typeof roleid == 'number'){
-    return res.status(400).json({ error: 'Serverid or roleid missing \"\" (quotes) in value.' });
   }
 
   try {
@@ -38,7 +99,7 @@ const getRoleCount = async (req, res) => {
     await guild.roles.fetch();
 
     // Get the role
-    const role = await guild.roles.cache.get(roleid);
+    const role = guild.roles.cache.get(roleid);
     if (!role) {
       return res.status(404).json({ error: 'Role not found' });
     }

@@ -1,6 +1,50 @@
+/**
+ * @swagger
+ * /convertnum:
+ *   get:
+ *     summary: Converts numbers from full to shortened or shortened to full
+ *     tags: [Number Manipulation]
+ *     description: Converts numbers from full to short format or vice versa, e.g., 1000 = 1k OR 1k = 1000
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: number
+ *         description: The number to convert, can be a normal number or a number with suffix (k, m, b, t)
+ *         in: query
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: 1000
+ *     responses:
+ *       200:
+ *         description: Successful request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 result:
+ *                   type: string
+ *                   description: The converted number, can be a normal number or a number with suffix (k, m, b, t)
+ *       400:
+ *         description: Missing or invalid number
+ */
+
+const swaggerJSDoc = require("swagger-jsdoc");
+
+
 //converts numbers from full to short or vice versa, eg: 1000 = 1k OR 1k = 1000
 const convertNum = async (req, res) => {
-    const { number } = req.body;
+
+  if (!req.query || req.query.number === undefined) {
+    return res.status(400).json({ error: 'number not specified' });
+}
+
+    const { number } = req.query;
+
+     if (isNaN(number) && !number.toLowerCase().match(/[kmbt]$/)) {
+      return res.status(400).json({ error: 'Invalid number or unsupported string format' });
+  }
   
     // Conversion from number to shortened format
     if (!isNaN(number)) {
