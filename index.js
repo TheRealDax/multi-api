@@ -10,7 +10,7 @@ dotenv.config();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use('/doc', swaggerui.serve, swaggerui.setup(specs));
+app.use('/docs', swaggerui.serve, swaggerui.setup(specs));
 
 // Endpoints
 const getFirst = require('./endpoints/getFirst');
