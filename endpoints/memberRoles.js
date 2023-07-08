@@ -109,12 +109,12 @@ const memberRoles = async (req, res) => {
     }
 
     // Filter the members of the guild who have the specified role
-    const roles = member.roles.cache.map(roles => roles.name);
-    const roleids = member.roles.cache.map(roles => roles.id);
+    const roles = member.roles.cache.filter(role => role.id !== serverId).map(role => role.name);
+    const roleids = member.roles.cache.filter(role => role.id !== serverId).map(role => role.id);
     const roleidsFormatted = roleids.map(id => `${id}`).join(', ');
-    const roletags = member.roles.cache.map(roles => `<@&${roles.id}>`);
+    const roletags = member.roles.cache.filter(roles => roles.id !== serverId).map(roles => `<@&${roles.id}>`);
 
-    return res.json({ roles: roles, roleids: roleids, roleidsformatted: roleidsFormatted, roletags: roletags });
+    return res.json({ roles: roles, roleids: roleids, roleidsformatted: roleidsFormatted, roletags: roletags, rolecount: roleids.length });
   } catch (error) {
     console.error('Error:', error);
     return res.status(500).json({ error: 'Internal server error' });
