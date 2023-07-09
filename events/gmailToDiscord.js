@@ -20,6 +20,7 @@ gRouter.get('/gmaildiscord', async (req, res) => {
   });
 
   gRouter.get('/gauth', async (req, res) => {
+    try {
     const { code } = req.query;
     const { tokens } = await oauth2Client.getToken(code);
     oauth2Client.setCredentials(tokens);
@@ -46,9 +47,11 @@ gRouter.get('/gmaildiscord', async (req, res) => {
     };
 
     await usersCollection.insertOne(user);
-    await fs.
-  
-    res.redirect('/public/gauthsuccess.html');
-  });
+    
+} catch(err) {
+    console.error('Error in /gauth route:', err);
+    res.status(500).send('An error occurred');
+  }
+});
 
   module.exports = gRouter;
