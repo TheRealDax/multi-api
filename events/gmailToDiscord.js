@@ -44,9 +44,14 @@ gRouter.get('/gmaildiscord', async (req, res) => {
     const user = {
     email: email,
     tokens: tokens
+    }
+    
+    const existingDocument = await collection.findOne({ user });
+
+    if (!existingDocument){
+    await usersCollection.insertOne(user);
     };
 
-    await usersCollection.insertOne(user);
 
     res.redirect('/public/gauthsuccess.html');
 } catch(err) {
