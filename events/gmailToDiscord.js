@@ -63,6 +63,7 @@ gRouter.get('/gmaildiscord', async (req, res) => {
 async function getEmailsForAllUsers() {
     const db = await mDB('gmailDiscord');
     const usersCollection = db.collection('users');
+    const emailCollection = db.collection('emails');
     const users = await usersCollection.find({}).toArray();
   
     for (let user of users) {
@@ -89,17 +90,30 @@ async function getEmailsForAllUsers() {
         }
   
         const gmail = google.gmail({ version: 'v1', auth: oauth2Client });
-        const res = await gmail.users.messages.list({ userId: 'me', q: 'is:unread' });
-        const emailCollection = db.collection('emails');
-        const storedEmails = await emailCollection.find({}).toArray();
-        const storedEmailIds = storedEmails.map(email => email.id);
+        const response = await gmail.users.messages.list({
+            userId: 'me',
+            q: 'is:unread'
+        });
 
-        // filter out emails that have already been retrieved
-        const newEmails = res.data.messages.filter(message => !storedEmailIds.includes(message.id));
+        // Store new emails only
+        for (let msg of response.data.messages) {
+            const message = await gmail.users.messages.get({
+                userId: 'me',
+                id: msg.id,
+                format: 'metadata',
+                metadataHeaders: ['Subject']
+            });
+            const headers = message.data.payload.headers;
+            const subjectHeader = headers.find(header => header.name === 'Subject');
+            const subjectContainsString = subjectHeader.value.includes('test email');
 
-        // add new emails to the database
-        for (let email of newEmails) {
-            await emailCollection.insertOne({ id: email.id });
+            if(subjectContainsString) {
+                const storedEmail = await emailCollection.findOne({id: msg.id});
+                // If email is not stored before
+                if (!storedEmail) {
+                    await emailCollection.insertOne({ id: msg.id, subject: subjectHeader.value });
+                }
+            }
         }
     }
 }
