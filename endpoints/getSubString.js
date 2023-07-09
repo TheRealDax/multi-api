@@ -49,10 +49,13 @@
  *                   description: The number of characters in the resulting substring
  *       400:
  *         description: Missing or invalid parameters
+ *       500:
+ *         description: Error in request
  */
 
 //gets the specified characters in a string from a start point and end point using start, end
 const getSubString = async (req, res) => {
+    try {
     const { string, start, end, numonly } = req.body;
     let result;
     let charcount;
@@ -78,6 +81,8 @@ const getSubString = async (req, res) => {
   
     res.json({ result, charcount });
     console.log(result);
-  };
+  } catch(err){
+    res.status(500).json('Error in request', err);
+  }};
 
   module.exports = getSubString;
