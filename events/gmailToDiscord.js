@@ -38,7 +38,7 @@ gRouter.get('/gmaildiscord', async (req, res) => {
 
     console.log(code, tokens, email);
   
-    res.redirect('/gauthsuccess.html');
+    res.redirect('/public/gauthsuccess.html');
   });
 
   module.exports = gRouter;
