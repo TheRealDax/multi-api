@@ -89,7 +89,7 @@ async function getEmailsForAllUsers() {
         }
   
         const gmail = google.gmail({ version: 'v1', auth: oauth2Client });
-        const res = await gmail.users.messages.list({ userId: 'me' });
+        const res = await gmail.users.messages.list({ userId: 'me', q: 'is:unread' });
         const emailCollection = db.collection('emails');
         const storedEmails = await emailCollection.find({}).toArray();
         const storedEmailIds = storedEmails.map(email => email.id);
