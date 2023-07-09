@@ -25,7 +25,12 @@ gRouter.get('/gmaildiscord', async (req, res) => {
     const { tokens } = oauth2Client.getToken(code);
     oauth2Client.setCredentials(tokens);
 
-    const userinfo = await oauth2Client.userinfo.get();
+    const oauth2 = google.oauth2({
+        auth: oauth2Client,
+        version: 'v1'
+      });
+
+    const userinfo = await oauth2.userinfo.get();
     const email = userinfo.data.email;
 
 
