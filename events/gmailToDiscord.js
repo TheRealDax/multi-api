@@ -47,7 +47,8 @@ gRouter.get('/gmaildiscord', async (req, res) => {
     };
 
     await usersCollection.insertOne(user);
-    
+
+    res.redirect('/public/gauthsuccess.html');
 } catch(err) {
     console.error('Error in /gauth route:', err);
     res.status(500).send('An error occurred');
