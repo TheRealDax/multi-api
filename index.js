@@ -2,6 +2,7 @@ const dotenv = require('dotenv');
 const express = require('express');
 const swaggerui = require('swagger-ui-express');
 const specs = require('./docs/swagger')
+const path = require('path')
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -11,6 +12,7 @@ dotenv.config();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/docs', swaggerui.serve, swaggerui.setup(specs));
+app.use('/public', express.static(path.join(__dirname, 'public')))
 
 // Endpoints
 const getFirst = require('./endpoints/getFirst');
@@ -29,6 +31,7 @@ const random = require('./endpoints/random');
 const memberRoles = require('./endpoints/memberRoles');
 const globalChat = require('./endpoints/globalChat');
 const genTally = require('./Genbot/genTally');
+const gmailToDiscord = require('./events/gmailToDiscord');
 
 
 // POST requests
@@ -52,6 +55,9 @@ app.get('/globalchat', globalChat);
 
 // Event listeners
 app.post('/gentally', genTally);
+
+// Use requests
+app.use(gmailToDiscord);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
