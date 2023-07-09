@@ -1,9 +1,8 @@
+const fs = require('fs').promises;
 const express = require('express');
 const gRouter = express.Router();
 const { google } = require('googleapis');
 const mDB = require('../functions/connectToDatabase')
-
-
 
 const oauth2Client = new google.auth.OAuth2(
     process.env.G_CLIENT_ID,
@@ -30,13 +29,24 @@ gRouter.get('/gmaildiscord', async (req, res) => {
         version: 'v2'
       });
 
-    const userinfo = await oauth2.userinfo.get();
+    const userinfo = await oauth2.userinfo.get({});
     const email = userinfo.data.email;
 
+    try {
+        await fs.writeFile('tokens.json', JSON.stringify(tokens, null, 2));
+    } catch (err) {
+        console.error('Error saving tokens to file:', err);
+    }
 
     const db = await mDB('gmailDiscord');
+    const usersCollection = db.collection('users');
+    const user = {
+    email: email,
+    tokens: tokens
+    };
 
-    console.log(code, tokens, email);
+    await usersCollection.insertOne(user);
+    await fs.
   
     res.redirect('/public/gauthsuccess.html');
   });
