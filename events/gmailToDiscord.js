@@ -22,7 +22,7 @@ gRouter.get('/gmaildiscord', async (req, res) => {
 
   gRouter.get('/gauth', async (req, res) => {
     const { code } = req.query;
-    const { tokens } = oauth2Client.getToken(code);
+    const { tokens } = await oauth2Client.getToken(code);
     oauth2Client.setCredentials(tokens);
 
     const oauth2 = google.oauth2({
