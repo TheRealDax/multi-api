@@ -90,7 +90,7 @@ async function getEmailsForAllUsers() {
 		const gmail = google.gmail({ version: 'v1', auth: oauth2Client });
 		const response = await gmail.users.messages.list({
 			userId: 'me',
-			q: 'is:unread',
+			q: 'in:inbox is:unread',
 		});
 
 		// Store new emails only
@@ -100,72 +100,70 @@ async function getEmailsForAllUsers() {
 				id: msg.id,
 				format: 'full',
 			});
-			if (message.data.labelIds && message.data.labelIds.includes('UNREAD')) {
-				const headers = message.data.payload.headers;
-				const subjectHeader = headers.find((header) => header.name === 'Subject');
-				const fromHeader = headers.find((header) => header.name === 'From');
-				let bodyData = message.data.payload.body.data;
+			const headers = message.data.payload.headers;
+			const subjectHeader = headers.find((header) => header.name === 'Subject');
+			const fromHeader = headers.find((header) => header.name === 'From');
+			let bodyData = message.data.payload.body.data;
 
-				// Check for multipart emails
-				if (!bodyData && message.data.payload.parts && message.data.payload.parts.length) {
-					// Find 'text/plain' or 'text/html' part
-					const part = message.data.payload.parts.find((part) => ['text/plain', 'text/html'].includes(part.mimeType));
-					if (part) {
-						bodyData = part.body.data;
-					}
+			// Check for multipart emails
+			if (!bodyData && message.data.payload.parts && message.data.payload.parts.length) {
+				// Find 'text/plain' or 'text/html' part
+				const part = message.data.payload.parts.find((part) => ['text/plain', 'text/html'].includes(part.mimeType));
+				if (part) {
+					bodyData = part.body.data;
+				}
+			}
+
+			let decodedBody = '';
+
+			if (bodyData) {
+				decodedBody = Buffer.from(bodyData, 'base64').toString();
+			}
+			// Check if subject and from headers are found
+			if (subjectHeader && fromHeader) {
+				try {
+					await emailCollection.insertOne({
+						id: msg.id,
+						subject: subjectHeader.value,
+					});
+				} catch (err) {
+					console.error('Error inserting into the collection:', err);
 				}
 
-				let decodedBody = '';
+				// Send email details to a webhook URL
+				const webhookURL = 'https://api.botghost.com/webhook/1085132231015661578/t5g48sn530j2qjkce90iav';
+				const header = {
+					Authorization: '6d057a9a8ffbeee248fcb0115b525c6272e9a83c505f43ef7ea585960b38e402',
+					'Content-Type': 'application/json',
+				};
+				const reqBody = {
+					variables: [
+						{
+							name: 'Email Sender',
+							variable: '{email_sender}',
+							value: `${fromHeader.value}`,
+						},
+						{
+							name: 'Email Subject',
+							variable: '{email_subject}',
+							value: `${subjectHeader.value}`,
+						},
+						{
+							name: 'Email Body',
+							variable: '{email_body}',
+							value: `${decodedBody}`,
+						},
+					],
+				};
 
-				if (bodyData) {
-					decodedBody = Buffer.from(bodyData, 'base64').toString();
-				}
-				// Check if subject and from headers are found
-				if (subjectHeader && fromHeader) {
-					try {
-						await emailCollection.insertOne({
-							id: msg.id,
-							subject: subjectHeader.value,
-						});
-					} catch (err) {
-						console.error('Error inserting into the collection:', err);
-					}
-
-					// Send email details to a webhook URL
-					const webhookURL = 'https://api.botghost.com/webhook/1085132231015661578/t5g48sn530j2qjkce90iav';
-					const header = {
-						Authorization: '6d057a9a8ffbeee248fcb0115b525c6272e9a83c505f43ef7ea585960b38e402',
-						'Content-Type': 'application/json',
-					};
-					const reqBody = {
-						variables: [
-							{
-								name: 'Email Sender',
-								variable: '{email_sender}',
-								value: `${fromHeader.value}`,
-							},
-							{
-								name: 'Email Subject',
-								variable: '{email_subject}',
-								value: `${subjectHeader.value}`,
-							},
-							{
-								name: 'Email Body',
-								variable: '{email_body}',
-								value: `${decodedBody}`,
-							},
-						],
-					};
-
-					axios
-						.post(webhookURL, reqBody, { headers: header })
-						.then((res) => {
-							console.log('Successful');
-						})
-						.catch((err) => {
-							console.error('Error', err);
-						});
-				}
+				axios
+					.post(webhookURL, reqBody, { headers: header })
+					.then((res) => {
+						console.log('Successful');
+					})
+					.catch((err) => {
+						console.error('Error', err);
+					});
 			}
 		}
 	}
