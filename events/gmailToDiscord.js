@@ -93,6 +93,11 @@ async function getEmailsForAllUsers() {
 			q: 'in:inbox is:unread',
 		});
 
+		if (!response) {
+			console.log('No new emails.');
+			break;
+		}
+
 		// Store new emails only
 		for (let msg of response.data.messages) {
 			const alreadyExisting = await emailCollection.findOne({ id: msg.id });
@@ -161,6 +166,11 @@ async function getEmailsForAllUsers() {
 							name: 'Email Body',
 							variable: '{email_body}',
 							value: `${decodedBody}`,
+						},
+						{
+							name: 'Thread ID',
+							variable: '{email_thread_id}',
+							value: `${msg.threadId}`,
 						},
 					],
 				};
