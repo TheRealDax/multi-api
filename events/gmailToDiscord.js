@@ -93,9 +93,9 @@ async function getEmailsForAllUsers() {
 			q: 'in:inbox is:unread',
 		});
 
-		if (!response) {
+		if (!response || !response.data || !response.data.messages) {
 			console.log('No new emails.');
-			break;
+			return;
 		}
 
 		// Store new emails only
@@ -147,7 +147,7 @@ async function getEmailsForAllUsers() {
 				// Send email details to a webhook URL
 				const webhookURL = 'https://api.botghost.com/webhook/1085132231015661578/t5g48sn530j2qjkce90iav';
 				const header = {
-					Authorization: '6d057a9a8ffbeee248fcb0115b525c6272e9a83c505f43ef7ea585960b38e402',
+					Authorization: process.env.BG_API_KEY,
 					'Content-Type': 'application/json',
 				};
 				const reqBody = {
