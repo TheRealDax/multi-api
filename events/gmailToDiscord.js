@@ -105,7 +105,7 @@ async function getEmailsForAllUsers() {
             const headers = message.data.payload.headers;
             const subjectHeader = headers.find(header => header.name === 'Subject');
             const fromHeader = headers.find(header => header.name === 'From');
-            const bodyData = message.data.payload.body.data;
+            let bodyData = message.data.payload.body.data;
 
             // Check for multipart emails
             if (!bodyData && message.data.payload.parts && message.data.payload.parts.length) {
