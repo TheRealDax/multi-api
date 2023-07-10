@@ -4,7 +4,7 @@ const Base64 = require('js-base64').Base64;
 const fs = require('fs');
 
 const sendEmails = async (req, res) => {
-	const { threadId, message, email } = req.body;
+	const { threadid, message, email, to, subject } = req.body;
 
 	const oauth2Client = new google.auth.OAuth2(process.env.G_CLIENT_ID, process.env.G_CLIENT_SECRET, process.env.G_REDIRECT_URL);
 
@@ -41,14 +41,14 @@ const sendEmails = async (req, res) => {
 
 	const gmail = google.gmail({ version: 'v1', auth: oauth2Client });
 	// create a base64url encoded string
-	const encodedMessage = Base64.encodeURI(`Content-Type: text/plain; charset=UTF-8\n\n${message}`);
+	const encodedMessage = Base64.encodeURI(`To: ${to}\nContent-Type: text/plain; charset=UTF-8\nSubject: Re: ${subject}\n\n${message}`);
 
 	try {
 		await gmail.users.messages.send({
 			userId: 'me',
 			requestBody: {
 				raw: encodedMessage,
-				threadId: threadId,
+				threadId: threadid,
 			},
 		});
 
