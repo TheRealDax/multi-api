@@ -35,6 +35,7 @@
 
 // formats the number into a currency format, eg: 1000 = 1,000
 const currencyFormat = async (req, res) => {
+  try {
     const { number } = req.query;
   
     // Check if the input is a valid number
@@ -47,6 +48,9 @@ const currencyFormat = async (req, res) => {
   
     res.status(200).json({ result: currencyFormat });
     console.log(currencyFormat);
-  };
+    
+  } catch(err){
+    res.status(500).json('Your request was invalid', err);
+  }};
 
   module.exports = currencyFormat;

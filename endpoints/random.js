@@ -51,6 +51,7 @@
  */
 
 const random = async (req, res) => {
+    try{
     const length = parseInt(req.query.length);
     const lettercase = req.query.lettercase || 'lower';
     const numbers = req.query.numbers !== 'false';
@@ -79,6 +80,9 @@ const random = async (req, res) => {
 
     res.send({ result });
     console.log(result);
-};
+
+} catch(err){
+    res.status(500).json('Your request was invalid', err);
+}};
 
 module.exports = random;

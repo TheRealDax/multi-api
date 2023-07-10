@@ -35,6 +35,7 @@ const swaggerJSDoc = require("swagger-jsdoc");
 
 //converts numbers from full to short or vice versa, eg: 1000 = 1k OR 1k = 1000
 const convertNum = async (req, res) => {
+  try{
 
   if (!req.query || req.query.number === undefined) {
     return res.status(400).json({ error: 'number not specified' });
@@ -99,6 +100,9 @@ const convertNum = async (req, res) => {
       res.json({ result });
       console.log(result);
     }
-  };
+    
+  } catch (err){
+    res.status(500).json('Your request was invalid', err);
+  }};
 
   module.exports = convertNum;

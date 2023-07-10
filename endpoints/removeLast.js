@@ -43,6 +43,7 @@
 
 // Removes the last n characters from a given string, where n is the number passed to `count`.
 const removeLast = async (req, res) => {
+  try {
     const { string, count } = req.body;
     let charcount;
 
@@ -56,6 +57,9 @@ const removeLast = async (req, res) => {
   
     res.json({ result, charcount });
     console.log(result);
-  };
+
+  } catch(err){
+    res.status(500).json('Your request was invalid', err);
+  }};
 
   module.exports = removeLast;

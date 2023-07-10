@@ -57,6 +57,7 @@ const moment = require('moment');
 
 //generate a unix timestamp based on a specific date and time or days in the future
 const timestamp = async (req, res) => {
+  try {
     const { date, time, days, format, timestamp, offset} = req.body;
   
     let convertedTimestamp;
@@ -83,7 +84,10 @@ const timestamp = async (req, res) => {
     }
   
     res.json({ convertedTimestamp });
-  };
+    
+  } catch(err){
+    res.status(500).json('Your request was invalid', err);
+  }};
 
   //funtion to decide the date/time format. Default is EU if format parameter is not passed.
 function getDateFormat(format) {
