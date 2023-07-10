@@ -41,12 +41,16 @@
 //gets the first X characters in a string, where X is the number passed to count
 const getFirst = async (req, res) => {
   try {
-    const { string, count } = req.body;
+    let { string, count } = req.body;
     let charcount;
 
     if ( string == undefined || count == undefined || isNaN(count) ){
       res.status(400).json({ error: 'string and count must be declared and have a valid value' });
       return;
+    }
+
+    if (typeof string !== 'string'){
+      string = string.toString();
     }
   
     const result = string.substring(0, count);

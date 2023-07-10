@@ -56,13 +56,17 @@
 //gets the specified characters in a string from a start point and end point using start, end
 const getSubString = async (req, res) => {
     try {
-    const { string, start, end, numonly } = req.body;
+    let { string, start, end, numonly } = req.body;
     let result;
     let charcount;
 
     if (string == undefined || start == undefined){
       res.status(400).json({ error: 'string and start must be declared and have a value' });
       return;
+    }
+
+    if (typeof string !== 'string'){
+      string = string.toString();
     }
   
     if (end !== undefined) {
@@ -81,6 +85,7 @@ const getSubString = async (req, res) => {
   
     res.json({ result, charcount });
     console.log(result);
+
   } catch(err){
     console.error('Error:', err);
     return res.status(500).json({ error: 'Internal server error' });
