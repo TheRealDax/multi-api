@@ -95,14 +95,20 @@ async function getEmailsForAllUsers() {
 
 		// Store new emails only
 		for (let msg of response.data.messages) {
+			const alreadyExisting = await emailCollection.findOne({ id: msg.id });
+			if (alreadyExisting) {
+				continue;
+			}
 			const message = await gmail.users.messages.get({
 				userId: 'me',
+				threadId: msg.threadId,
 				id: msg.id,
 				format: 'full',
 			});
 			const headers = message.data.payload.headers;
 			const subjectHeader = headers.find((header) => header.name === 'Subject');
 			const fromHeader = headers.find((header) => header.name === 'From');
+			const url = `https://mail.google.com/mail/u/0/#inbox/${msg.threadId}`;
 
 			// Check for multipart emails
 			let part;
@@ -116,7 +122,9 @@ async function getEmailsForAllUsers() {
 
 			if (bodyData) {
 				decodedBody = Buffer.from(bodyData, 'base64').toString();
-				console.log(`BODY LENGTH: ${decodedBody.length}`, decodedBody);
+				if (decodedBody.length > 3000) {
+					decodedBody = `Email body is over 3000 characters. [View in Gmail](${url})`;
+				}
 			}
 			// Check if subject and from headers are found
 			if (subjectHeader && fromHeader) {
@@ -124,6 +132,7 @@ async function getEmailsForAllUsers() {
 					await emailCollection.insertOne({
 						mailbox: email,
 						id: msg.id,
+						threadId: msg.threadId,
 						subject: subjectHeader.value,
 					});
 				} catch (err) {
