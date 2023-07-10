@@ -118,6 +118,7 @@ async function getEmailsForAllUsers() {
 
 			if (bodyData) {
 				decodedBody = Buffer.from(bodyData, 'base64').toString();
+                console.log(`BODY LENGTH: ${decodedBody.length()}`, decodedBody);
 			}
 			// Check if subject and from headers are found
 			if (subjectHeader && fromHeader) {
