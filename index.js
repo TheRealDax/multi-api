@@ -1,10 +1,10 @@
 const dotenv = require('dotenv');
 const express = require('express');
 const swaggerui = require('swagger-ui-express');
-const specs = require('./docs/swagger')
-const path = require('path')
+const specs = require('./docs/swagger');
+const path = require('path');
 
-const app = express();  
+const app = express();
 const PORT = process.env.PORT || 3000;
 
 dotenv.config();
@@ -12,7 +12,7 @@ dotenv.config();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/docs', swaggerui.serve, swaggerui.setup(specs));
-app.use('/public', express.static(path.join(__dirname, 'public')))
+app.use('/public', express.static(path.join(__dirname, 'public')));
 
 // Endpoints
 const getFirst = require('./endpoints/getFirst');
@@ -32,7 +32,7 @@ const memberRoles = require('./endpoints/memberRoles');
 const globalChat = require('./endpoints/globalChat');
 const genTally = require('./Genbot/genTally');
 const gmailToDiscord = require('./events/gmailToDiscord');
-
+const sendEmails = require('./Genbot/sendEmails');
 
 // POST requests
 app.post('/regex', regex);
@@ -43,6 +43,7 @@ app.post('/getsubstring', getSubString);
 app.post('/timestamp', timestamp);
 app.post('/transcript', transcript);
 app.post('/vc', vc);
+app.post('/sendemail', sendEmails);
 
 // GET requests
 app.get('/temprole', tempRole);
@@ -60,5 +61,5 @@ app.post('/gentally', genTally);
 app.use(gmailToDiscord);
 
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+	console.log(`Server is running on port ${PORT}`);
 });
