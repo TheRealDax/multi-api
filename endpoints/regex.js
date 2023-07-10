@@ -33,9 +33,12 @@
  *                 responses:
  *                   type: object
  *                   description: The matched string groups
+ *                 responses:
+ *                   type: object
+ *                   description: true
  *       400:
  *         description: Missing or invalid parameters
- *       500:
+ *       404:
  *         description: No match found. Visit https://regex101.com/ for testing the regular expression.
  */
 
