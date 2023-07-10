@@ -2,7 +2,7 @@ const fs = require('fs').promises;
 const express = require('express');
 const gRouter = express.Router();
 const { google } = require('googleapis');
-const mDB = require('../functions/connectToDatabase')
+const { getDB } = require('../functions/connectToDatabase')
 
 const oauth2Client = new google.auth.OAuth2(
     process.env.G_CLIENT_ID,
@@ -13,7 +13,7 @@ const oauth2Client = new google.auth.OAuth2(
 gRouter.get('/gmaildiscord', async (req, res) => {
     const url = oauth2Client.generateAuthUrl({
         access_type: 'offline',
-        scope: ['https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/gmail.readonly'],
+        scope: ['https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/gmail.modify'],
       });
 
       res.redirect(url);
@@ -38,8 +38,8 @@ gRouter.get('/gmaildiscord', async (req, res) => {
     } catch (err) {
         console.error('Error saving tokens to file:', err);
     }
-
-    const db = await mDB('gmailDiscord');
+    
+    const db = await getDB('gmailDiscord');
     const usersCollection = db.collection('users');
     const user = {
     email: email,
@@ -61,7 +61,7 @@ gRouter.get('/gmaildiscord', async (req, res) => {
 });
 
 async function getEmailsForAllUsers() {
-    const db = await mDB('gmailDiscord');
+    const db = await getDB('gmailDiscord');
     const usersCollection = db.collection('users');
     const emailCollection = db.collection('emails');
     const users = await usersCollection.find({}).toArray();
@@ -100,22 +100,68 @@ async function getEmailsForAllUsers() {
             const message = await gmail.users.messages.get({
                 userId: 'me',
                 id: msg.id,
-                format: 'metadata',
-                metadataHeaders: ['Subject']
+                format: 'full',
             });
             const headers = message.data.payload.headers;
             const subjectHeader = headers.find(header => header.name === 'Subject');
-            const subjectContainsString = subjectHeader.value.includes('test email');
+            const fromHeader = headers.find(header => header.name === 'From');
+            const bodyData = message.data.payload.body.data;
 
-            if(subjectContainsString) {
-                const storedEmail = await emailCollection.findOne({id: msg.id});
-                // If email is not stored before
-                if (!storedEmail) {
-                    await emailCollection.insertOne({ id: msg.id, subject: subjectHeader.value });
+            // Check for multipart emails
+            if (!bodyData && message.data.payload.parts && message.data.payload.parts.length) {
+            // Find 'text/plain' or 'text/html' part
+                const part = message.data.payload.parts.find(part => ['text/plain', 'text/html'].includes(part.mimeType));
+                if (part) {
+                    bodyData = part.body.data;
                 }
+            }
+            
+            let decodedBody = '';
+
+            if (bodyData) {
+                decodedBody = Buffer.from(bodyData, 'base64').toString();
+            }
+            // Check if subject and from headers are found
+            if (subjectHeader && fromHeader) {
+                try {
+                    await emailCollection.insertOne({ id: msg.id, subject: subjectHeader.value });
+                } catch(err) {
+                    console.error('Error inserting into the collection:', err);
+                }
+
+            // Send email details to a webhook URL
+            const webhookURL = "https://api.botghost.com/webhook/1085132231015661578/t5g48sn530j2qjkce90iav";
+            const header = {
+                Authorization: '6d057a9a8ffbeee248fcb0115b525c6272e9a83c505f43ef7ea585960b38e402',
+                'Content-Type': 'application/json',
+              };
+            const reqBody = {
+            variables: [{
+                name: 'Email Sender',
+                variable: '{email_sender}',
+                value: `${fromHeader.value}`
+            },
+            {
+                name: 'Email Subject',
+                variable: '{email_subject}',
+                value: `${subjectHeader.value}`
+            },
+            {
+                name: 'Email Body',
+                variable: '{email_body}',
+                value: `${decodedBody}`
+            }]};
+
+            axios.post(webhookURL, reqBody, { headers: header })
+            .then(res => {
+                console.log('Successful');
+              })
+              .catch(err => {
+                console.error('Error', err);
+              });
             }
         }
     }
 }
 
-  module.exports = gRouter;
+module.exports = gRouter;

@@ -28,7 +28,7 @@
 const axios = require('axios');
 //const { MongoClient } = require('mongodb');
 const crypto = require('crypto');
-const mDB = require('../functions/connectToDatabase')
+const { getDB } = require('../functions/connectToDatabase')
 
 /* connectionString = process.env.MONGO_CONNECTION_STRING;
 MongoClient.connect(connectionString, {
@@ -42,8 +42,7 @@ MongoClient.connect(connectionString, {
 
 const globalChat = async (req, res) => {
     const { register, token, createhook, serverid, execute, content, user, avatar, deletehook } = req.query;
-    const db = await mDB('mainTestDB');
-
+    const db = await getDB('mainTestDB');
     if (register && serverid) {
         const collections = await db.listCollections().toArray();
         let existingCollectionName = null;

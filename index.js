@@ -4,7 +4,7 @@ const swaggerui = require('swagger-ui-express');
 const specs = require('./docs/swagger')
 const path = require('path')
 
-const app = express();
+const app = express();  
 const PORT = process.env.PORT || 3000;
 
 dotenv.config();
