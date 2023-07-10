@@ -30,10 +30,10 @@
  *             schema:
  *               type: object
  *               properties:
- *                 responses:
+ *                 result:
  *                   type: object
  *                   description: The matched string groups
- *                 responses:
+ *                 match:
  *                   type: object
  *                   description: true
  *       400:
