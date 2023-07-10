@@ -82,7 +82,8 @@ const getSubString = async (req, res) => {
     res.json({ result, charcount });
     console.log(result);
   } catch(err){
-    res.status(500).json('Error in request', err);
+    console.error('Error:', err);
+    return res.status(500).json({ error: 'Internal server error' });
   }};
 
   module.exports = getSubString;

@@ -59,7 +59,8 @@ const removeLast = async (req, res) => {
     console.log(result);
 
   } catch(err){
-    res.status(500).json('Your request was invalid', err);
+    console.error('Error:', err);
+    return res.status(500).json({ error: 'Internal server error' });
   }};
 
   module.exports = removeLast;

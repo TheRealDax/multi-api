@@ -48,9 +48,10 @@ const currencyFormat = async (req, res) => {
   
     res.status(200).json({ result: currencyFormat });
     console.log(currencyFormat);
-    
+
   } catch(err){
-    res.status(500).json('Your request was invalid', err);
+    console.error('Error:', err);
+    return res.status(500).json({ error: 'Internal server error' });
   }};
 
   module.exports = currencyFormat;

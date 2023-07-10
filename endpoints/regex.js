@@ -66,7 +66,8 @@ const regex = async (req, res) => {
       res.status(500).json({ error: 'No match found. If you are having trouble, visit https://regex101.com/ to test your regular expression before trying again.' });
     }
   } catch(err){
-    res.status(500).json('Your request was invalid', err);
+    console.error('Error:', err);
+    return res.status(500).json({ error: 'Internal server error' });
   }};
 
   module.exports = regex;
