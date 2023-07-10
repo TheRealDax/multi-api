@@ -103,28 +103,26 @@ async function getEmailsForAllUsers() {
 			const headers = message.data.payload.headers;
 			const subjectHeader = headers.find((header) => header.name === 'Subject');
 			const fromHeader = headers.find((header) => header.name === 'From');
-			let bodyData = message.data.payload.body.data;
 
 			// Check for multipart emails
-			if (!bodyData && message.data.payload.parts && message.data.payload.parts.length) {
-				// Find 'text/plain' or 'text/html' part
-				const part = message.data.payload.parts.find((part) => ['text/plain', 'text/html'].includes(part.mimeType));
-				if (part) {
-					bodyData = part.body.data;
-				}
+			let part;
+			if (message.data.payload.parts) {
+				// Find 'text/plain' part
+				part = message.data.payload.parts.find((part) => part.mimeType === 'text/plain');
 			}
 
+			let bodyData = part ? part.body.data : message.data.payload.body.data;
 			let decodedBody = '';
 
 			if (bodyData) {
 				decodedBody = Buffer.from(bodyData, 'base64').toString();
-                console.log(`BODY LENGTH: ${decodedBody.length}`, decodedBody);
+				console.log(`BODY LENGTH: ${decodedBody.length}`, decodedBody);
 			}
 			// Check if subject and from headers are found
 			if (subjectHeader && fromHeader) {
 				try {
 					await emailCollection.insertOne({
-                        mailbox: email,
+						mailbox: email,
 						id: msg.id,
 						subject: subjectHeader.value,
 					});
