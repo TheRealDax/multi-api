@@ -123,6 +123,7 @@ async function getEmailsForAllUsers() {
 			if (subjectHeader && fromHeader) {
 				try {
 					await emailCollection.insertOne({
+                        mailbox: email,
 						id: msg.id,
 						subject: subjectHeader.value,
 					});
