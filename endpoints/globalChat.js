@@ -83,7 +83,7 @@ const globalChat = async (req, res) => {
                   const wtoken = match[2];
         
                   const collection = db.collection(token);
-                const existingDocument = await collection.findOne({ sid: serverid });
+                  const existingDocument = await collection.findOne({ sid: serverid });
 
                         if (existingDocument) {
                             res.status(400).send({ message: 'A webhook for this server ID already exists.' });
@@ -104,13 +104,13 @@ const globalChat = async (req, res) => {
                         const wtoken = match[2];
                     
                         const collection = db.collection(token);
-                        const existingDocument = await collection.findOne({ wid, wtoken });
+                        const existingDocument = await collection.findOne({ sid: serverid, wid, wtoken });
 
                         if (!existingDocument) {
                             res.status(404).send({ message: 'This webhook does not exist.' });
                             
                         } else {
-                        await collection.deleteOne({ wid, wtoken });
+                        await collection.deleteOne({ sid: serverid, wid, wtoken });
                         res.status(200).send({ message: 'Webhook deleted.' });
                         }
 
