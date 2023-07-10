@@ -4,12 +4,12 @@ const Base64 = require('js-base64').Base64;
 const fs = require('fs');
 
 const sendEmails = async (req, res) => {
-	const { threadid, message } = req.body;
+	const { messageid, message } = req.body;
 
 	const oauth2Client = new google.auth.OAuth2(process.env.G_CLIENT_ID, process.env.G_CLIENT_SECRET, process.env.G_REDIRECT_URL);
 
 	const gmail = google.gmail({ version: 'v1', auth: oauth2Client });
-	const thread = await gmail.users.threads.get({ userId: 'me', id: threadid });
+	const thread = await gmail.users.threads.get({ userId: 'me', id: messageid });
 	const email = thread.data.messages[0].payload.headers.find((header) => header.name === 'From').value;
 	const to = thread.data.messages[0].payload.headers.find((header) => header.name === 'To').value;
 	const subject = thread.data.messages[0].payload.headers.find((header) => header.name === 'Subject').value;
@@ -47,7 +47,7 @@ const sendEmails = async (req, res) => {
 
 	const originalMessageResponse = await gmail.users.messages.get({
 		userId: 'me',
-		id: threadid,
+		id: messageid,
 		format: 'full',
 	});
 
@@ -75,7 +75,7 @@ const sendEmails = async (req, res) => {
 			userId: 'me',
 			requestBody: {
 				raw: encodedMessage,
-				threadId: threadid,
+				messageid: messageid,
 			},
 		});
 

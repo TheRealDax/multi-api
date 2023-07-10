@@ -168,9 +168,9 @@ async function getEmailsForAllUsers() {
 							value: `${decodedBody}`,
 						},
 						{
-							name: 'Thread ID',
-							variable: '{email_thread_id}',
-							value: `${msg.threadId}`,
+							name: 'Email ID',
+							variable: '{email_id}',
+							value: `${msg.id}`,
 						},
 					],
 				};
