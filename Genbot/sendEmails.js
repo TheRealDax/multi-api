@@ -17,7 +17,7 @@ const sendEmails = async (req, res) => {
 	const db = await getDB('gmailDiscord');
 	const usersCollection = db.collection('users');
 	//const emailCollection = db.collection('emails');
-	const user = await usersCollection.findOne({ email: email });
+	const user = await usersCollection.findOne({ email: to });
 	if (!user) {
 		console.error('User not found');
 		res.status(404).send('Error sending email.');
