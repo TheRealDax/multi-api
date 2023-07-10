@@ -11,7 +11,12 @@ const sendEmails = async (req, res) => {
 	const db = await getDB('gmailDiscord');
 	const usersCollection = db.collection('users');
 	//const emailCollection = db.collection('emails');
-	const user = await usersCollection.find({ email: email }).toArray()[0];
+	const user = await usersCollection.findOne({ email: email });
+	if(!user) {
+		console.error('User not found');
+		res.status(404).send('Error sending email.');
+		return;
+	}
 
 	let tokens = user.tokens;
 
