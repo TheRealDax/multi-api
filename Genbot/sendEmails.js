@@ -38,25 +38,22 @@ const sendEmails = async (req, res) => {
 
 		oauth2Client.setCredentials(tokens);
 
-		const gmail = google.gmail({ version: 'v1', auth: oauth2Client });
-		const thread = await gmail.users.threads.get({ userId: 'me', id: messageid }).catch((e) => {
-			console.error('Failed to get the email thread.', e);
-			res.status(500).send('Failed to get the email thread.');
-			throw e;
-		});
-
-		const email = thread.data.messages[0].payload.headers.find((header) => header.name === 'From').value;
-		//const to = thread.data.messages[0].payload.headers.find((header) => header.name === 'To').value;
-		const subject = thread.data.messages[0].payload.headers.find((header) => header.name === 'Subject').value;
-
 		if (oauth2Client.isTokenExpiring()) {
 			const refreshedTokens = await oauth2Client.refreshAccessToken();
 			oauth2Client.setCredentials(refreshedTokens);
 
 			// Update the tokens in the database and local storage
-			await usersCollection.updateOne({ email: user.email }, { $set: { tokens: refreshedTokens } });
 			await fs.promises.writeFile(`tokens_${user.email}.json`, JSON.stringify(refreshedTokens, null, 2));
+			await usersCollection.updateOne({ email: user.email }, { $set: { tokens: refreshedTokens } });
 		}
+
+		const gmail = google.gmail({ version: 'v1', auth: oauth2Client });
+
+		const thread = await gmail.users.threads.get({ userId: 'me', id: messageid }).catch((e) => {
+			console.error('Failed to get the email thread.', e);
+			res.status(500).send('Failed to get the email thread.');
+			throw e;
+		});
 
 		const originalMessageResponse = await gmail.users.messages
 			.get({
@@ -68,6 +65,10 @@ const sendEmails = async (req, res) => {
 				console.error('Failed to get the email id.', messageid, e);
 				res.status(500).send('failed to get the email id');
 			});
+
+		const email = thread.data.messages[0].payload.headers.find((header) => header.name === 'From').value;
+		//const to = thread.data.messages[0].payload.headers.find((header) => header.name === 'To').value;
+		const subject = thread.data.messages[0].payload.headers.find((header) => header.name === 'Subject').value;
 
 		const originalMessageData = originalMessageResponse.data.payload.body.data;
 		const originalMessage = Buffer.from(originalMessageData, 'base64').toString('utf8');
@@ -87,24 +88,23 @@ const sendEmails = async (req, res) => {
 		const quotedOriginalMessage = `On ${originalDate}, ${originalFrom} wrote:\n> ${originalMessage.replace(/\n/g, '\n> ')}`;
 		const replyMessage = `${message}\n\n${quotedOriginalMessage}`;
 		const encodedMessage = Base64.encodeURI(`To: ${email}\nContent-Type: text/plain; charset=UTF-8\nSubject: Re: ${subject}\n\n${replyMessage}`);
+		try {
+			await gmail.users.messages.send({
+				userId: 'me',
+				requestBody: {
+					raw: encodedMessage,
+					messageid: messageid,
+				},
+			});
+
+			res.status(200).send('Email sent successfully.');
+		} catch (err) {
+			console.error('Error sending email:', err);
+			res.status(500).send('Error sending email.');
+		}
 	} catch (err) {
 		console.error('Unexpected error:', err);
 		res.status(500).send('Unexpected error');
-	}
-
-	try {
-		await gmail.users.messages.send({
-			userId: 'me',
-			requestBody: {
-				raw: encodedMessage,
-				messageid: messageid,
-			},
-		});
-
-		res.status(200).send('Email sent successfully.');
-	} catch (err) {
-		console.error('Error sending email:', err);
-		res.status(500).send('Error sending email.');
 	}
 };
 
