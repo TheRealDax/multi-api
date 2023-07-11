@@ -49,12 +49,6 @@ const sendEmails = async (req, res) => {
 
 		const gmail = google.gmail({ version: 'v1', auth: oauth2Client });
 
-		const thread = await gmail.users.threads.get({ userId: 'me', id: messageid }).catch((e) => {
-			console.error('Failed to get the email thread.', e);
-			res.status(500).send('Failed to get the email thread.');
-			throw e;
-		});
-
 		const originalMessageResponse = await gmail.users.messages
 			.get({
 				userId: 'me',
@@ -65,6 +59,12 @@ const sendEmails = async (req, res) => {
 				console.error('Failed to get the email id.', messageid, e);
 				res.status(500).send('failed to get the email id');
 			});
+
+		const thread = await gmail.users.threads.get({ userId: 'me', id: originalMessageResponse.threadId }).catch((e) => {
+			console.error('Failed to get the email thread.', e);
+			res.status(500).send('Failed to get the email thread.');
+			throw e;
+		});
 
 		const email = thread.data.messages[0].payload.headers.find((header) => header.name === 'From').value;
 		//const to = thread.data.messages[0].payload.headers.find((header) => header.name === 'To').value;
