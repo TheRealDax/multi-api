@@ -1,6 +1,5 @@
 const express = require('express');
 const axios = require('axios');
-const fs = require('fs').promises;
 const { google } = require('googleapis');
 const { getDB } = require('../functions/connectToDatabase');
 
@@ -30,12 +29,6 @@ gRouter.get('/gauth', async (req, res) => {
 
 		const userinfo = await oauth2.userinfo.get({});
 		const email = userinfo.data.email;
-
-		try {
-			await fs.writeFile(`tokens_${email}.json`, JSON.stringify(tokens, null, 2));
-		} catch (err) {
-			console.error('Error saving tokens to file:', err);
-		}
 
 		const db = await getDB('gmailDiscord');
 		const usersCollection = db.collection('users');
@@ -68,23 +61,14 @@ async function getEmailsForAllUsers() {
 		const email = user.email;
 		let tokens = user.tokens;
 
-		// Attempt to load the tokens from local storage.
-		try {
-			const tokensData = await fs.readFile(`tokens_${email}.json`, 'utf8');
-			tokens = JSON.parse(tokensData);
-		} catch (err) {
-			console.log('No local token found for user', email, '. Using tokens from database.');
-		}
-
 		oauth2Client.setCredentials(tokens);
 
 		if (oauth2Client.isTokenExpiring()) {
 			const refreshedTokens = await oauth2Client.refreshAccessToken();
 			oauth2Client.setCredentials(refreshedTokens);
 
-			// Update the tokens in the database and local storage
+			// Update the tokens in the database
 			await usersCollection.updateOne({ email: email }, { $set: { tokens: refreshedTokens } });
-			await fs.writeFile(`tokens_${email}.json`, JSON.stringify(refreshedTokens, null, 2));
 		}
 
 		const gmail = google.gmail({ version: 'v1', auth: oauth2Client });

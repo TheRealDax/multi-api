@@ -1,7 +1,6 @@
 const { google } = require('googleapis');
 const { getDB } = require('../functions/connectToDatabase');
 const Base64 = require('js-base64').Base64;
-const fs = require('fs');
 
 const sendEmails = async (req, res) => {
 	try {
@@ -28,22 +27,13 @@ const sendEmails = async (req, res) => {
 
 		let tokens = user.tokens;
 
-		// Attempt to load the tokens from local storage.
-		try {
-			const tokensData = await fs.promises.readFile(`tokens_${user.email}.json`, 'utf8');
-			tokens = JSON.parse(tokensData);
-		} catch (err) {
-			console.log('No local token found for user', user.email, '. Using tokens from database.');
-		}
-
 		oauth2Client.setCredentials(tokens);
 
 		if (oauth2Client.isTokenExpiring()) {
 			const refreshedTokens = await oauth2Client.refreshAccessToken();
 			oauth2Client.setCredentials(refreshedTokens);
 
-			// Update the tokens in the database and local storage
-			await fs.promises.writeFile(`tokens_${user.email}.json`, JSON.stringify(refreshedTokens, null, 2));
+			// Update the tokens in the database
 			await usersCollection.updateOne({ email: user.email }, { $set: { tokens: refreshedTokens } });
 		}
 
