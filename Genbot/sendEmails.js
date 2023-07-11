@@ -4,7 +4,15 @@ const Base64 = require('js-base64').Base64;
 const fs = require('fs');
 
 const sendEmails = async (req, res) => {
+	try {
 	const { messageid, message, from } = req.body;
+	
+	if (!messageid || !message || !from) {
+		console.error('Required parameters missing.');
+		console.log(messageid, message, from);
+		res.status(400).send('Required parameters missing.');
+		return;
+	}
 
 	const oauth2Client = new google.auth.OAuth2(process.env.G_CLIENT_ID, process.env.G_CLIENT_SECRET, process.env.G_REDIRECT_URL);
 	const db = await getDB('gmailDiscord');
@@ -31,7 +39,12 @@ const sendEmails = async (req, res) => {
 	oauth2Client.setCredentials(tokens);
 
 	const gmail = google.gmail({ version: 'v1', auth: oauth2Client });
-	const thread = await gmail.users.threads.get({ userId: 'me', id: messageid });
+	const thread = await gmail.users.threads.get({ userId: 'me', id: messageid }).catch(e =>{
+		console.error('Failed to get the email thread.', e);
+		res.status(500).send('Failed to get the email thread.');
+		throw e;
+	});
+	
 	const email = thread.data.messages[0].payload.headers.find((header) => header.name === 'From').value;
 	//const to = thread.data.messages[0].payload.headers.find((header) => header.name === 'To').value;
 	const subject = thread.data.messages[0].payload.headers.find((header) => header.name === 'Subject').value;
@@ -69,6 +82,11 @@ const sendEmails = async (req, res) => {
 	const quotedOriginalMessage = `On ${originalDate}, ${originalFrom} wrote:\n> ${originalMessage.replace(/\n/g, '\n> ')}`;
 	const replyMessage = `${message}\n\n${quotedOriginalMessage}`;
 	const encodedMessage = Base64.encodeURI(`To: ${email}\nContent-Type: text/plain; charset=UTF-8\nSubject: Re: ${subject}\n\n${replyMessage}`);
+
+	} catch (err){
+		console.error('Unexpected error:', err);
+		res.status(500).send('Unexpected error');
+	}
 
 	try {
 		await gmail.users.messages.send({
