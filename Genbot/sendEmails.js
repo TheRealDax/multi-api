@@ -57,12 +57,11 @@ const sendEmails = async (req, res) => {
 			})
 			.catch((e) => {
 				console.error('Failed to get the email id.', messageid, e);
-				res.status(500).send('failed to get the email id');
+				throw e;
 			});
 
-		const thread = await gmail.users.threads.get({ userId: 'me', id: originalMessageResponse.threadId }).catch((e) => {
+		const thread = await gmail.users.threads.get({ userId: 'me', id: originalMessageResponse.data.threadId }).catch((e) => {
 			console.error('Failed to get the email thread.', e);
-			res.status(500).send('Failed to get the email thread.');
 			throw e;
 		});
 
