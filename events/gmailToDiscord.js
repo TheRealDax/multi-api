@@ -128,7 +128,7 @@ async function getEmailsForAllUsers() {
 			if (bodyData) {
 				decodedBody = Buffer.from(bodyData, 'base64').toString();
 				if (decodedBody.length > 3000) {
-					decodedBody = `Email body is over 3000 characters. [View in Gmail](${url})`;
+					decodedBody = `Email body is over 3000 characters. Please view and respond to this email from Gmail.)`;
 				}
 			}
 			// Check if subject and from headers are found
@@ -171,6 +171,11 @@ async function getEmailsForAllUsers() {
 							name: 'Email ID',
 							variable: '{email_id}',
 							value: `${msg.id}`,
+						},
+						{
+							name: 'Email URL',
+							variable: '{email_url}',
+							value: `${url}`,
 						},
 					],
 				};
