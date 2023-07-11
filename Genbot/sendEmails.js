@@ -4,20 +4,14 @@ const Base64 = require('js-base64').Base64;
 const fs = require('fs');
 
 const sendEmails = async (req, res) => {
-	const { messageid, message } = req.body;
+	const { messageid, message, from } = req.body;
 
 	const oauth2Client = new google.auth.OAuth2(process.env.G_CLIENT_ID, process.env.G_CLIENT_SECRET, process.env.G_REDIRECT_URL);
-
-	const gmail = google.gmail({ version: 'v1', auth: oauth2Client });
-	const thread = await gmail.users.threads.get({ userId: 'me', id: messageid });
-	const email = thread.data.messages[0].payload.headers.find((header) => header.name === 'From').value;
-	const to = thread.data.messages[0].payload.headers.find((header) => header.name === 'To').value;
-	const subject = thread.data.messages[0].payload.headers.find((header) => header.name === 'Subject').value;
-
 	const db = await getDB('gmailDiscord');
 	const usersCollection = db.collection('users');
+
 	//const emailCollection = db.collection('emails');
-	const user = await usersCollection.findOne({ email: to });
+	const user = await usersCollection.findOne({ email: from });
 	if (!user) {
 		console.error('User not found');
 		res.status(404).send('Error sending email.');
@@ -28,13 +22,19 @@ const sendEmails = async (req, res) => {
 
 	// Attempt to load the tokens from local storage.
 	try {
-		const tokensData = await fs.promises.readFile(`tokens_${user.email}.json`, 'utf8');
+		const tokensData = await fs.promises.readFile(`tokens_${user.to}.json`, 'utf8');
 		tokens = JSON.parse(tokensData);
 	} catch (err) {
-		console.log('No local token found for user', user.email, '. Using tokens from database.');
+		console.log('No local token found for user', user.to, '. Using tokens from database.');
 	}
 
 	oauth2Client.setCredentials(tokens);
+
+	const gmail = google.gmail({ version: 'v1', auth: oauth2Client });
+	const thread = await gmail.users.threads.get({ userId: 'me', id: messageid });
+	const email = thread.data.messages[0].payload.headers.find((header) => header.name === 'From').value;
+	//const to = thread.data.messages[0].payload.headers.find((header) => header.name === 'To').value;
+	const subject = thread.data.messages[0].payload.headers.find((header) => header.name === 'Subject').value;
 
 	if (oauth2Client.isTokenExpiring()) {
 		const refreshedTokens = await oauth2Client.refreshAccessToken();
@@ -68,7 +68,7 @@ const sendEmails = async (req, res) => {
 
 	const quotedOriginalMessage = `On ${originalDate}, ${originalFrom} wrote:\n> ${originalMessage.replace(/\n/g, '\n> ')}`;
 	const replyMessage = `${message}\n\n${quotedOriginalMessage}`;
-	const encodedMessage = Base64.encodeURI(`To: ${to}\nContent-Type: text/plain; charset=UTF-8\nSubject: Re: ${subject}\n\n${replyMessage}`);
+	const encodedMessage = Base64.encodeURI(`To: ${email}\nContent-Type: text/plain; charset=UTF-8\nSubject: Re: ${subject}\n\n${replyMessage}`);
 
 	try {
 		await gmail.users.messages.send({
