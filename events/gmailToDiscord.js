@@ -129,7 +129,7 @@ async function getEmailsForAllUsers() {
 				}
 
 				// Send email details to a webhook URL
-				const webhookURL = 'https://api.botghost.com/webhook/1085132231015661578/t5g48sn530j2qjkce90iav';
+				const webhookURL = 'https://api.botghost.com/webhook/1090768041563918346/nc8b8c6a21jlx8lutoe90a';
 				const header = {
 					Authorization: process.env.BG_API_KEY,
 					'Content-Type': 'application/json',
