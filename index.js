@@ -33,6 +33,7 @@ const globalChat = require('./endpoints/globalChat');
 const genTally = require('./Genbot/genTally');
 const gmailToDiscord = require('./events/gmailToDiscord');
 const sendEmails = require('./Genbot/sendEmails');
+const automod = require('./endpoints/automod');
 
 // POST requests
 app.post('/regex', regex);
@@ -44,6 +45,7 @@ app.post('/timestamp', timestamp);
 app.post('/transcript', transcript);
 app.post('/vc', vc);
 app.post('/sendemail', sendEmails);
+app.post('/automod', automod);
 
 // GET requests
 app.get('/temprole', tempRole);
