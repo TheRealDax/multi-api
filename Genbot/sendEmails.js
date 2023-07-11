@@ -68,7 +68,8 @@ const sendEmails = async (req, res) => {
 		const email = thread.data.messages[0].payload.headers.find((header) => header.name === 'From').value;
 		//const to = thread.data.messages[0].payload.headers.find((header) => header.name === 'To').value;
 		const subject = thread.data.messages[0].payload.headers.find((header) => header.name === 'Subject').value;
-
+		console.log('originalMessageResponse:', JSON.stringify(originalMessageResponse, null, 2));
+		
 		const originalMessageData = originalMessageResponse.data.payload.body.data;
 		const originalMessage = Buffer.from(originalMessageData, 'base64').toString('utf8');
 		const originalMessageHeaders = originalMessageResponse.data.payload.headers;
