@@ -44,7 +44,7 @@ gRouter.get('/gauth', async (req, res) => {
 			tokens: tokens,
 		};
 
-		const existingDocument = await usersCollection.findOne({ email });
+		const existingDocument = await usersCollection.findOne({ email: email });
 
 		if (!existingDocument) {
 			await usersCollection.insertOne(user);
