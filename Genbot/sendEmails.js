@@ -55,7 +55,15 @@ const sendEmails = async (req, res) => {
 			throw e;
 		});
 
-		const email = thread.data.messages[0].payload.headers.find((header) => header.name === 'From').value;
+		const threadMessages = thread.data.messages;
+		let email = '';
+		for (let i = threadMessages.length - 1; i >= 0; i--) {
+			let currentEmail = threadMessages[i].payload.headers.find((header) => header.name === 'From').value;
+			if (currentEmail !== from) {
+				email = currentEmail;
+				break;
+			}
+		}
 		//const to = thread.data.messages[0].payload.headers.find((header) => header.name === 'To').value;
 		const subject = thread.data.messages[0].payload.headers.find((header) => header.name === 'Subject').value;
 
