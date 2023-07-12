@@ -64,7 +64,8 @@ async function getEmailsForAllUsers() {
 
 			if (oauth2Client.isTokenExpiring()) {
 				const refreshedTokens = await oauth2Client.refreshAccessToken();
-				oauth2Client.setCredentials(refreshedTokens.tokens);
+				console.log('REFRESHEDTOKENS', refreshedTokens)
+				oauth2Client.setCredentials(refreshedTokens);
 
 				await usersCollection.updateOne({ email: email }, { $set: { tokens: refreshedTokens.tokens } }); // <-- Use the tokens property
 			}
