@@ -4,6 +4,8 @@ const { google } = require('googleapis');
 const { getDB } = require('../functions/connectToDatabase');
 
 const gRouter = express.Router();
+const oauth2Client = new google.auth.OAuth2(process.env.G_CLIENT_ID, process.env.G_CLIENT_SECRET, process.env.G_REDIRECT_URL);
+
 
 gRouter.get('/gmaildiscord', async (req, res) => {
 	const url = oauth2Client.generateAuthUrl({
