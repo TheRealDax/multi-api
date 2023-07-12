@@ -60,7 +60,10 @@ async function getEmailsForAllUsers() {
 			const email = user.email;
 			let tokens = user.tokens;
 
-			oauth2Client.setCredentials(tokens);
+			console.log(email);
+			console.log(tokens);
+
+			console.log(oauth2Client.setCredentials(tokens));
 
 			if (oauth2Client.isTokenExpiring()) {
 				const refreshedTokens = await oauth2Client.refreshAccessToken();
@@ -69,8 +72,6 @@ async function getEmailsForAllUsers() {
 
 				await usersCollection.updateOne({ email: email }, { $set: { tokens: refreshedTokens.tokens } }); // <-- Use the tokens property
 			}
-
-			oauth2Client.setCredentials(tokens);
 
 			const gmail = google.gmail({ version: 'v1', auth: oauth2Client });
 			const response = await gmail.users.messages.list({
