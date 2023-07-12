@@ -19,12 +19,14 @@ gRouter.get('/gauth', async (req, res) => {
 	try {
 		const { code } = req.query;
 		const { tokens } = await oauth2Client.getToken(code);
-		console.log(oauth2Client.setCredentials(tokens));
+		oauth2Client.setCredentials(tokens);
 
 		const oauth2 = google.oauth2({
 			auth: oauth2Client,
 			version: 'v2',
 		});
+
+		console.log('TOKENS:', tokens);
 
 		const userinfo = await oauth2.userinfo.get({});
 		const email = userinfo.data.email;
@@ -35,6 +37,8 @@ gRouter.get('/gauth', async (req, res) => {
 			email: email,
 			tokens: tokens,
 		};
+
+		console.log('USER', user);
 
 		const existingDocument = await usersCollection.findOne({ email: email });
 
