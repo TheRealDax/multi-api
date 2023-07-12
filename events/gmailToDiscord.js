@@ -5,8 +5,6 @@ const { getDB } = require('../functions/connectToDatabase');
 
 const gRouter = express.Router();
 
-const oauth2Client = new google.auth.OAuth2(process.env.G_CLIENT_ID, process.env.G_CLIENT_SECRET, process.env.G_REDIRECT_URL);
-
 gRouter.get('/gmaildiscord', async (req, res) => {
 	const url = oauth2Client.generateAuthUrl({
 		access_type: 'offline',
@@ -61,14 +59,15 @@ async function getEmailsForAllUsers() {
 		const email = user.email;
 		let tokens = user.tokens;
 
+		const oauth2Client = new google.auth.OAuth2(process.env.G_CLIENT_ID, process.env.G_CLIENT_SECRET, process.env.G_REDIRECT_URL);
 		oauth2Client.setCredentials(tokens);
 
 		if (oauth2Client.isTokenExpiring()) {
 			const refreshedTokens = await oauth2Client.refreshAccessToken();
-			oauth2Client.setCredentials(refreshedTokens);
+			oauth2Client.setCredentials(refreshedTokens.tokens); // <-- Use the tokens property
 
 			// Update the tokens in the database
-			await usersCollection.updateOne({ email: email }, { $set: { tokens: refreshedTokens } });
+			await usersCollection.updateOne({ email: email }, { $set: { tokens: refreshedTokens.tokens } }); // <-- Use the tokens property
 		}
 
 		const gmail = google.gmail({ version: 'v1', auth: oauth2Client });

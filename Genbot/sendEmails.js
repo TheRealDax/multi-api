@@ -30,11 +30,17 @@ const sendEmails = async (req, res) => {
 		oauth2Client.setCredentials(tokens);
 
 		if (oauth2Client.isTokenExpiring()) {
-			const refreshedTokens = await oauth2Client.refreshAccessToken();
-			oauth2Client.setCredentials(refreshedTokens);
-
-			// Update the tokens in the database
-			await usersCollection.updateOne({ email: user.email }, { $set: { tokens: refreshedTokens } });
+			try {
+				const refreshedTokens = await oauth2Client.refreshAccessToken();
+				oauth2Client.setCredentials(refreshedTokens);
+		
+				// Update the tokens in the database
+				await usersCollection.updateOne({ email: user.email }, { $set: { tokens: refreshedTokens } });
+			} catch (err) {
+				console.error('Error refreshing access token:', err);
+				res.status(500).send('Error refreshing access token.');
+				return;
+			}
 		}
 
 		const gmail = google.gmail({ version: 'v1', auth: oauth2Client });
@@ -66,9 +72,6 @@ const sendEmails = async (req, res) => {
 		}
 		//const to = thread.data.messages[0].payload.headers.find((header) => header.name === 'To').value;
 		const subject = thread.data.messages[0].payload.headers.find((header) => header.name === 'Subject').value;
-
-		// ! For logging, remove after
-		//console.log('originalMessageResponse:', JSON.stringify(originalMessageResponse, null, 2));
 
 		let originalMessageData;
 		if (originalMessageResponse.data.payload.parts) {
