@@ -26,8 +26,8 @@ gRouter.get('/gauth', async (req, res) => {
 			version: 'v2',
 		});
 		
-		//!! Remove later
-		//console.log('TOKENS:', tokens);
+
+		//console.log('TOKENS:', tokens); //! for logging
 
 		const userinfo = await oauth2.userinfo.get({});
 		const email = userinfo.data.email;
@@ -39,8 +39,8 @@ gRouter.get('/gauth', async (req, res) => {
 			tokens,
 		};
 
-		//!! remove later
-		//console.log('USER', user);
+
+		//console.log('USER', user); //! for logging
 
 		const existingDocument = await usersCollection.findOne({ email: email });
 
@@ -64,17 +64,19 @@ async function getEmailsForAllUsers() {
 	try {
 		for (let user of users) {
 			const email = user.email;
-			let tokens = user.tokens;
+			let tokens = user;
 
-			console.log('TOKENS', tokens);
+			console.log('TOKENS', tokens); //! for logging
 
 			oauth2Client.setCredentials(tokens);
 
 			if (oauth2Client.isTokenExpiring()) {
 				const refreshedTokens = await oauth2Client.refreshAccessToken();
-				//!! remove later
-				console.log('REFRESHEDTOKENS', refreshedTokens)
-				oauth2Client.setCredentials(refreshedTokens);
+				console.log('REFRESHEDTOKENS', refreshedTokens) //! for logging
+				oauth2Client.setCredentials({
+					access_token: refreshedTokens.credentials.access_token,
+					expiry_date: refreshedTokens.credentials.expiry_date
+				  });
 
 				await usersCollection.updateOne({ email: email }, { $set: { tokens: refreshedTokens } }); // <-- Use the tokens property
 			}
