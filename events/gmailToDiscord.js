@@ -35,7 +35,7 @@ gRouter.get('/gauth', async (req, res) => {
 		const usersCollection = db.collection('users');
 		const user = {
 			email: email,
-			tokens: tokens,
+			tokens,
 		};
 
 		console.log('USER', user);
