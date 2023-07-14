@@ -87,11 +87,6 @@ const memberRoles = async (req, res) => {
   console.log({ serverId, userId });
 
   try {
-    // Check if the bot is already logged in
-    if (!client.readyAt) {
-      await client.login(authToken);
-      console.log("Logging in...");
-    }
 
     const guild = await client.guilds.fetch(serverId);
     if (!guild) {

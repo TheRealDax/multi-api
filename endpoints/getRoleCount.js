@@ -82,12 +82,8 @@ const getRoleCount = async (req, res) => {
   }
 
   try {
-    // Check if the bot is already logged in
-    if (!client.readyAt) {
-
       await client.login(authToken);
       console.log("Logging in...")
-    }
 
     const guild = await client.guilds.fetch(serverid);
     if (!guild) {
@@ -116,5 +112,3 @@ const getRoleCount = async (req, res) => {
     return res.status(500).json({ error: 'Internal server error' });
   }
 };
-
-module.exports = getRoleCount;
