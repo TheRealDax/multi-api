@@ -75,10 +75,11 @@ async function getEmailsForAllUsers() {
 				console.log('REFRESHEDTOKENS', refreshedTokens) //! for logging
 				oauth2Client.setCredentials({
 					access_token: refreshedTokens.credentials.access_token,
-					expiry_date: refreshedTokens.credentials.expiry_date
+					expiry_date: refreshedTokens.credentials.expiry_date,
+					refresh_token: tokens.refresh_token
 				  });
 
-				await usersCollection.updateOne({ email: email }, { $set: { tokens: refreshedTokens } }); // <-- Use the tokens property
+				await usersCollection.updateOne({ email: email }, { $set: { 'tokens.access_token': refreshedTokens.credentials.access_token, 'tokens.expiry_date': refreshedTokens.credentials.expiry_date } }); // <-- Use the tokens property
 			}
 
 			const gmail = google.gmail({ version: 'v1', auth: oauth2Client });
