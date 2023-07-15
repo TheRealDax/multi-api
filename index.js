@@ -3,16 +3,31 @@ const express = require('express');
 const swaggerui = require('swagger-ui-express');
 const specs = require('./docs/swagger');
 const path = require('path');
+const session = require('express-session');
+const MongoDBStore = require('connect-mongodb-session')(session);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 dotenv.config();
 
+const store = new MongoDBStore({
+    uri: process.env.MONGO_CONNECTION_STRING,
+    collection: 'sessions'
+});
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use('/docs', swaggerui.serve, swaggerui.setup(specs));
-app.use('/public', express.static(path.join(__dirname, 'public')));
+app.use(session({
+	secret: process.env.SESSION_SECRET, // Replace 'some secret value' with your actual secret
+	resave: false,
+	saveUninitialized: false,
+	store: store,
+	cookie: {
+	  secure: true, // set to true if you are using https
+	  maxAge: 24 * 60 * 60 * 1000 // 1 day
+	}
+  }));
 
 // Endpoints
 const getFirst = require('./endpoints/getFirst');
@@ -60,7 +75,9 @@ app.get('/globalchat', globalChat);
 app.post('/gentally', genTally);
 
 // Use requests
+app.use('/public', express.static(path.join(__dirname, 'public')));
 app.use(gmailToDiscord);
+app.use('/docs', swaggerui.serve, swaggerui.setup(specs));
 
 app.listen(PORT, () => {
 	console.log(`Server is running on port ${PORT}`);
