@@ -1,58 +1,77 @@
 const express = require('express');
 const axios = require('axios');
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const refresh = require('passport-oauth2-refresh');
 const { google } = require('googleapis');
 const { getDB } = require('../functions/connectToDatabase');
 
 const gRouter = express.Router();
-const oauth2Client = new google.auth.OAuth2(process.env.G_CLIENT_ID, process.env.G_CLIENT_SECRET, process.env.G_REDIRECT_URL);
+
+passport.use(
+	new GoogleStrategy(
+		{
+			clientID: process.env.G_CLIENT_ID,
+			clientSecret: process.env.G_CLIENT_SECRET,
+			callbackURL: process.env.G_REDIRECT_URL,
+		},
+		async (accessToken, refreshToken, profile, done) => {
+			const db = await getDB('gmailDiscord');
+			const usersCollection = db.collection('users');
+
+			const user = {
+				email: profile.emails[0].value,
+				tokens: { access_token: accessToken, refresh_token: refreshToken },
+			};
+
+			const existingDocument = await usersCollection.findOne({ email: user.email });
+
+			if (!existingDocument) {
+				await usersCollection.insertOne(user);
+			} else {
+				await usersCollection.updateOne({ email: user.email }, { $set: user });
+			}
+
+			done(null, user);
+		}
+	)
+);
+
+async function refreshAccessToken(user) {
+	return new Promise((resolve, reject) => {
+		refresh.requestNewAccessToken('google', user.tokens.refresh_token, (err, accessToken, refreshToken) => {
+			if (err) {
+				reject(err);
+			} else {
+				user.tokens.access_token = accessToken;
+				if (refreshToken) {
+					user.tokens.refresh_token = refreshToken;
+				}
+				resolve(user);
+			}
+		});
+	});
+}
 
 gRouter.get('/gmaildiscord', async (req, res) => {
+	const oauth2Client = new google.auth.OAuth2(process.env.G_CLIENT_ID, process.env.G_CLIENT_SECRET, process.env.G_REDIRECT_URL);
 	const url = oauth2Client.generateAuthUrl({
 		access_type: 'offline',
 		scope: ['https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/gmail.modify'],
+		prompt: 'consent',
 	});
 
 	res.redirect(url);
 });
 
-gRouter.get('/gauth', async (req, res) => {
+gRouter.get('/gauth', passport.authenticate('google', { failureRedirect: '/login' }), async (req, res) => {
 	try {
-		const { code } = req.query;
-		const { tokens } = await oauth2Client.getToken(code);
-		oauth2Client.setCredentials(tokens);
-
-		const oauth2 = google.oauth2({
-			auth: oauth2Client,
-			version: 'v2',
-		});
-		
-
-		//console.log('TOKENS:', tokens); //! for logging
-
-		const userinfo = await oauth2.userinfo.get({});
-		const email = userinfo.data.email;
-
-		const db = await getDB('gmailDiscord');
-		const usersCollection = db.collection('users');
-		const user = {
-			email: email,
-			tokens,
-		};
-
-
-		//console.log('USER', user); //! for logging
-
-		const existingDocument = await usersCollection.findOne({ email: email });
-
-		if (!existingDocument) {
-			await usersCollection.insertOne(user);
-		}
-
 		res.redirect('/public/gauthsuccess.html');
 	} catch (err) {
 		console.error('Error in /gauth route:', err);
 		res.status(500).send('An error occurred');
 	}
+
 	getEmailsForAllUsers();
 });
 
@@ -63,24 +82,10 @@ async function getEmailsForAllUsers() {
 	const users = await usersCollection.find({}).toArray();
 	try {
 		for (let user of users) {
-			const email = user.email;
-			let tokens = user.tokens;
+			user = await refreshAccessToken(user);
 
-			//console.log('TOKENS', tokens); //! for logging
-
-			oauth2Client.setCredentials(tokens);
-
-			if (oauth2Client.isTokenExpiring()) {
-				const refreshedTokens = await oauth2Client.refreshAccessToken();
-				console.log('REFRESHEDTOKENS', refreshedTokens) //! for logging
-				oauth2Client.setCredentials({
-					access_token: refreshedTokens.credentials.access_token,
-					expiry_date: refreshedTokens.credentials.expiry_date,
-					refresh_token: tokens.refresh_token
-				  });
-
-				await usersCollection.updateOne({ email: email }, { $set: { 'tokens.access_token': refreshedTokens.credentials.access_token, 'tokens.expiry_date': refreshedTokens.credentials.expiry_date } }); // <-- Use the tokens property
-			}
+			const oauth2Client = new google.auth.OAuth2(process.env.G_CLIENT_ID, process.env.G_CLIENT_SECRET, process.env.G_REDIRECT_URL);
+			oauth2Client.setCredentials(user.tokens);
 
 			const gmail = google.gmail({ version: 'v1', auth: oauth2Client });
 			const response = await gmail.users.messages.list({
