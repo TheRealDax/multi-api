@@ -20,7 +20,7 @@ gRouter.get('/gauth', async (req, res) => {
 		const { code } = req.query;
 		const { tokens } = await oauth2Client.getToken(code);
 		oauth2Client.setCredentials(tokens);
-		console.log(code);
+		console.log(oauth2Client.getToken(code));
 
 		const oauth2 = google.oauth2({
 			auth: oauth2Client,
