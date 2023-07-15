@@ -64,7 +64,7 @@ async function getEmailsForAllUsers() {
 	try {
 		for (let user of users) {
 			const email = user.email;
-			let tokens = user.tokens.refresh_token;
+			let tokens = user.tokens;
 
 			//console.log('TOKENS', tokens); //! for logging
 
