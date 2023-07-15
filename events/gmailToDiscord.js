@@ -20,6 +20,7 @@ gRouter.get('/gauth', async (req, res) => {
 		const { code } = req.query;
 		const { tokens } = await oauth2Client.getToken(code);
 		oauth2Client.setCredentials(tokens);
+		console.log(code);
 
 		const oauth2 = google.oauth2({
 			auth: oauth2Client,
@@ -66,13 +67,13 @@ async function getEmailsForAllUsers() {
 			const email = user.email;
 			let tokens = user.tokens;
 
-			console.log('TOKENS', tokens); //! for logging
+			//console.log('TOKENS', tokens); //! for logging
 
 			oauth2Client.setCredentials(tokens);
 
 			if (oauth2Client.isTokenExpiring()) {
 				const refreshedTokens = await oauth2Client.refreshAccessToken();
-				console.log('REFRESHEDTOKENS', refreshedTokens) //! for logging
+				//console.log('REFRESHEDTOKENS', refreshedTokens) //! for logging
 				oauth2Client.setCredentials({
 					access_token: refreshedTokens.credentials.access_token,
 					expiry_date: refreshedTokens.credentials.expiry_date,
