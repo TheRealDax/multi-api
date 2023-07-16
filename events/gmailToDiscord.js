@@ -8,34 +8,34 @@ const { getDB } = require('../functions/connectToDatabase');
 
 const gRouter = express.Router();
 
-passport.use(
-	new GoogleStrategy(
-		{
-			clientID: process.env.G_CLIENT_ID,
-			clientSecret: process.env.G_CLIENT_SECRET,
-			callbackURL: process.env.G_REDIRECT_URL,
-		},
-		async (accessToken, refreshToken, profile, done) => {
-			const db = await getDB('gmailDiscord');
-			const usersCollection = db.collection('users');
+const strategy = new GoogleStrategy(
+	{
+		clientID: process.env.G_CLIENT_ID,
+		clientSecret: process.env.G_CLIENT_SECRET,
+		callbackURL: process.env.G_REDIRECT_URL,
+	},
+	async (accessToken, refreshToken, profile, done) => {
+		const db = await getDB('gmailDiscord');
+		const usersCollection = db.collection('users');
 
-			const user = {
-				email: profile.emails[0].value,
-				tokens: { access_token: accessToken, refresh_token: refreshToken },
-			};
+		const user = {
+			email: profile.emails[0].value,
+			tokens: { access_token: accessToken, refresh_token: refreshToken },
+		};
 
-			const existingDocument = await usersCollection.findOne({ email: user.email });
+		const existingDocument = await usersCollection.findOne({ email: user.email });
 
-			if (!existingDocument) {
-				await usersCollection.insertOne(user);
-			} else {
-				await usersCollection.updateOne({ email: user.email }, { $set: user });
-			}
-
-			done(null, user);
+		if (!existingDocument) {
+			await usersCollection.insertOne(user);
+		} else {
+			await usersCollection.updateOne({ email: user.email }, { $set: user });
 		}
-	)
+
+		done(null, user);
+	}
 );
+passport.use(strategy);
+refresh.use(strategy);
 
 passport.serializeUser((user, done) => {
 	done(null, user.email);
