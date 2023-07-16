@@ -6,7 +6,6 @@ const refresh = require('passport-oauth2-refresh');
 const { google } = require('googleapis');
 const { getDB } = require('../functions/connectToDatabase');
 
-
 const gRouter = express.Router();
 
 passport.use(
@@ -38,6 +37,19 @@ passport.use(
 	)
 );
 
+passport.serializeUser((user, done) => {
+	done(null, user.email);
+});
+
+passport.deserializeUser(async (email, done) => {
+	const db = await getDB('gmailDiscord');
+	const usersCollection = db.collection('users');
+
+	usersCollection.findOne({ email }, (err, user) => {
+		done(err, user);
+	});
+});
+
 async function refreshAccessToken(user) {
 	return new Promise((resolve, reject) => {
 		refresh.requestNewAccessToken('google', user.tokens.refresh_token, (err, accessToken, refreshToken) => {
@@ -59,7 +71,6 @@ gRouter.get('/gmaildiscord', async (req, res) => {
 	const url = oauth2Client.generateAuthUrl({
 		access_type: 'offline',
 		scope: ['https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/gmail.modify'],
-		prompt: 'consent',
 	});
 
 	res.redirect(url);
