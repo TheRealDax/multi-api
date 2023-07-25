@@ -10,7 +10,7 @@ const genTally = async (req, res) => {
 			const fields = event.data.fields.filter((field) => field.type === 'HIDDEN_FIELDS').map((field) => field.label);
 			let questions = false;
 
-			if (event.data.fields.filter((field) => field.key === 'question_q4RMN7')) {
+			if (event.data.fields.filter((field) => field.key === 'question_q4RMN7').length > 0) {
 				questions = event.data.fields.filter((field) => field.key === 'question_q4RMN7').map((field) => field.value);
 			}
 

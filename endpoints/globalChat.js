@@ -26,23 +26,12 @@
  */
 
 const axios = require('axios');
-//const { MongoClient } = require('mongodb');
 const crypto = require('crypto');
-const { getDB } = require('../functions/connectToDatabase')
-
-/* connectionString = process.env.MONGO_CONNECTION_STRING;
-MongoClient.connect(connectionString, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-
-  }).then(client => {
-    console.log('Connected to Database');
-    db = client.db('mainTestDB');
-  }); */
+const db = require('../functions/db').getDb();
 
 const globalChat = async (req, res) => {
     const { register, token, createhook, serverid, execute, content, user, avatar, deletehook } = req.query;
-    const db = await getDB('mainTestDB');
+
     if (register && serverid) {
         const collections = await db.listCollections().toArray();
         let existingCollectionName = null;
@@ -122,7 +111,7 @@ const globalChat = async (req, res) => {
                 const documents = await collection.find({}).toArray();
         
                 const filteredDocuments = documents.filter(document => document.sid !== serverid && !document.server);
-                console.log(filteredDocuments);
+                //console.log(filteredDocuments);
         
                 for (const document of filteredDocuments) {
                   const webhookUrl = `https://discord.com/api/webhooks/${document.wid}/${document.wtoken}`;
@@ -133,7 +122,7 @@ const globalChat = async (req, res) => {
               } else if (execute && !serverid || !content || !user || !avatar) {
                 res.status(400).send({ message: 'The serverid, message, user and avatar parameters are required.' });
               } else {
-                console.log ({ register, token, createhook, serverid, execute, content, user, avatar });
+                //console.log ({ register, token, createhook, serverid, execute, content, user, avatar });
                 res.status(500).send({ error: 'There was an error with your request. Please check your parameters and try again.' });
               }
             } else {
