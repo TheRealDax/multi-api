@@ -1,3 +1,53 @@
+/**
+ * @swagger
+ * /highestrole:
+ *    get:
+ *     summary: Gets the highest role of a member in a Discord server
+ *     tags: [Discord]
+ *     description: Gets the highest role of a member in a Discord server
+ *     produces:
+ *       - application/json
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: serverid
+ *         description: The ID of the Discord server
+ *         in: query
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: '335777177704595467'
+ *       - name: userid
+ *         description: The ID of the Discord user
+ *         in: query
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: '225647195771240448'
+ *     responses:
+ *       200:
+ *         description: Successful request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 Role:
+ *                   type: string
+ *                   description: The name of the highest role
+ *                 RoleId:
+ *                   type: string
+ *                   description: The ID of the highest role
+ *       400:
+ *         description: Missing serverid or userid
+ *       401:
+ *         description: Missing Authorization header
+ *       404:
+ *         description: Guild or Member not found
+ *       500:
+ *         description: Internal server error
+ */
+
 const { Client, GatewayIntentBits } = require('discord.js');
 const intents = [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers];
 
@@ -17,10 +67,10 @@ const highestRole = async (req, res) => {
 		await client.login(authToken);
 		console.log('Logging in...');
 
-		const discordUser = client.users.cache.get(userid);
+		const discordUser = await client.users.fetch(userid);
 		if (discordUser) {
-			const guild = client.guilds.cache.get(serverid);
-			const member = guild.members.cache.get(discordUser.id);
+			const guild = await client.guilds.fetch(serverid);
+			const member = await guild.members.fetch(discordUser.id);
 			if (member) {
 				const highestRole = member.roles.highest.name;
                 const highestRoleId = member.roles.highest.id;
