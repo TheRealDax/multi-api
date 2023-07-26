@@ -174,6 +174,8 @@ async function getEmails() {
 							}
 						);
 					});
+				}else {
+					console.log('No unread emails');
 				}
 			}
 		);
