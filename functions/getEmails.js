@@ -42,7 +42,7 @@ async function getEmails() {
 					console.log(err);
 				}
 				const messages = response.data.messages;
-				if (messages.length) {
+				if (messages && messages.length) {
 					messages.forEach((message) => {
 						gmail.users.messages.get(
 							{
