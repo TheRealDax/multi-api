@@ -65,7 +65,6 @@ const highestRole = async (req, res) => {
 	}
 	try {
 		await client.login(authToken);
-		console.log('Logging in...');
 
 		const discordUser = await client.users.fetch(userid);
 		if (discordUser) {

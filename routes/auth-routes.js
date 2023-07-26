@@ -10,7 +10,6 @@ router.get('/google', passport.authenticate('google', {
 router.get('/google/redirect', passport.authenticate('google', {
     session: false,
 }), (req, res) =>{
-    console.log('Hit the callback');
     res.redirect('/public/gauthsuccess.html');
 });
 
