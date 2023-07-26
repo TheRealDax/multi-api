@@ -99,7 +99,21 @@ const sendEmails = async (req, res) => {
 						if (err) {
 							console.log(err);
 						}
-						console.log('Email sent');
+                        //mark original email as read
+                        gmail.users.messages.modify(
+                            {
+                                userId: 'me',
+                                id: messageid,
+                                resource: {
+                                    removeLabelIds: ['UNREAD'],
+                                },
+                            },
+                            (err, response) => {
+                                if (err) {
+                                    console.log(err);
+                                }
+                            }
+                        );
 					}
 				);
 			}
