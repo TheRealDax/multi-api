@@ -3,7 +3,7 @@ const axios = require('axios');
 const { google } = require('googleapis');
 const moment = require('moment');
 
-async function getEmails(req, res) {
+async function getEmails() {
 	const users = await db.collection('users').find({}).toArray();
 	users.forEach((user) => {
 		const accessToken = user.accessToken;
@@ -178,7 +178,6 @@ async function getEmails(req, res) {
 			}
 		);
 	});
-	res.send('Emails fetched');
 }
 
 //interval function to run every 5 minutes
