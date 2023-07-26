@@ -105,7 +105,7 @@ async function getEmails(req, res) {
 									db.collection('emails').insertOne({ googleId: user.googleId, ...emailData });
 									console.log('Inserted email', email.id);
 
-/* 									const webhookURL = 'https://api.botghost.com/webhook/1085132231015661578/t5g48sn530j2qjkce90iav'; //! Add webhook URL here
+ 									const webhookURL = 'https://api.botghost.com/webhook/1085132231015661578/t5g48sn530j2qjkce90iav'; //! Add webhook URL here
 									const header = {
 										Authorization: process.env.BG_API_KEY_TEST,
 										'Content-Type': 'application/json',
@@ -167,7 +167,7 @@ async function getEmails(req, res) {
 										})
 										.catch((err) => {
 											console.error('Error', err);
-										}); */
+										});
 								} else {
 									console.log('Email already exists in the database');
 								}
