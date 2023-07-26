@@ -60,60 +60,52 @@ const client = new Client({ intents });
 
 // Gets the number of members who have a role
 const memberRoles = async (req, res) => {
+	const authToken = req.headers.authorization;
+	if (!authToken) {
+		return res.status(401).json({ error: 'Missing Authorization header. Please use a Discord bot token.' });
+	}
 
-  const authToken = req.headers.authorization;
-  if (!authToken) {
-    return res.status(401).json({ error: 'Missing Authorization header. Please use a Discord bot token.' });
-  }
+	const serverid = req.query.serverid;
+	const userid = req.query.userid;
 
-  const serverid = req.query.serverid;
-  const userid = req.query.userid;
+	if (!serverid || !userid) {
+		return res.status(400).json({ error: 'Missing serverid or userid' });
+	}
 
-  if (!serverid || !userid) {
-    return res.status(400).json({ error: 'Missing serverid or userid' });
-  }
+	try {
+		try {
+			await client.login(authToken);
+		} catch (error) {
+			console.error('Error:', error);
+			return res.status(500).json({ error: 'Error during login' });
+		}
 
-  let serverId = serverid;
-  let userId = userid;
+		const guild = await client.guilds.fetch(serverid);
+		if (!guild) {
+			return res.status(404).json({ error: 'Guild not found' });
+		}
 
-  if (typeof serverid === 'string') {
-    serverId = serverid.replace(/^['"]|['"]$/g, '');
-  }
+		// Fetch members and roles to populate the cache
+		await guild.members.fetch();
+		await guild.roles.fetch();
 
-  if (typeof userid === 'string') {
-    userId = userid.replace(/^['"]|['"]$/g, '');
-  }
+		// Get the user
+		const member = guild.members.cache.get(userid);
+		if (!member) {
+			return res.status(404).json({ error: 'Member not found' });
+		}
 
-  console.log({ serverId, userId });
+		// Filter the members of the guild who have the specified role
+		const roles = member.roles.cache.filter((role) => role.id !== serverid).map((role) => role.name);
+		const roleids = member.roles.cache.filter((role) => role.id !== serverid).map((role) => role.id);
+		const roleidsFormatted = roleids.map((id) => `${id}`).join(', ');
+		const roletags = member.roles.cache.filter((roles) => roles.id !== serverid).map((roles) => `<@&${roles.id}>`);
 
-  try {
-
-    const guild = await client.guilds.fetch(serverId);
-    if (!guild) {
-      return res.status(404).json({ error: 'Guild not found' });
-    }
-
-    // Fetch members and roles to populate the cache
-    await guild.members.fetch();
-    await guild.roles.fetch();
-
-    // Get the user
-    const member = guild.members.cache.get(userId);
-    if (!member) {
-      return res.status(404).json({ error: 'Member not found' });
-    }
-
-    // Filter the members of the guild who have the specified role
-    const roles = member.roles.cache.filter(role => role.id !== serverId).map(role => role.name);
-    const roleids = member.roles.cache.filter(role => role.id !== serverId).map(role => role.id);
-    const roleidsFormatted = roleids.map(id => `${id}`).join(', ');
-    const roletags = member.roles.cache.filter(roles => roles.id !== serverId).map(roles => `<@&${roles.id}>`);
-
-    return res.json({ roles: roles, roleids: roleids, roleidsformatted: roleidsFormatted, roletags: roletags, rolecount: roleids.length });
-  } catch (error) {
-    console.error('Error:', error);
-    return res.status(500).json({ error: 'Internal server error' });
-  }
+		return res.json({ roles: roles, roleids: roleids, roleidsformatted: roleidsFormatted, roletags: roletags, rolecount: roleids.length });
+	} catch (error) {
+		console.error('Error:', error);
+		return res.status(500).json({ error: 'Internal server error' });
+	}
 };
 
 module.exports = memberRoles;
