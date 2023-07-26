@@ -113,8 +113,8 @@ const moveUser = async (req, res) => {
 		}
 
 		const channel = await server.channels.fetch(channelid);
-		if (!channel) {
-			return res.status(404).json({ error: 'Channel not found' });
+		if (!channel || channel.type !== 2) {
+			return res.status(400).json({ error: 'Not a voice channel' });
 		}
 
         if (!member.voice.channelId) {
