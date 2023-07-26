@@ -48,7 +48,7 @@ const sendEmails = async (req, res) => {
 				if (!subject.value.startsWith('RE:')) {
 					subject.value = `RE: ${subject.value}`;
 				}
-                const threadId = email.threadId;
+				const threadId = email.threadId;
 				const from = headers.find((header) => header.name === 'From');
 				const date = headers.find((header) => header.name === 'Date');
 				const to = headers.find((header) => header.name === 'To');
@@ -72,18 +72,13 @@ const sendEmails = async (req, res) => {
 				let bodyData = part ? part.body.data : email.payload.body.data;
 				let decodedBody = '';
 				decodedBody = Buffer.from(bodyData, 'base64').toString();
-                const currentDate = new Date();
-                const utcDate = currentDate.toUTCString();
+				const currentDate = new Date();
+				const utcDate = currentDate.toUTCString();
 
-				const emailHeaders = [
-                    `From: ${toName} <${toEmail}>`,
-					`To: ${fromName} <${fromEmail}>`,
-					`Subject: ${subject.value}`,
-                    `Date: ${utcDate}`,
-                ].join('\r\n');
-
+				const emailHeaders = [`From: ${toName} <${toEmail}>`, `To: ${fromName} <${fromEmail}>`, `Subject: ${subject.value}`, `Date: ${utcDate}`].join('\r\n');
+                const sig = '\n\nGenbot Support\n\nThis email was sent via Discord.\nTo get faster support, you may join our Discord server at https://discord.gg/3uDffDuZNZ\n\n';
 				const quoted = `On ${date.value}, ${from.value} wrote:\n> ${decodedBody.replace(/\n/g, '\n> ')}`;
-				const replyMessage = `${emailHeaders}\r\n\r\n${replymessage}\n\n${quoted}`;
+				const replyMessage = `${emailHeaders}\r\n\r\n${replymessage}${sig}\n\n${quoted}`;
 				const encodedReply = Base64.encodeURI(replyMessage);
 
 				// send the email
@@ -92,28 +87,28 @@ const sendEmails = async (req, res) => {
 						userId: 'me',
 						resource: {
 							raw: encodedReply,
-                            threadId: threadId,
+							threadId: threadId,
 						},
 					},
 					(err, response) => {
 						if (err) {
 							console.log(err);
 						}
-                        //mark original email as read
-                        gmail.users.messages.modify(
-                            {
-                                userId: 'me',
-                                id: messageid,
-                                resource: {
-                                    removeLabelIds: ['UNREAD'],
-                                },
-                            },
-                            (err, response) => {
-                                if (err) {
-                                    console.log(err);
-                                }
-                            }
-                        );
+						//mark original email as read
+						gmail.users.messages.modify(
+							{
+								userId: 'me',
+								id: messageid,
+								resource: {
+									removeLabelIds: ['UNREAD'],
+								},
+							},
+							(err, response) => {
+								if (err) {
+									console.log(err);
+								}
+							}
+						);
 					}
 				);
 			}
@@ -121,7 +116,7 @@ const sendEmails = async (req, res) => {
 	} catch (err) {
 		console.log(err);
 	}
-    res.status(200).json('Email sent successfully.');
+	res.status(200).json('Email sent successfully.');
 };
 
 module.exports = sendEmails;
