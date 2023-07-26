@@ -3,6 +3,7 @@
  * /moveUser:
  *   get:
  *     summary: Move a user to a different voice channel
+ *     tags: [Discord]
  *     description: |
  *       Moves a user to a different voice channel in a Discord server.
  *       Requires a Discord bot token with the necessary permissions.
