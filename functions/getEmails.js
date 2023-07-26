@@ -105,9 +105,9 @@ async function getEmails(req, res) {
 									db.collection('emails').insertOne({ googleId: user.googleId, ...emailData });
 									console.log('Inserted email', email.id);
 
- 									const webhookURL = 'https://api.botghost.com/webhook/1085132231015661578/t5g48sn530j2qjkce90iav'; //! Add webhook URL here
+ 									const webhookURL = 'https://api.botghost.com/webhook/1090768041563918346/nc8b8c6a21jlx8lutoe90a'; //! Add webhook URL here
 									const header = {
-										Authorization: process.env.BG_API_KEY_TEST,
+										Authorization: process.env.BG_API_KEY,
 										'Content-Type': 'application/json',
 									};
 									const reqBody = {
@@ -179,6 +179,15 @@ async function getEmails(req, res) {
 		);
 	});
 	res.send('Emails fetched');
+}
+
+//interval function to run every 5 minutes
+try{
+setInterval(() => {
+	getEmails();
+}, 300000);
+} catch (err) {
+	console.error('Error fetching emails:', err);
 }
 
 module.exports = getEmails;
