@@ -29,7 +29,7 @@ passport.use(
 				done(null, existingUser);
 			} else {
 				//convert params.expires_in which is in seconds to a unix timestamp of the time now + expires_in
-				const expiryToken = params.expires_in = moment().add(params.expires_in, 'seconds').unix();
+				const expiryToken = params.expires_in = moment().add(params.expires_in, 'seconds').unix() * 1000;
 				const newUser = await collection.insertOne({
 					googleId: profile.id,
 					email: profile.emails[0].value,
