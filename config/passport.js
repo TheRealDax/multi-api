@@ -23,9 +23,10 @@ passport.use(
 			callbackURL: process.env.G_REDIRECT_URL,
 		},
 		async (accessToken, refreshToken, params, profile, done) => {
-			const existingUser = await collection.findOne({ googleId: profile.id });
+			let existingUser = await collection.findOne({ googleId: profile.id });
 			if (existingUser) {
-				console.log('Existing User', accessToken, refreshToken, params, profile);
+				const expiryToken = params.expires_in = moment().add(params.expires_in, 'seconds').unix() * 1000;
+				existingUser = await collection.findOneAndUpdate( { googleId: profile.id }, { $set: { accessToken, refreshToken, expires_in: expiryToken } });
 				done(null, existingUser);
 			} else {
 				//convert params.expires_in which is in seconds to a unix timestamp of the time now + expires_in
