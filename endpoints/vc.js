@@ -72,15 +72,17 @@ const disconnectFromVoiceChannel = (channel, serverId) => {
 };
 
 const vc = async (req, res) => {
-  let { channelid, serverid, deleteafter = false, disconnect = false } = req.body;
+  //let { channelid, serverid, deleteafter = false, disconnect = false } = req.body;
   const { authorization: token } = req.headers;
+
+  const channelid = req.query.channelid;
+  const serverid = req.query.serverid;
+  const deleteafter = req.query.deleteafter || false;
+  const disconnect = req.query.disconnect || false;
 
   if (!channelid || !serverid) {
     res.status(400).json({ error: 'Missing required parameters. Please ensure you are using token, serverid, and channelid parameters.' });
     return;
-  }
-  else if (typeof serverid == 'number' || typeof channelid == 'number'){
-    return res.status(400).json({ error: 'Serverid or channelid missing \"\" (quotes) in value.' });
   }
 
   if (!TOKEN_REGEX.test(token)) {
