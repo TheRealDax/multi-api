@@ -77,8 +77,8 @@ const sendEmails = async (req, res) => {
 
 				const emailHeaders = [`From: ${toName} <${toEmail}>`, `To: ${fromName} <${fromEmail}>`, `Subject: ${subject.value}`, `Date: ${utcDate}`].join('\r\n');
                 const sig = '\n\nGenbot Support\n\nThis email was sent via Discord.\nTo get faster support, you may join our Discord server at https://discord.gg/3uDffDuZNZ\n\n';
-				const quoted = `On ${date.value}, ${from.value} wrote:\n> ${decodedBody.replace(/\n/g, '\n> ')}`;
-				const replyMessage = `${emailHeaders}\r\n\r\n${replymessage}${sig}\n\n${quoted}`;
+				//const quoted = `On ${date.value}, ${from.value} wrote:\n> ${decodedBody.replace(/\n/g, '\n> ')}`;
+				const replyMessage = `${emailHeaders}\r\n\r\n${replymessage}${sig}`;
 				const encodedReply = Base64.encodeURI(replyMessage);
 
 				// send the email
