@@ -61,122 +61,126 @@ async function getEmails() {
 									}
 								});
 								if (!isExisting) {
-									const email = response.data;
-									const headers = email.payload.headers;
-									const subject = headers.find((header) => header.name === 'Subject');
-									const from = headers.find((header) => header.name === 'From');
-									const date = headers.find((header) => header.name === 'Date');
-									const to = headers.find((header) => header.name === 'To');
-									const url = `https://mail.google.com/mail/u/0/#inbox/${message.threadId}`;
+									try {
+										const email = response.data;
+										const headers = email.payload.headers;
+										const subject = headers.find((header) => header.name === 'Subject');
+										const from = headers.find((header) => header.name === 'From');
+										const date = headers.find((header) => header.name === 'Date');
+										const to = headers.find((header) => header.name === 'To');
+										const url = `https://mail.google.com/mail/u/0/#inbox/${message.threadId}`;
 
-									// extract names and emails seperately
-									const reg = /(.*)<(.*)>/;
-									const fromMatches = reg.exec(from.value);
-									const toMatches = reg.exec(to.value);
-									const fromEmail = (from.value = fromMatches[2] ? fromMatches[2].trim() : from.value);
-									const fromName = (from.value = fromMatches[1] ? fromMatches[1].trim() : '');
-									const toEmail = (to.value = toMatches[2] ? toMatches[2].trim() : to.value);
-									const toName = (to.value = toMatches[1] ? toMatches[1].trim() : '');
-									
-									let part;
-									//console.log(email.payload.parts);
-									if (email.payload.parts) {
-										// Find 'text/plain' part
-										part = email.payload.parts.find((part) => part.mimeType === 'text/plain');
-									}
+										// extract names and emails seperately
+										const reg = /(.*)<(.*)>/;
+										const fromMatches = reg.exec(from.value);
+										const toMatches = reg.exec(to.value);
+										const fromEmail = (from.value = fromMatches[2] ? fromMatches[2].trim() : from.value);
+										const fromName = (from.value = fromMatches[1] ? fromMatches[1].trim() : '');
+										const toEmail = (to.value = toMatches[2] ? toMatches[2].trim() : to.value);
+										const toName = (to.value = toMatches[1] ? toMatches[1].trim() : '');
 
-									let bodyData = part ? part.body.data : email.payload.body.data;
-									let decodedBody = '';
-
-									if (bodyData) {
-										const reg = /(On\s(.*)wrote:)|(>.*\n)/g;
-										decodedBody = Buffer.from(bodyData, 'base64').toString();
-										decodedBody = decodedBody.replace(reg, '');
-										if (decodedBody.length > 3000) {
-											decodedBody = `Email body is over 3000 characters. Please view and respond to this email from Gmail.)`;
+										let part;
+										//console.log(email.payload.parts);
+										if (email.payload.parts) {
+											// Find 'text/plain' part
+											part = email.payload.parts.find((part) => part.mimeType === 'text/plain');
 										}
+
+										let bodyData = part ? part.body.data : email.payload.body.data;
+										let decodedBody = '';
+
+										if (bodyData) {
+											const regex = /(On\s(.*)wrote:)|(>.*\n)/g;
+											decodedBody = Buffer.from(bodyData, 'base64').toString();
+											decodedBody = decodedBody.replace(regex, '');
+											if (decodedBody.length > 3000) {
+												decodedBody = `Email body is over 3000 characters. Please view and respond to this email from Gmail.)`;
+											}
+										}
+										const emailData = {
+											id: email.id,
+											threadId: email.threadId,
+											date: date.value,
+											from: from.value,
+											subject: subject.value,
+											//body: decodedBody, //! no need to store
+										};
+										db.collection('emails').insertOne({ googleId: user.googleId, ...emailData });
+										console.log('Inserted email', email.id);
+
+										const webhookURL = 'https://api.botghost.com/webhook/1090768041563918346/nc8b8c6a21jlx8lutoe90a'; //! Add webhook URL here
+										const header = {
+											Authorization: process.env.BG_API_KEY,
+											'Content-Type': 'application/json',
+										};
+										const reqBody = {
+											variables: [
+												{
+													name: 'Email Sender',
+													variable: '{email_sender}',
+													value: `${fromEmail}`,
+												},
+												{
+													name: 'Email Recipient',
+													variable: '{email_recipient}',
+													value: `${toEmail}`,
+												},
+												{
+													name: 'Email Sender Name',
+													variable: '{email_sender_name}',
+													value: `${fromName}`,
+												},
+												{
+													name: 'Email Recipient Name',
+													variable: '{email_recipient_name}',
+													value: `${toName}`,
+												},
+												{
+													name: 'Email Subject',
+													variable: '{email_subject}',
+													value: `${subject.value}`,
+												},
+												{
+													name: 'Email Body',
+													variable: '{email_body}',
+													value: `${decodedBody}`,
+												},
+												{
+													name: 'Email ID',
+													variable: '{email_id}',
+													value: `${email.id}`,
+												},
+												{
+													name: 'Thread ID',
+													variable: '{thread_id}',
+													value: `${email.threadId}`,
+												},
+												{
+													name: 'Email URL',
+													variable: '{email_url}',
+													value: `${url}`,
+												},
+											],
+										};
+
+										axios
+											.post(webhookURL, reqBody, { headers: header })
+											.then((res) => {
+												console.log('Successful');
+											})
+											.catch((err) => {
+												console.error('Error', err);
+											});
+									} catch (err) {
+										console.error('Error fetching emails:', err);
 									}
-									const emailData = {
-										id: email.id,
-										threadId: email.threadId,
-										date: date.value,
-										from: from.value,
-										subject: subject.value,
-										//body: decodedBody, //! no need to store
-									};
-									db.collection('emails').insertOne({ googleId: user.googleId, ...emailData });
-									console.log('Inserted email', email.id);
-
- 									const webhookURL = 'https://api.botghost.com/webhook/1090768041563918346/nc8b8c6a21jlx8lutoe90a'; //! Add webhook URL here
-									const header = {
-										Authorization: process.env.BG_API_KEY,
-										'Content-Type': 'application/json',
-									};
-									const reqBody = {
-										variables: [
-											{
-												name: 'Email Sender',
-												variable: '{email_sender}',
-												value: `${fromEmail}`,
-											},
-											{
-												name: 'Email Recipient',
-												variable: '{email_recipient}',
-												value: `${toEmail}`,
-											},
-											{
-												name: 'Email Sender Name',
-												variable: '{email_sender_name}',
-												value: `${fromName}`,
-											},
-											{
-												name: 'Email Recipient Name',
-												variable: '{email_recipient_name}',
-												value: `${toName}`,
-											},
-											{
-												name: 'Email Subject',
-												variable: '{email_subject}',
-												value: `${subject.value}`,
-											},
-											{
-												name: 'Email Body',
-												variable: '{email_body}',
-												value: `${decodedBody}`,
-											},
-											{
-												name: 'Email ID',
-												variable: '{email_id}',
-												value: `${email.id}`,
-											},
-											{
-												name: 'Thread ID',
-												variable: '{thread_id}',
-												value: `${email.threadId}`,
-											},
-											{
-												name: 'Email URL',
-												variable: '{email_url}',
-												value: `${url}`,
-											},
-										],
-									};
-
-									axios
-										.post(webhookURL, reqBody, { headers: header })
-										.then((res) => {
-											console.log('Successful');
-										})
-										.catch((err) => {
-											console.error('Error', err);
-										});
 								} else {
 									console.log('Email already exists in the database');
 								}
 							}
 						);
 					});
-				}else {
+				} else {
 					console.log('No unread emails');
 				}
 			}
@@ -185,10 +189,10 @@ async function getEmails() {
 }
 
 //interval function to run every 5 minutes
-try{
-setInterval(() => {
-	getEmails();
-}, 300000);
+try {
+	setInterval(() => {
+		getEmails();
+	}, 300000);
 } catch (err) {
 	console.error('Error fetching emails:', err);
 }
