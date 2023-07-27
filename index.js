@@ -45,6 +45,7 @@ async function Init() {
 	const getEmails = require('./functions/getEmails');
 	const sendEmails = require('./Genbot/sendEmail');
 	const highestRole = require('./endpoints/highestRole');
+	const getThreads = require('./endpoints/getThreads');
 
 	// POST requests
 	app.post('/regex', regex);
@@ -67,6 +68,7 @@ async function Init() {
 	app.get('/memberroles', memberRoles);
 	app.get('/globalchat', globalChat);
 	app.get('/highestrole', highestRole);
+	app.get('/getthread', getThreads);
 
 	//Event listeners
 	app.post('/gentally', genTally);
