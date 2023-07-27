@@ -74,10 +74,10 @@ async function getEmails() {
 										const reg = /(.*)<(.*)>/;
 										const fromMatches = reg.exec(from.value);
 										const toMatches = reg.exec(to.value);
-										const fromName = fromMatches ? fromMatches[1].trim() : '';
-										const fromEmail = fromMatches ? fromMatches[2].trim() : '';
-										const toName = toMatches ? toMatches[1].trim() : '';
-										const toEmail = toMatches ? toMatches[2].trim() : '';
+										const fromName = fromMatches ? fromMatches[1].trim() : ' ';
+										const fromEmail = fromMatches ? fromMatches[2].trim() : ' ';
+										const toName = toMatches ? toMatches[1].trim() : ' ';
+										const toEmail = toMatches ? toMatches[2].trim() : ' ';
 
 										let part;
 										//console.log(email.payload.parts);
