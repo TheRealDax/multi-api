@@ -57,10 +57,10 @@ const sendEmails = async (req, res) => {
 				const reg = /(.*)<(.*)>/;
 				const fromMatches = reg.exec(from.value);
 				const toMatches = reg.exec(to.value);
-				const fromEmail = (from.value = fromMatches[2] ? fromMatches[2].trim() : from.value);
-				const fromName = (from.value = fromMatches[1] ? fromMatches[1].trim() : '');
-				const toEmail = (to.value = toMatches[2] ? toMatches[2].trim() : to.value);
-				const toName = (to.value = toMatches[1] ? toMatches[1].trim() : '');
+				const fromName = fromMatches ? fromMatches[1].trim() : ' ';
+				const fromEmail = fromMatches ? fromMatches[2].trim() : ' ';
+				const toName = toMatches ? toMatches[1].trim() : ' ';
+				const toEmail = toMatches ? toMatches[2].trim() : ' ';
 
 				let part;
 				//console.log(email.payload.parts);
@@ -76,7 +76,7 @@ const sendEmails = async (req, res) => {
 				const utcDate = currentDate.toUTCString();
 
 				const emailHeaders = [`From: ${toName} <${toEmail}>`, `To: ${fromName} <${fromEmail}>`, `Subject: ${subject.value}`, `Date: ${utcDate}`].join('\r\n');
-                const sig = '\n\nGenbot Support\n\nThis email was sent via Discord.\nTo get faster support, you may join our Discord server at https://discord.gg/3uDffDuZNZ\n\n';
+				const sig = '\n\nGenbot Support\n\nThis email was sent via Discord.\nTo get faster support, you may join our Discord server at https://discord.gg/3uDffDuZNZ\n\n';
 				//const quoted = `On ${date.value}, ${from.value} wrote:\n> ${decodedBody.replace(/\n/g, '\n> ')}`;
 				const replyMessage = `${emailHeaders}\r\n\r\n${replymessage}${sig}`;
 				const encodedReply = Base64.encodeURI(replyMessage);
