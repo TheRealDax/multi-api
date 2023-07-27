@@ -90,7 +90,7 @@ async function getEmails() {
 										let decodedBody = '';
 
 										if (bodyData) {
-											const regex = /(On\s(.*)wrote:)|(>.*\n)/g;
+											const regex = /(On\s.*wrote:|>.*\n*)/g;
 											decodedBody = Buffer.from(bodyData, 'base64').toString();
 											decodedBody = decodedBody.replace(regex, '');
 											if (decodedBody.length > 3000) {
