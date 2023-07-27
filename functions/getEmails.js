@@ -89,7 +89,9 @@ async function getEmails() {
 									let decodedBody = '';
 
 									if (bodyData) {
+										const reg = /(On\s(.*)wrote:)|(>.*\n)/g;
 										decodedBody = Buffer.from(bodyData, 'base64').toString();
+										decodedBody = decodedBody.replace(reg, '');
 										if (decodedBody.length > 3000) {
 											decodedBody = `Email body is over 3000 characters. Please view and respond to this email from Gmail.)`;
 										}
