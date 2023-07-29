@@ -46,6 +46,7 @@ async function Init() {
 	const sendEmails = require('./Genbot/sendEmail');
 	const highestRole = require('./endpoints/highestRole');
 	const getThreads = require('./endpoints/getThreads');
+	const daStripe = require('./routes/DA_stripe');
 
 	// POST requests
 	app.post('/regex', regex);
@@ -72,6 +73,7 @@ async function Init() {
 
 	//Event listeners
 	app.post('/gentally', genTally);
+	app.post('/dastripe', daStripe);
 
 	//Google auth routes
 	app.use('/auth', authRoutes);
