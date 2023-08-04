@@ -2,8 +2,8 @@
  * @swagger
  * /globalban:
  *   post:
- *     summary: Ban a user from all servers the bot is in.
- *     description: Ban a user from all servers the bot is in. Requires an Authorization header with the bot token.
+ *     summary: Ban or unban a user from all servers the bot is in.
+ *     description: Ban or unban a user from all servers the bot is in. Requires an Authorization header with the bot token.
  *     tags:
  *       - Discord
  *     security:
@@ -14,16 +14,21 @@
  *         schema:
  *           type: string
  *         required: true
- *         description: User ID to ban.
+ *         description: User ID to ban or unban.
  *       - in: query
  *         name: reason
  *         schema:
  *           type: string
  *         required: false
- *         description: Reason for the ban.
+ *         description: Reason for the ban or unban.
+ *       - in: query
+ *         name: unban
+ *         schema:
+ *           type: boolean
+ *         description: Set to `true` to unban the user instead of banning.
  *     responses:
  *       '200':
- *         description: User was banned on all servers.
+ *         description: User was banned or unbanned on all servers.
  *         content:
  *           application/json:
  *             schema:
@@ -80,6 +85,7 @@ const globalBan = async (req, res) => {
 		const authtoken = req.headers.authorization;
 		const userid = req.query.userid;
 		const reason = req.query.reason || 'No reason provided';
+		const unban = req.query.unban || false;
 
 		if (!authtoken) {
 			res.status(401).json({ error: 'Missing Authorization header' });
@@ -114,9 +120,17 @@ const globalBan = async (req, res) => {
 				}
 			} catch (err) {
 			}
+			if (unban) {
+				try {
+					await currentGuild.bans.remove(userid);
+				} catch (err) {
+					return res.status(500).json({ error: 'Failed to unban user: ', err});
+				}
+				return res.status(200).json({ result: `${user.username} was unbanned on ${guilds.size} servers.` });
+			}
  			await currentGuild.bans.create(userid, { reason: reason });
 		}
-		return res.status(200).json({ result: `${user.username} was banned on all servers`, user_was_in: `${count} out of ${guilds.size} servers`,  user_found_on: userFoundOnGuild });
+		return res.status(200).json({ result: `${user.username} was banned on ${guilds.size} servers`, user_was_in: `${count} out of ${guilds.size} servers`,  user_found_on: userFoundOnGuild });
 	} catch (err) {
 		console.error('Error:', err);
 		return res.status(500).json({ error: 'Failure. Please check that your bot is in at least 1 server and the userid is correct.' });
