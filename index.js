@@ -33,21 +33,20 @@ async function Init() {
 	const convertNum = require('./endpoints/convertNum');
 	const transcript = require('./endpoints/transcript');
 	const regex = require('./endpoints/regex');
-	const vc = require('./endpoints/vc');
+	//const vc = require('./endpoints/vc');
 	const getRoleCount = require('./endpoints/getRoleCount');
 	const tempRole = require('./endpoints/tempRole');
 	const random = require('./endpoints/random');
 	const memberRoles = require('./endpoints/memberRoles');
 	const genTally = require('./Genbot/genTally');
 	const globalChat = require('./endpoints/globalChat');
-	//const sendEmails = require('./Genbot/sendEmails');
 	const automod = require('./endpoints/automod');
 	const getEmails = require('./functions/getEmails');
 	const sendEmails = require('./Genbot/sendEmail');
 	const highestRole = require('./endpoints/highestRole');
 	const getThreads = require('./endpoints/getThreads');
 	const daStripe = require('./routes/DA_stripe');
-	//const vcRecord = require('./endpoints/vcrecord');
+	const vcRecord = require('./endpoints/vcrecord');
 	const globalBan = require('./endpoints/globalban');
 
 	// POST requests
@@ -58,8 +57,7 @@ async function Init() {
 	app.post('/getsubstring', getSubString);
 	app.post('/timestamp', timestamp);
 	app.post('/transcript', transcript);
-	app.post('/vc', vc);
-	//app.post('/sendemail', sendEmails);
+	//app.post('/vc', vc);
 	app.post('/automod', automod);
 
 	// GET requests
@@ -72,7 +70,7 @@ async function Init() {
 	app.get('/globalchat', globalChat);
 	app.get('/highestrole', highestRole);
 	app.get('/getthread', getThreads);
-	//app.get('/vcrecord', vcRecord);
+	app.get('/vcrecord', vcRecord);
 	app.get('/globalban', globalBan);
 
 	//Event listeners

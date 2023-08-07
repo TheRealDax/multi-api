@@ -23,6 +23,7 @@ async function getEmails() {
 				oauth2Client.refreshAccessToken((err, tokens) => {
 					if (err) {
 						console.log(err);
+						return;
 					}
 					db.collection('users').findOneAndUpdate({ googleId: user.googleId }, { $set: { accessToken: tokens.access_token, expires_in: tokens.expiry_date } });
 					console.log('Access token refreshed');
@@ -189,6 +190,7 @@ async function getEmails() {
 		});
 	} catch (err) {
 		console.error('Error in main function:', err);
+		return;
 	}
 }
 //interval function to run every 5 minutes
