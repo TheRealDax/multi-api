@@ -3,6 +3,7 @@
  * /globalban:
  *   post:
  *     summary: Ban or unban a user from all servers the bot is in.
+ *     tags: [Discord]
  *     description: Ban or unban a user from all servers the bot is in. This endpoint requires an Authorization header with a valid Discord bot token.
  *     parameters:
  *       - name: userid
