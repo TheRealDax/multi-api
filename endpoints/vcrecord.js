@@ -34,7 +34,7 @@ const vcRecord = async (req, res) => {
 	try {
 		let client = clients[serverid];
 
-		if (!client[serverid]) {
+		if (!client) {
 			client = new Client({ intents });
 			clients[serverid] = client;
 			await client.login(token);
