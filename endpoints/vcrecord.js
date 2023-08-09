@@ -118,7 +118,7 @@ const vcRecord = async (req, res) => {
 					setTimeout(() => {
 						try {
 							if (channel.members.size === 1) {
-								connection.destroy();
+								connection.disconnect();
 								console.log(`Disconnected from voice channel`);
 								out.close();
 								const pcm = fs.createReadStream(pcmFile);
@@ -148,6 +148,15 @@ const vcRecord = async (req, res) => {
 								fs.unlinkSync(pcmFile);
 								fs.unlinkSync(wavFile);
 
+								//check the file size and if it is over 7.5MB, console log and return
+								const stats = fs.statSync(mp3File);
+								const fileSizeInBytes = stats.size;
+								const fileSizeInMegabytes = fileSizeInBytes / (1024 * 1024);
+								if (fileSizeInMegabytes > 7.5) {
+									console.log('File size is too large');
+									return;
+								}
+
 								const attachment = new AttachmentBuilder(mp3File, { name: `${recordingname}.mp3` });
 								recordingChannel.send({
 									files: [attachment],
@@ -155,11 +164,11 @@ const vcRecord = async (req, res) => {
 							}
 						} catch (error) {
 							console.log(error);
-							connection.destroy();
 						}
 					}, 10000);
 				}
 			}
+			client.destroy();
 		});
 
 		res.status(200).json({ message: 'Joined voice channel successfully' });
