@@ -19,7 +19,7 @@ const vcRecord = async (req, res) => {
 	const vcid = req.query.vcid;
 	const recordingchannelid = req.query.recordingchannelid;
 	const serverid = req.query.serverid;
-	const recordingname = req.query.recordingname || 'recording.mp3';
+	const recordingname = req.query.recordingname || 'recording';
 
 	if (!vcid || !serverid || !recordingchannelid) {
 		res.status(400).json({ error: 'Missing required parameters. Please ensure you are using all required parameters' });
