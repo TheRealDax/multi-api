@@ -33,7 +33,6 @@ async function Init() {
 	const convertNum = require('./endpoints/convertNum');
 	const transcript = require('./endpoints/transcript');
 	const regex = require('./endpoints/regex');
-	//const vc = require('./endpoints/vc');
 	const getRoleCount = require('./endpoints/getRoleCount');
 	const tempRole = require('./endpoints/tempRole');
 	const random = require('./endpoints/random');
@@ -57,7 +56,6 @@ async function Init() {
 	app.post('/getsubstring', getSubString);
 	app.post('/timestamp', timestamp);
 	app.post('/transcript', transcript);
-	//app.post('/vc', vc);
 	app.post('/automod', automod);
 
 	// GET requests

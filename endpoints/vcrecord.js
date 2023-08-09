@@ -11,7 +11,6 @@ const exec = util.promisify(require('node:child_process').exec);
 const TOKEN_REGEX = /^Bot\s[a-zA-Z0-9_.-]+$/; // Regular expression pattern for token validation
 
 const intents = [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates, GatewayIntentBits.GuildMessages];
-const clients = {};
 
 const vcRecord = async (req, res) => {
 	const { authorization: token } = req.headers;
@@ -32,13 +31,8 @@ const vcRecord = async (req, res) => {
 	}
 
 	try {
-		let client = clients[serverid];
-
-		if (!client) {
-			client = new Client({ intents });
-			clients[serverid] = client;
-			await client.login(token);
-		}
+		const client = new Client({ intents });
+		await client.login(token);
 
 		const guild = await client.guilds.fetch(serverid);
 		const channel = await guild.channels.fetch(vcid);
@@ -46,8 +40,10 @@ const vcRecord = async (req, res) => {
 
 		const existingConn = getVoiceConnection(channel.guild.id);
 		if (existingConn) {
-			res.status(400).json({ error: 'Already recording in another channel' });
-			return;
+			if (existingConn.state.status === VoiceConnectionStatus.Ready) {
+				res.status(400).json({ error: 'Already recording in another channel' });
+				return;
+			}
 		}
 
 		if (!channel) {
@@ -74,9 +70,10 @@ const vcRecord = async (req, res) => {
 			adapterCreator: channel.guild.voiceAdapterCreator,
 		});
 
-		await entersState(connection, VoiceConnectionStatus.Ready, 20e3);
-		if (connection.state.status !== VoiceConnectionStatus.Ready) {
-			res.status(500).json({ error: 'Failed to join voice channel' });
+		await entersState(connection, VoiceConnectionStatus.Ready, 10000);
+		if (connection.state.status !== 'ready') {
+			connection.disconnect();
+			res.status(500).json({ error: 'Failed to join voice channel. Please try again' });
 			return;
 		}
 		/* 		const usersInChannel = channel.members.filter((member) => !member.user.bot).map((member) => member.user.id);
@@ -118,6 +115,11 @@ const vcRecord = async (req, res) => {
 					setTimeout(() => {
 						try {
 							if (channel.members.size === 1) {
+								//check if pcmFile exists
+								if (!fs.existsSync(pcmFile)) {
+									connection.disconnect();
+									return;
+								}
 								connection.disconnect();
 								console.log(`Disconnected from voice channel`);
 								out.close();
@@ -135,7 +137,6 @@ const vcRecord = async (req, res) => {
 										setTimeout(() => {
 											try {
 												fs.unlinkSync(mp3File);
-												client.destroy();
 											} catch (error) {
 												console.log(error);
 											}
@@ -146,22 +147,36 @@ const vcRecord = async (req, res) => {
 								});
 							}
 							async function sendFile() {
-								fs.unlinkSync(pcmFile);
-								fs.unlinkSync(wavFile);
+								try {
+									fs.unlinkSync(pcmFile);
+									fs.unlinkSync(wavFile);
 
-								//check the file size and if it is over 7.5MB, console log and return
-								const stats = fs.statSync(mp3File);
-								const fileSizeInBytes = stats.size;
-								const fileSizeInMegabytes = fileSizeInBytes / (1024 * 1024);
-								if (fileSizeInMegabytes > 7.5) {
-									console.log('File size is too large');
-									return;
+									const stats = fs.statSync(mp3File);
+									const fileSizeInBytes = stats.size;
+									const fileSizeInMegabytes = fileSizeInBytes / (1024 * 1024);
+									const premium = guild.premiumTier;
+
+									let premiumLimit;
+									if (premium === 'NONE' || 'TIER_1') {
+										premiumLimit = 25;
+									} else if (premium === 'TIER_2') {
+										premiumLimit = 50;
+									} else if (premium === 'TIER_3') {
+										premiumLimit = 100;
+									}
+
+									if (fileSizeInMegabytes > premiumLimit) {
+										recordingChannel.send(`Your recording could not be sent. Your server has a file upload limit of ${premiumLimit}MB and your recording is ${fileSizeInMegabytes.toFixed(2)}MB.`);
+										return;
+									} else {
+										const attachment = new AttachmentBuilder(mp3File, { name: `${recordingname}.mp3` });
+										recordingChannel.send({
+											files: [attachment],
+										});
+									}
+								} catch (error) {
+									console.log(error);
 								}
-
-								const attachment = new AttachmentBuilder(mp3File, { name: `${recordingname}.mp3` });
-								recordingChannel.send({
-									files: [attachment],
-								});
 							}
 						} catch (error) {
 							console.log(error);
