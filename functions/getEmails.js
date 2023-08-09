@@ -23,7 +23,6 @@ async function getEmails() {
 				oauth2Client.refreshAccessToken((err, tokens) => {
 					if (err) {
 						console.log(err);
-						if (err.code === 'invalid_grant') {
 							db.collection('users').deleteOne({ googleId: user.googleId });
 						const webhookURL = 'https://api.botghost.com/webhook/1090768041563918346/zp3y2j4otrmgm7bvx9a4ql'; //! Add webhook URL here
 						const header = {
@@ -49,7 +48,7 @@ async function getEmails() {
 								console.error('Error', err);
 							});
 						return;
-					}}
+					}
 					db.collection('users').findOneAndUpdate({ googleId: user.googleId }, { $set: { accessToken: tokens.access_token, expires_in: tokens.expiry_date } });
 					console.log('Access token refreshed');
 				});
