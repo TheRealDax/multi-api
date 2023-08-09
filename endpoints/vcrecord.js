@@ -143,6 +143,7 @@ const vcRecord = async (req, res) => {
 										console.log(error);
 									}
 								});
+								client.destroy();
 							}
 							async function sendFile() {
 								fs.unlinkSync(pcmFile);
@@ -168,7 +169,6 @@ const vcRecord = async (req, res) => {
 					}, 10000);
 				}
 			}
-			client.destroy();
 		});
 
 		res.status(200).json({ message: 'Joined voice channel successfully' });
