@@ -1,10 +1,12 @@
 // API endpoint using express that takes serverid, channelid as query parameters and connects to discord
 
 const { entersState, joinVoiceChannel, VoiceConnectionStatus, EndBehaviorType, getVoiceConnection } = require('@discordjs/voice');
-const { Client, GatewayIntentBits, ChannelType } = require('discord.js');
+const { Client, GatewayIntentBits, ChannelType, AttachmentBuilder } = require('discord.js');
 const prism = require('prism-media');
 const fs = require('fs');
 const wav = require('wav');
+const util = require('node:util');
+const exec = util.promisify(require('node:child_process').exec);
 
 const TOKEN_REGEX = /^Bot\s[a-zA-Z0-9_.-]+$/; // Regular expression pattern for token validation
 
@@ -14,11 +16,12 @@ const clients = {};
 const vcRecord = async (req, res) => {
 	const { authorization: token } = req.headers;
 
-	const channelid = req.query.channelid;
+	const vcid = req.query.vcid;
+	const recordingchannelid = req.query.recordingchannelid;
 	const serverid = req.query.serverid;
 
-	if (!channelid || !serverid) {
-		res.status(400).json({ error: 'Missing required parameters. Please ensure you are using token, serverid, and channelid parameters.' });
+	if (!vcid || !serverid || !recordingchannelid) {
+		res.status(400).json({ error: 'Missing required parameters. Please ensure you are using all required parameters' });
 		return;
 	}
 
@@ -37,7 +40,8 @@ const vcRecord = async (req, res) => {
 		}
 
 		const guild = await client.guilds.fetch(serverid);
-		const channel = await guild.channels.fetch(channelid);
+		const channel = await guild.channels.fetch(vcid);
+		const recordingChannel = await guild.channels.fetch(recordingchannelid);
 
 		const existingConn = getVoiceConnection(channel.guild.id);
 		if (existingConn) {
@@ -55,6 +59,11 @@ const vcRecord = async (req, res) => {
 			return;
 		}
 
+		if (recordingChannel.type !== ChannelType.GuildText) {
+			res.status(400).json({ error: 'Recording channel must be a text channel' });
+			return;
+		}
+
 		//join voice channel
 		const connection = joinVoiceChannel({
 			channelId: channel.id,
@@ -65,19 +74,25 @@ const vcRecord = async (req, res) => {
 		});
 
 		await entersState(connection, VoiceConnectionStatus.Ready, 20e3);
-/* 		const usersInChannel = channel.members.filter((member) => !member.user.bot).map((member) => member.user.id);
+		if (connection.state.status !== VoiceConnectionStatus.Ready) {
+			res.status(500).json({ error: 'Failed to join voice channel' });
+			return;
+		}
+		/* 		const usersInChannel = channel.members.filter((member) => !member.user.bot).map((member) => member.user.id);
 		for (const userId of usersInChannel) {
 			console.log(`Subscribed to ${userId}`);
 		} */
 		const timestamp = new Date().getTime();
-		const pcmFile = `./recordings/${channelid} - ${timestamp}.pcm`;
-		const wavFile = `./recordings/${channelid} - ${timestamp}.wav`;
+		const filename = `./recordings/${vcid}-${timestamp}`;
+		const pcmFile = `${filename}.pcm`;
+		const wavFile = `${filename}.wav`;
+		const mp3File = `${filename}.mp3`;
 		let stream;
 		let decoder;
 		let out;
 
 		//detect when user joins voice channel //! not needed
-/* 		client.on('voiceStateUpdate', async (oldState, newState) => {
+		/* 		client.on('voiceStateUpdate', async (oldState, newState) => {
 			if (newState.channelId === channel.id) {
 				console.log(`User ${newState.member.user.tag} joined voice channel`);
 				const userId = newState.member.id;
@@ -85,12 +100,12 @@ const vcRecord = async (req, res) => {
 		}); */
 
 		connection.receiver.speaking.on('start', async (userId) => {
-			if(connection.receiver.subscriptions.size === 0) {
-			stream = connection.receiver.subscribe(userId, { end: { behavior: EndBehaviorType.AfterSilence, duration: 100 } });
-			out = fs.createWriteStream(pcmFile, { flags: 'a' });
-			decoder = new prism.opus.Decoder({ rate: 48000, channels: 2, frameSize: 960 });
-			stream.pipe(decoder).pipe(out);
-			//console.log(`User ${userId} started speaking`);
+			if (connection.receiver.subscriptions.size === 0) {
+				stream = connection.receiver.subscribe(userId, { end: { behavior: EndBehaviorType.AfterSilence, duration: 100 } });
+				out = fs.createWriteStream(pcmFile, { flags: 'a' });
+				decoder = new prism.opus.Decoder({ rate: 48000, channels: 2, frameSize: 960 });
+				stream.pipe(decoder).pipe(out);
+				//console.log(`User ${userId} started speaking`);
 			}
 		});
 
@@ -99,28 +114,49 @@ const vcRecord = async (req, res) => {
 				if (channel.members.size === 1) {
 					console.log(`No users left in voice channel, disconnecting in 10 seconds`);
 					setTimeout(() => {
-						try{
-						if (channel.members.size === 1) {
+						try {
+							if (channel.members.size === 1) {
+								connection.destroy();
+								console.log(`Disconnected from voice channel`);
+								out.close();
+								const pcm = fs.createReadStream(pcmFile);
+								const wavData = new wav.FileWriter(wavFile, {
+									sampleRate: 48000,
+									channels: 2,
+									bitDepth: 16,
+								});
+								pcm.pipe(wavData);
+								pcm.on('close', async () => {
+									try {
+										await exec(`ffmpeg -i ${wavFile} ${mp3File}`);
+										await sendFile();
+										setTimeout(() => {
+											try {
+												fs.unlinkSync(mp3File);
+											} catch (error) {
+												console.log(error);
+											}
+										}, 10000);
+									} catch (error) {
+										console.log(error);
+									}
+								});
+							}
+							async function sendFile() {
+								fs.unlinkSync(pcmFile);
+								fs.unlinkSync(wavFile);
+
+								const attachment = new AttachmentBuilder(mp3File, { name: 'recording.mp3' });
+								recordingChannel.send({
+									files: [attachment],
+								});
+							}
+						} catch (error) {
+							console.log(error);
 							connection.destroy();
-							console.log(`Disconnected from voice channel`);
-							out.close();
-							const pcm = fs.createReadStream(pcmFile);
-							const wavData = new wav.FileWriter(wavFile, {
-								sampleRate: 48000,
-								channels: 2,
-								bitDepth: 16,
-							});
-							pcm.pipe(wavData);
-							//fs.unlinkSync(pcmFile);
-							
 						}
-					} catch (error) {
-						console.log(error);
-						connection.destroy();
-					}
 					}, 10000);
 				}
-
 			}
 		});
 
