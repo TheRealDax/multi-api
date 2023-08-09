@@ -19,6 +19,7 @@ const vcRecord = async (req, res) => {
 	const vcid = req.query.vcid;
 	const recordingchannelid = req.query.recordingchannelid;
 	const serverid = req.query.serverid;
+	const recordingname = req.query.recordingname || 'recording.mp3';
 
 	if (!vcid || !serverid || !recordingchannelid) {
 		res.status(400).json({ error: 'Missing required parameters. Please ensure you are using all required parameters' });
@@ -83,7 +84,8 @@ const vcRecord = async (req, res) => {
 			console.log(`Subscribed to ${userId}`);
 		} */
 		const timestamp = new Date().getTime();
-		const filename = `./recordings/${vcid}-${timestamp}`;
+		const tmpDir = '/tmp';
+		const filename = `${tmpDir}/${vcid}-${timestamp}`;
 		const pcmFile = `${filename}.pcm`;
 		const wavFile = `${filename}.wav`;
 		const mp3File = `${filename}.mp3`;
@@ -146,7 +148,7 @@ const vcRecord = async (req, res) => {
 								fs.unlinkSync(pcmFile);
 								fs.unlinkSync(wavFile);
 
-								const attachment = new AttachmentBuilder(mp3File, { name: 'recording.mp3' });
+								const attachment = new AttachmentBuilder(mp3File, { name: `${recordingname}.mp3` });
 								recordingChannel.send({
 									files: [attachment],
 								});
