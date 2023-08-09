@@ -178,6 +178,20 @@ async function getEmails() {
 										}
 									} else {
 										console.log('Email already exists in the database');
+										gmail.users.messages.modify(
+											{
+												userId: 'me',
+												id: message.id,
+												resource: {
+													removeLabelIds: ['UNREAD'],
+												},
+											},
+											(err, response) => {
+												if (err) {
+													console.log(err);
+												}
+											}
+										);
 									}
 								}
 							);
