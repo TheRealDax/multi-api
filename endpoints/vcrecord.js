@@ -135,6 +135,7 @@ const vcRecord = async (req, res) => {
 										setTimeout(() => {
 											try {
 												fs.unlinkSync(mp3File);
+												client.destroy();
 											} catch (error) {
 												console.log(error);
 											}
@@ -143,7 +144,6 @@ const vcRecord = async (req, res) => {
 										console.log(error);
 									}
 								});
-								client.destroy();
 							}
 							async function sendFile() {
 								fs.unlinkSync(pcmFile);
