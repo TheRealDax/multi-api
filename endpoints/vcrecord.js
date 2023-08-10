@@ -166,13 +166,14 @@ const vcRecord = async (req, res) => {
 									}
 
 									if (fileSizeInMegabytes > premiumLimit) {
-										recordingChannel.send(`Your recording could not be sent. Your server has a file upload limit of ${premiumLimit}MB and your recording is ${fileSizeInMegabytes.toFixed(2)}MB.`);
-										return;
+										await recordingChannel.send(`Your recording could not be sent. Your server has a file upload limit of ${premiumLimit}MB and your recording is ${fileSizeInMegabytes.toFixed(2)}MB.`);
+										client.destroy();
 									} else {
 										const attachment = new AttachmentBuilder(mp3File, { name: `${recordingname}.mp3` });
-										recordingChannel.send({
+										await recordingChannel.send({
 											files: [attachment],
 										});
+										client.destroy();
 									}
 								} catch (error) {
 									console.log(error);
