@@ -136,6 +136,7 @@ const vc = async (req, res) => {
 
     let checkInterval;
     let timeoutInterval;
+    let duckyiscool = false;
 
     // Check if the bot is alone in the voice channel every 5 minutes
     const checkAloneInChannel = () => {
