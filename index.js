@@ -47,6 +47,7 @@ async function Init() {
 	const daStripe = require('./routes/DA_stripe');
 	const vcRecord = require('./endpoints/vcrecord');
 	const globalBan = require('./endpoints/globalban');
+	const purge = require('./endpoints/purge');
 
 	// POST requests
 	app.post('/regex', regex);
@@ -70,6 +71,7 @@ async function Init() {
 	app.get('/getthread', getThreads);
 	app.get('/vcrecord', vcRecord);
 	app.get('/globalban', globalBan);
+	app.get('/purge', purge);
 
 	//Event listeners
 	app.post('/gentally', genTally);

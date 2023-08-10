@@ -83,7 +83,6 @@ const getRoleCount = async (req, res) => {
 
   try {
       await client.login(authToken);
-      console.log("Logging in...")
 
     const guild = await client.guilds.fetch(serverid);
     if (!guild) {
