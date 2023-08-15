@@ -126,7 +126,7 @@ const tempRole = async (req, res) => {
 
 		removeRoleFunction = setInterval(removeRole, timeout);
 
-		return res.json('Role added to user.');
+		return res.status(200).json('Role added to user.');
 	} catch (error) {
 		console.error('Error:', error);
 		return res.status(500).json({ error: 'Internal server error' });

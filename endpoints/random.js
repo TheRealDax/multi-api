@@ -52,7 +52,7 @@
 
 const random = async (req, res) => {
     try{
-    const length = parseInt(req.query.length);
+    const length = parseInt(req.query.length) || 8;
     const lettercase = req.query.lettercase || 'lower';
     const numbers = req.query.numbers !== 'false';
     const charlimit = req.query.charlimit || 'abcdefghijklmnopqrstuvwxyz0123456789';
@@ -78,7 +78,7 @@ const random = async (req, res) => {
         result += characters.charAt(Math.floor(Math.random() * characters.length));
     }
 
-    res.send({ result });
+    return res.status(200).json({ result });
     console.log(result);
 
 } catch(err){

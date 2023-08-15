@@ -56,7 +56,7 @@ const purge = async (req, res) => {
     const token = req.headers.authorization;
     const serverid = req.query.serverid;
     const channelid = req.query.channelid;
-    const count = req.query.count;
+    const count = req.query.count || 10;
 
     try {
         await client.login(token);

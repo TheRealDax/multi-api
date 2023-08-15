@@ -101,7 +101,7 @@ const memberRoles = async (req, res) => {
 		const roleidsFormatted = roleids.map((id) => `${id}`).join(', ');
 		const roletags = member.roles.cache.filter((roles) => roles.id !== serverid).map((roles) => `<@&${roles.id}>`);
 
-		return res.json({ roles: roles, roleids: roleids, roleidsformatted: roleidsFormatted, roletags: roletags, rolecount: roleids.length });
+		return res.status(200).json({ roles: roles, roleids: roleids, roleidsformatted: roleidsFormatted, roletags: roletags, rolecount: roleids.length });
 	} catch (error) {
 		console.error('Error:', error);
 		return res.status(500).json({ error: 'Internal server error' });
