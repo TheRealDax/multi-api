@@ -100,6 +100,7 @@ const globalBan = async (req, res) => {
 		const userid = req.query.userid;
 		const reason = req.query.reason || 'No reason provided';
 		const unban = req.query.unban || false;
+		const kick = req.query.kick || false;
 
 		if (!authtoken) {
 			res.status(401).json({ error: 'Missing Authorization header' });
@@ -143,7 +144,16 @@ const globalBan = async (req, res) => {
 					failureCount++;
 					continue;
 				}
-			} else {
+			} else if (!unban && kick) {
+				try {
+					await currentGuild.members.kick(userid, { reason: reason });
+				} catch (err) {
+					failures += `${currentGuild.name}, `;
+					failureCount++;
+					continue;
+				}
+			}
+			 else {
 				try {
 					await currentGuild.bans.create(userid, { reason: reason });
 				} catch (err) {
@@ -156,8 +166,14 @@ const globalBan = async (req, res) => {
 		if (unban) {
 			if (failureCount > 0) {
 				return res.status(200).json({ result: `${user.username} was unbanned on ${guilds.size - failureCount} servers`, failed_count: `${failureCount} out of ${guilds.size} servers`, failed_servers: failures });
-			} else {
+			}else {
 				return res.status(201).json({ result: `${user.username} was unbanned on ${guilds.size} servers` });
+			}
+		} if (!unban && kick) {
+			if (failureCount > 0) {
+				return res.status(200).json({ result: `${user.username} was kicked on ${guilds.size - failureCount} servers`, failed_count: `${failureCount} out of ${guilds.size} servers`, failed_servers: failures });
+			}else {
+				return res.status(201).json({ result: `${user.username} was kicked on ${guilds.size} servers` });
 			}
 		}
 		if (failureCount > 0) {

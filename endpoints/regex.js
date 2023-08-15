@@ -44,33 +44,47 @@
 
 // Returns a string based on a regular expression
 const regex = async (req, res) => {
-  try {
-    const string = req.body.string;
-    const regex = req.body.regex;
+	try {
+		const string = req.body.string;
+		const regex = req.body.regex;
 
-    if (string == undefined || regex == undefined){
-      res.status(400).json({ error: 'string and regex must be declared and have a value' });
-      return;
-    }
+		if (string == undefined || regex == undefined) {
+			res.status(400).json({ error: 'string and regex must be declared and have a value' });
+			return;
+		}
 
-    const regexString = new RegExp(regex);
-    const matchedString = regexString.exec(string);
-  
-    if (matchedString) {
-      const matchedGroups = matchedString.slice(0);
-      const responses = matchedGroups.reduce((result, group, index) => {
-        result[`match${index + 1}`] = group;
-        return result;
-      }, {});
-  
-      res.json({ result: responses, match: true });
-      console.log( responses );
-    } else {
-      res.status(404).json({ result: 'No match found. If you are having trouble, visit https://regex101.com/ to test your regular expression before trying again.', match: false });
-    }
-  } catch(err){
-    console.error('Error:', err);
-    return res.status(500).json({ error: 'Internal server error' });
-  }};
+		const regexString = new RegExp(regex, 'gm');
+		let matchedStrings;
+		const responses = [];
+    let numMatches = 0;
+    let groups = [];
 
-  module.exports = regex;
+		while ((matchedStrings = regexString.exec(string)) !== null) {
+			const matchedString = matchedStrings[0];
+			const position = matchedStrings.index;
+
+			// Capturing and handling groups
+			const matchedGroups = matchedStrings.slice(1);
+			if (matchedGroups.length > 0) {
+				groups = matchedGroups;
+			}
+      numMatches++;
+			responses.push({ matchedString, position, groups });
+		}
+
+		if (responses.length > 0) {
+			res.json({ result: responses, match: true, numMatches: numMatches });
+			console.log(responses);
+		} else {
+			res.status(404).json({
+				result: 'No match found. If you are having trouble, visit https://regex101.com/ to test your regular expression before trying again.',
+				match: false,
+			});
+		}
+	} catch (err) {
+		console.error('Error:', err);
+		return res.status(500).json({ error: 'Internal server error' });
+	}
+};
+
+module.exports = regex;
