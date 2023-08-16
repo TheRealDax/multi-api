@@ -30,9 +30,6 @@
  *         description: Missing or invalid number
  */
 
-const swaggerJSDoc = require("swagger-jsdoc");
-
-
 //converts numbers from full to short or vice versa, eg: 1000 = 1k OR 1k = 1000
 const convertNum = async (req, res) => {
   try{
@@ -79,7 +76,6 @@ const convertNum = async (req, res) => {
       }
   
       res.json({ result });
-      console.log(result);
     }
     
     // Conversion from shortened format to number
@@ -98,7 +94,6 @@ const convertNum = async (req, res) => {
       }
   
       res.json({ result });
-      console.log(result);
     }
 
   } catch (err){

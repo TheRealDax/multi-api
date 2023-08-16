@@ -79,7 +79,6 @@ const random = async (req, res) => {
     }
 
     return res.status(200).json({ result });
-    console.log(result);
 
 } catch(err){
     console.error('Error:', err);

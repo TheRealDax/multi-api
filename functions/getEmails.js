@@ -42,7 +42,6 @@ async function getEmails() {
 						axios
 							.post(webhookURL, reqBody, { headers: header })
 							.then((res) => {
-								console.log('Successful');
 							})
 							.catch((err) => {
 								console.error('Error', err);
@@ -53,7 +52,6 @@ async function getEmails() {
 					console.log('Access token refreshed');
 				});
 			} else {
-				console.log('Access token is still valid');
 			}
 
 			const gmail = google.gmail({ version: 'v1', auth: oauth2Client });
@@ -193,7 +191,6 @@ async function getEmails() {
 											axios
 												.post(webhookURL, reqBody, { headers: header })
 												.then((res) => {
-													console.log('Successful');
 												})
 												.catch((err) => {
 													console.error('Error', err);
@@ -203,7 +200,6 @@ async function getEmails() {
 											return;
 										}
 									} else {
-										console.log('Email already exists in the database');
 										gmail.users.messages.modify(
 											{
 												userId: 'me',

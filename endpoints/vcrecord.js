@@ -111,7 +111,6 @@ const vcRecord = async (req, res) => {
 		client.on('voiceStateUpdate', async (oldState, newState) => {
 			if (oldState.channelId === channel.id) {
 				if (channel.members.size === 1) {
-					console.log(`No users left in voice channel, disconnecting in 10 seconds`);
 					setTimeout(() => {
 						try {
 							if (channel.members.size === 1) {
@@ -121,7 +120,6 @@ const vcRecord = async (req, res) => {
 									return;
 								}
 								connection.disconnect();
-								console.log(`Disconnected from voice channel`);
 								out.close();
 								const pcm = fs.createReadStream(pcmFile);
 								const wavData = new wav.FileWriter(wavFile, {

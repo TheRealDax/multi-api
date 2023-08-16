@@ -63,7 +63,6 @@ const genTally = async (req, res) => {
 			axios
 				.post(fields[1], reqBody, { headers: header })
 				.then((response) => {
-					console.log('Successful');
 				})
 				.catch((error) => {
 					console.error('Error', error);

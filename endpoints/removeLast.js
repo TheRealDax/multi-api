@@ -60,7 +60,6 @@ const removeLast = async (req, res) => {
     charcount = result.length;
   
     res.json({ result, charcount });
-    console.log(result);
 
   } catch(err){
     console.error('Error:', err);

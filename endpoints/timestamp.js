@@ -83,7 +83,7 @@ const timestamp = async (req, res) => {
       return res.status(400).json({ error: 'Invalid request. Please provide either date and time or days parameter.' });
     }
   
-    res.json({ convertedTimestamp });
+    res.status(200).json({ convertedTimestamp });
 
   } catch(err){
     console.error('Error:', err);
