@@ -229,14 +229,14 @@ async function getEmails() {
 		return;
 	}
 }
-//interval function to run every 5 minutes
-try {
+//! Turned off at the moment
+/* try {
 	setInterval(() => {
 		getEmails();
 	}, 300000);
 } catch (err) {
 	console.error('Error fetching emails:', err);
 	return;
-}
+} */
 
 module.exports = getEmails;
