@@ -22,31 +22,32 @@ async function getEmails() {
 			if (isExpired) {
 				oauth2Client.refreshAccessToken((err, tokens) => {
 					if (err) {
-						console.log(err);
-						db.collection('users').deleteOne({ googleId: user.googleId });
-						const webhookURL = 'https://api.botghost.com/webhook/1090768041563918346/zp3y2j4otrmgm7bvx9a4ql'; //! Add webhook URL here
-						const header = {
-							Authorization: process.env.BG_API_KEY,
-							'Content-Type': 'application/json',
-						};
-						const reqBody = {
-							variables: [
-								{
-									name: 'Email Auth Error',
-									variable: '{email_auth_error}',
-									value: `The token for ${user.email} has expired and could not be refreshed. Please re-authenticate.`,
-								},
-							],
-						};
+						if (err.response.data.error === 'invalid_grant') {
+							console.log('Refresh token expired, Sending notification to user');
+							db.collection('users').deleteOne({ googleId: user.googleId });
+							const webhookURL = 'https://api.botghost.com/webhook/1090768041563918346/zp3y2j4otrmgm7bvx9a4ql'; //! Add webhook URL here
+							const header = {
+								Authorization: process.env.BG_API_KEY,
+								'Content-Type': 'application/json',
+							};
+							const reqBody = {
+								variables: [
+									{
+										name: 'Email Auth Error',
+										variable: '{email_auth_error}',
+										value: `The token for ${user.email} has expired and could not be refreshed. Please re-authenticate.`,
+									},
+								],
+							};
 
-						axios
-							.post(webhookURL, reqBody, { headers: header })
-							.then((res) => {
-							})
-							.catch((err) => {
-								console.error('Error', err);
-							});
-						return;
+							axios
+								.post(webhookURL, reqBody, { headers: header })
+								.then((res) => {})
+								.catch((err) => {
+									console.error('Error', err);
+								});
+							return;
+						}
 					}
 					db.collection('users').findOneAndUpdate({ googleId: user.googleId }, { $set: { accessToken: tokens.access_token, expires_in: tokens.expiry_date } });
 					console.log('Access token refreshed');
@@ -190,8 +191,7 @@ async function getEmails() {
 
 											axios
 												.post(webhookURL, reqBody, { headers: header })
-												.then((res) => {
-												})
+												.then((res) => {})
 												.catch((err) => {
 													console.error('Error', err);
 												});
