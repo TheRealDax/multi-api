@@ -36,6 +36,7 @@ const transcript = async (req, res) => {
     const bucketName = process.env.BUCKET_NAME;
     const s3Key = `transcripts/${serverid}-${channelid}.html`;
     const timeNow = new Date();
+    const url = `https://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/${s3Key}`;
   
     if (!serverid || !channelid) {
       res.status(400).json({ error: 'Missing required parameters. Please ensure you are using serverid and channelid parameters in all requests' });
@@ -133,7 +134,6 @@ const transcript = async (req, res) => {
         }
   
         if (close) {
-          const url = `https://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/${s3Key}`;
           const putObjectCommand = new PutObjectCommand({
             Bucket: bucketName,
             Key: s3Key,
@@ -144,7 +144,7 @@ const transcript = async (req, res) => {
 
           res.json({ message: 'Transcript closed and updated.', url });
         } else {
-          res.json({ message: 'Transcript updated.' });
+          res.json({ message: 'Transcript updated.', url });
         }
       });
 
@@ -176,7 +176,7 @@ const transcript = async (req, res) => {
         const putObjectCommand = new PutObjectCommand({ Bucket: bucketName, Key: s3Key, Body: fileContent, ContentType: 'text/html' });
         await s3Client.send(putObjectCommand);
 
-        res.json({ message: 'Transcript created.' });
+        res.json({ message: 'Transcript created.', url });
       } else {
         console.error(`Error updating transcript: ${error.message}`);
         res.status(500).json({ error: 'Failed to update transcript.' });
