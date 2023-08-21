@@ -48,6 +48,7 @@ async function Init() {
 	const vcRecord = require('./endpoints/vcrecord');
 	const globalBan = require('./endpoints/globalban');
 	const purge = require('./endpoints/purge');
+	const checkNum = require('./endpoints/checknum');
 
 	// POST requests
 	app.post('/regex', regex);
@@ -72,6 +73,7 @@ async function Init() {
 	app.get('/vcrecord', vcRecord);
 	app.get('/globalban', globalBan);
 	app.get('/purge', purge);
+	app.get('/checknum', checkNum);
 
 	//Event listeners
 	app.post('/gentally', genTally);

@@ -1,7 +1,7 @@
 /**
  * @swagger
  * /purge:
- *   post:
+ *   get:
  *     summary: Purge messages from a Discord text channel
  *     tags: [Discord]
  *     description: Purge a specified number of messages from a Discord text channel.
