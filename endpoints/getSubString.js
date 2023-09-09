@@ -60,9 +60,13 @@ const getSubString = async (req, res) => {
     let result;
     let charcount;
 
-    if (string == undefined || start == undefined){
-      res.status(400).json({ error: 'string and start must be declared and have a value' });
+    if (string == undefined){
+      res.status(400).json({ error: 'no string detected' });
       return;
+    }
+
+    if (!start || start == undefined){
+      start = 0;
     }
 
     if (typeof string !== 'string'){
