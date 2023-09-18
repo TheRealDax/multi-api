@@ -63,7 +63,7 @@ const removeLast = async (req, res) => {
 
   } catch(err){
     console.error('Error:', err);
-    return res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).json({ error: `${err}` });
   }};
 
   module.exports = removeLast;

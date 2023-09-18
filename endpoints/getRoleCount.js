@@ -108,7 +108,7 @@ const getRoleCount = async (req, res) => {
     return res.json({members: membersWithRole, count: roleCount.size, memberlist: displayNames, membertags: memberTags });
   } catch (error) {
     console.error('Error:', error);
-    return res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).json({ error: `${error}` });
   }
 };
 

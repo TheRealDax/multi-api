@@ -82,7 +82,7 @@ const purge = async (req, res) => {
             return res.status(400).json({ error: 'You can only bulk delete messages that are under 14 days old' });
         }
         console.error('Error:', err);
-        return res.status(500).json({ error: 'Internal server error' });
+        return res.status(500).json({ error: `${err}` });
     }
 };
 

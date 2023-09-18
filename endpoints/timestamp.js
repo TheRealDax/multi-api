@@ -87,7 +87,7 @@ const timestamp = async (req, res) => {
 
   } catch(err){
     console.error('Error:', err);
-    return res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).json({ error: `${err}` });
   }};
 
   //funtion to decide the date/time format. Default is EU if format parameter is not passed.

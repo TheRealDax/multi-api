@@ -77,7 +77,7 @@ const memberRoles = async (req, res) => {
 			await client.login(authToken);
 		} catch (error) {
 			console.error('Error:', error);
-			return res.status(500).json({ error: 'Error during login' });
+			return res.status(500).json({ error: `${error}` });
 		}
 
 		const guild = await client.guilds.fetch(serverid);
@@ -104,7 +104,7 @@ const memberRoles = async (req, res) => {
 		return res.status(200).json({ roles: roles, roleids: roleids, roleidsformatted: roleidsFormatted, roletags: roletags, rolecount: roleids.length });
 	} catch (error) {
 		console.error('Error:', error);
-		return res.status(500).json({ error: 'Internal server error' });
+		return res.status(500).json({ error: `${error}` });
 	}
 };
 

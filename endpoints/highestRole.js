@@ -82,7 +82,7 @@ const highestRole = async (req, res) => {
 		}
 	} catch (error) {
 		console.error(error);
-		res.status(500).json({ error: 'An error occurred while fetching the highest role' });
+		res.status(500).json({ error: `${error}` });
 	}
 };
 module.exports = highestRole;

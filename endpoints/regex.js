@@ -56,8 +56,8 @@ const regex = async (req, res) => {
 		const regexString = new RegExp(regex, 'gm');
 		let matchedStrings;
 		const responses = [];
-    let numMatches = 0;
-    let groups = [];
+    	let numMatches = 0;
+    	let groups = [];
 
 		while ((matchedStrings = regexString.exec(string)) !== null) {
 			const matchedString = matchedStrings[0];
@@ -82,7 +82,7 @@ const regex = async (req, res) => {
 		}
 	} catch (err) {
 		console.error('Error:', err);
-		return res.status(500).json({ error: 'Internal server error' });
+		return res.status(500).json({ error: `${err}` });
 	}
 };
 
