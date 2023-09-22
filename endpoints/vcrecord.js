@@ -1,3 +1,90 @@
+/**
+ * @swagger
+ * /vcRecord:
+ *   post:
+ *     summary: Record audio in a voice channel and send it as an MP3 file.
+ *     description: This endpoint allows recording audio in a voice channel and sending it as an MP3 file to a designated text channel.
+ *     tags: [Discord]
+ *     parameters:
+ *       - in: query
+ *         name: vcid
+ *         schema:
+ *           type: string
+ *         description: The ID of the voice channel where audio will be recorded.
+ *         required: true
+ *       - in: query
+ *         name: recordingchannelid
+ *         schema:
+ *           type: string
+ *         description: The ID of the text channel where the recorded audio will be sent as an MP3 file.
+ *         required: true
+ *       - in: query
+ *         name: serverid
+ *         schema:
+ *           type: string
+ *         description: The ID of the server where the voice channel and text channel are located.
+ *         required: true
+ *       - in: query
+ *         name: recordingname
+ *         schema:
+ *           type: string
+ *         description: (Optional) The name of the recorded audio file (default is 'recording').
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               authorization:
+ *                 type: string
+ *                 description: The Discord bot token in the format 'Bot <token>'.
+ *             required:
+ *               - authorization
+ *     responses:
+ *       200:
+ *         description: Audio recording and sending as MP3 file were successful.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: A success message indicating that the recording was successful.
+ *       400:
+ *         description: Bad request due to missing or invalid parameters.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: A description of the error.
+ *       404:
+ *         description: Voice or text channel not found or invalid token format.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: A description of the error.
+ *       500:
+ *         description: An error occurred while processing the request.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: A description of the error.
+ */
+
+
 // API endpoint using express that takes serverid, channelid as query parameters and connects to discord
 
 const { entersState, joinVoiceChannel, VoiceConnectionStatus, EndBehaviorType, getVoiceConnection } = require('@discordjs/voice');

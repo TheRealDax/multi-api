@@ -49,6 +49,7 @@ async function Init() {
 	const globalBan = require('./endpoints/globalban');
 	const purge = require('./endpoints/purge');
 	const checkNum = require('./endpoints/checknum');
+	const replace = require('./endpoints/replace');
 
 	// POST requests
 	app.post('/regex', regex);
@@ -59,6 +60,7 @@ async function Init() {
 	app.post('/timestamp', timestamp);
 	app.post('/transcript', transcript);
 	app.post('/automod', automod);
+	app.post('/replace', replace);
 
 	// GET requests
 	app.get('/temprole', tempRole);
