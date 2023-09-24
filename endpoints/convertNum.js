@@ -50,20 +50,20 @@ const convertNum = async (req, res) => {
       let result = number;
   
       if (num >= 1000000000000) {
-        if (num % 1 === 0) {
-          result = (num / 1000000000000) + 't';
+        if (num % 10 === 0) {
+          result = (Math.floor(num / 100000000) / 10000) + 't';
         } else {
           result = (num / 1000000000000).toFixed(2) + 't';
         }
       } else if (num >= 1000000000) {
-        if (num % 1 === 0) {
-          result = (num / 1000000000) + 'b';
+        if (num % 10 === 0) {
+          result = (Math.floor(num / 1000000) / 1000) + 'b';
         } else {
           result = (num / 1000000000).toFixed(2) + 'b';
         }
       } else if (num >= 1000000) {
-        if (num % 1 === 0) {
-          result = (num / 1000000) + 'm';
+        if (num % 10 === 0) {
+          result = (Math.floor(num / 10000) / 100) + 'm';
         } else {
           result = (num / 1000000).toFixed(2) + 'm';
         }
