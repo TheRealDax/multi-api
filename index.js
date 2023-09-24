@@ -39,7 +39,7 @@ async function Init() {
 	const memberRoles = require('./endpoints/memberRoles');
 	const genTally = require('./Genbot/genTally');
 	const globalChat = require('./endpoints/globalChat');
-	const automod = require('./endpoints/automod');
+	const automod = require('./endpoints/automod.js');
 	const getEmails = require('./functions/getEmails');
 	const sendEmails = require('./Genbot/sendEmail');
 	const highestRole = require('./endpoints/highestRole');
@@ -48,8 +48,9 @@ async function Init() {
 	const vcRecord = require('./endpoints/vcrecord');
 	const globalBan = require('./endpoints/globalban');
 	const purge = require('./endpoints/purge');
-	const checkNum = require('./endpoints/checknum');
+	const checkNum = require('./endpoints/checknum.js');
 	const replace = require('./endpoints/replace');
+	const base64 = require('./endpoints/base64');
 
 	// POST requests
 	app.post('/regex', regex);
@@ -61,6 +62,7 @@ async function Init() {
 	app.post('/transcript', transcript);
 	app.post('/automod', automod);
 	app.post('/replace', replace);
+	app.post('/base64', base64);
 
 	// GET requests
 	app.get('/temprole', tempRole);
