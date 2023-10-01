@@ -1,7 +1,7 @@
 /**
  * @swagger
  * /vcRecord:
- *   post:
+ *   get:
  *     summary: Record audio in a voice channel and send it as an MP3 file.
  *     description: This endpoint allows recording audio in a voice channel and sending it as an MP3 file to a designated text channel.
  *     tags: [Discord]
