@@ -37,15 +37,15 @@ async function Init() {
 	const tempRole = require('./endpoints/tempRole');
 	const random = require('./endpoints/random');
 	const memberRoles = require('./endpoints/memberRoles');
-	const genTally = require('./Genbot/genTally');
+	//const genTally = require('./Genbot/genTally');
 	const globalChat = require('./endpoints/globalChat');
 	const automod = require('./endpoints/automod.js');
-	const getEmails = require('./functions/getEmails');
-	const sendEmails = require('./Genbot/sendEmail');
+	//const getEmails = require('./functions/getEmails');
+	//const sendEmails = require('./Genbot/sendEmail');
 	const highestRole = require('./endpoints/highestRole');
-	const getThreads = require('./endpoints/getThreads');
-	const daStripe = require('./routes/DA_stripe');
-	const vcRecord = require('./endpoints/vcrecord');
+	//const getThreads = require('./endpoints/getThreads');
+	//const daStripe = require('./routes/DA_stripe');
+	//const vcRecord = require('./endpoints/vcrecord');
 	const globalBan = require('./endpoints/globalban');
 	const purge = require('./endpoints/purge');
 	const checkNum = require('./endpoints/checknum.js');
@@ -74,19 +74,19 @@ async function Init() {
 	app.get('/globalchat', globalChat);
 	app.get('/highestrole', highestRole);
 	app.get('/getthread', getThreads);
-	app.get('/vcrecord', vcRecord);
+	//app.get('/vcrecord', vcRecord);
 	app.get('/globalban', globalBan);
 	app.get('/purge', purge);
 	app.get('/checknum', checkNum);
 
 	//Event listeners
-	app.post('/gentally', genTally);
-	app.post('/dastripe', daStripe);
+	//app.post('/gentally', genTally);
+	//app.post('/dastripe', daStripe);
 
 	//Google auth routes
 	app.use('/auth', authRoutes);
-	app.get('/getmails', getEmails);
-	app.post('/sendmail', sendEmails);
+	//app.get('/getmails', getEmails);
+	//app.post('/sendmail', sendEmails);
 
 	// Use requests
 	app.use('/public', express.static(path.join(__dirname, 'public')));
