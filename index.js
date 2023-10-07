@@ -73,7 +73,7 @@ async function Init() {
 	app.get('/memberroles', memberRoles);
 	app.get('/globalchat', globalChat);
 	app.get('/highestrole', highestRole);
-	app.get('/getthread', getThreads);
+	//app.get('/getthread', getThreads);
 	//app.get('/vcrecord', vcRecord);
 	app.get('/globalban', globalBan);
 	app.get('/purge', purge);
