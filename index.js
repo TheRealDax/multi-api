@@ -45,7 +45,7 @@ async function Init() {
 	const highestRole = require('./endpoints/highestRole');
 	//const getThreads = require('./endpoints/getThreads');
 	//const daStripe = require('./routes/DA_stripe');
-	//const vcRecord = require('./endpoints/vcrecord');
+	const vcRecord = require('./endpoints/vcrecord');
 	const globalBan = require('./endpoints/globalban');
 	//const purge = require('./endpoints/purge');
 	const checkNum = require('./endpoints/checknum.js');
@@ -74,7 +74,7 @@ async function Init() {
 	app.get('/globalchat', globalChat);
 	app.get('/highestrole', highestRole);
 	//app.get('/getthread', getThreads);
-	//app.get('/vcrecord', vcRecord);
+	app.get('/vcrecord', vcRecord);
 	app.get('/globalban', globalBan);
 	//app.get('/purge', purge);
 	app.get('/checknum', checkNum);
