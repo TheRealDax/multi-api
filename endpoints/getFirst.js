@@ -56,7 +56,7 @@ const getFirst = async (req, res) => {
     const result = string.substring(0, count);
     charcount = result.length;
   
-    res.json({ result, charcount });
+    return res.json({ result, charcount });
 
   } catch(err){
     console.error('Error:', err);

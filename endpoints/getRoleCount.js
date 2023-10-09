@@ -82,7 +82,7 @@ const getRoleCount = async (req, res) => {
   }
 
   try {
-      await client.login(authToken);
+    await client.login(authToken);
 
     const guild = await client.guilds.fetch(serverid);
     if (!guild) {
@@ -102,10 +102,9 @@ const getRoleCount = async (req, res) => {
     // Filter the members of the guild who have the specified role
     const roleCount = guild.members.cache.filter(member => member.roles.cache.has(role.id));
     const membersWithRole = roleCount.map(member => ({ displayname: member.displayName, userid: member.id }));
-    const displayNames = roleCount.map(member => member.displayName).join(', ');
-    const memberTags = roleCount.map(member => `<@${member.id}>`).join(', ');
+    client.destroy();
 
-    return res.json({members: membersWithRole, count: roleCount.size, memberlist: displayNames, membertags: memberTags });
+    return res.json({members: membersWithRole, count: roleCount.size});
   } catch (error) {
     console.error('Error:', error);
     return res.status(500).json({ error: `${error}` });

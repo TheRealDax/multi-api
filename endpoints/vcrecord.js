@@ -261,21 +261,22 @@ const vcRecord = async (req, res) => {
 										client.destroy();
 									}
 								} catch (error) {
+									client.destroy();
 									console.log(error);
 								}
 							}
 						} catch (error) {
+							client.destroy();
 							console.log(error);
 						}
 					}, 10000);
 				}
 			}
 		});
-
 		res.status(200).json({ message: 'Joined voice channel successfully' });
 	} catch (error) {
 		console.error(error);
-		res.status(500).json({ error: 'Something went wrong, your recording was not saved.' });
+		return res.status(500).json({ error: 'Something went wrong, your recording was not saved.' });
 	}
 };
 

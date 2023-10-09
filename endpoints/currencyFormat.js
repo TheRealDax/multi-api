@@ -46,7 +46,7 @@ const currencyFormat = async (req, res) => {
     // Convert the number to currency format
     const currencyFormat = Number(number).toLocaleString();
   
-    res.status(200).json({ result: currencyFormat });
+    return res.status(200).json({ result: currencyFormat });
 
   } catch(err){
     console.error('Error:', err);

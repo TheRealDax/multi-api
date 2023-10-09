@@ -73,9 +73,9 @@ const regex = async (req, res) => {
 		}
 
 		if (responses.length > 0) {
-			res.json({ result: responses, match: true, numMatches: numMatches });
+			return res.json({ result: responses, match: true, numMatches: numMatches });
 		} else {
-			res.status(404).json({
+			return res.status(404).json({
 				result: 'No match found. If you are having trouble, visit https://regex101.com/ to test your regular expression before trying again.',
 				match: false,
 			});

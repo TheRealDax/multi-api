@@ -176,10 +176,10 @@ const transcript = async (req, res) => {
         const putObjectCommand = new PutObjectCommand({ Bucket: bucketName, Key: s3Key, Body: fileContent, ContentType: 'text/html' });
         await s3Client.send(putObjectCommand);
 
-        res.json({ message: 'Transcript created.', url });
+        return res.json({ message: 'Transcript created.', url });
       } else {
         console.error(`Error updating transcript: ${error.message}`);
-        res.status(500).json({ error: 'Failed to update transcript.' });
+        return res.status(500).json({ error: 'Failed to update transcript.' });
       }
     }
   };

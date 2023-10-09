@@ -75,7 +75,7 @@ const convertNum = async (req, res) => {
         }
       }
   
-      res.json({ result });
+      return res.json({ result });
     }
     
     // Conversion from shortened format to number
@@ -93,7 +93,7 @@ const convertNum = async (req, res) => {
         result = parseFloat(numStr) * 1000;
       }
   
-      res.json({ result });
+      return res.json({ result });
     }
 
   } catch (err){

@@ -56,7 +56,7 @@ const getLast = async (req, res) => {
     const result = string.substring(string.length - count);
     charcount = result.length;
   
-    res.json({ result, charcount });
+    return res.json({ result, charcount });
 
   } catch(err){
     console.error('Error:', err);

@@ -165,23 +165,29 @@ const globalBan = async (req, res) => {
 		}
 		if (unban) {
 			if (failureCount > 0) {
+				client.destroy();
 				return res.status(200).json({ result: `${user.username} was unbanned on ${guilds.size - failureCount} servers`, failed_count: `${failureCount} out of ${guilds.size} servers`, failed_servers: failures });
 			}else {
 				return res.status(201).json({ result: `${user.username} was unbanned on ${guilds.size} servers` });
 			}
 		} if (!unban && kick) {
 			if (failureCount > 0) {
+				client.destroy();
 				return res.status(200).json({ result: `${user.username} was kicked on ${guilds.size - failureCount} servers`, failed_count: `${failureCount} out of ${guilds.size} servers`, failed_servers: failures });
 			}else {
+				client.destroy();
 				return res.status(201).json({ result: `${user.username} was kicked on ${guilds.size} servers` });
 			}
 		}
 		if (failureCount > 0) {
+			client.destroy();
 			return res.status(200).json({ result: `${user.username} was banned on ${guilds.size - failureCount} servers`, failed_count: `${failureCount} out of ${guilds.size} servers`, failed_servers: failures });
 		} else {
+			client.destroy();
 			return res.status(201).json({ result: `${user.username} was banned on ${guilds.size} servers`, user_was_in: `${count} out of ${guilds.size} servers`, user_found_on: userFoundOnGuild });
 		}
 	} catch (err) {
+		client.destroy();
 		console.error('Error:', err);
 		return res.status(500).json({ error: 'Failure. Please check that your bot is in at least 1 server and the userid is correct.' });
 	}

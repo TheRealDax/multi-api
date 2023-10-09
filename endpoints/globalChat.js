@@ -74,15 +74,15 @@ const globalChat = async (req, res) => {
                   const existingDocument = await collection.findOne({ sid: serverid });
 
                         if (existingDocument) {
-                            res.status(400).send({ message: 'A webhook for this server ID already exists.' });
+                            return res.status(400).send({ message: 'A webhook for this server ID already exists.' });
                         } else {
 
                         await collection.insertOne({ sid: serverid, wid, wtoken });
                 
-                        res.status(201).send({ message: 'Webhook created.' });
+                        return res.status(201).send({ message: 'Webhook created.' });
                         } 
                         }else {
-                        res.status(400).send({ message: 'Invalid webhook URL.' });
+                        return res.status(400).send({ message: 'Invalid webhook URL.' });
                         }
 
                     } else if (deletehook && serverid) {
@@ -95,15 +95,15 @@ const globalChat = async (req, res) => {
                         const existingDocument = await collection.findOne({ sid: serverid, wid, wtoken });
 
                         if (!existingDocument) {
-                            res.status(404).send({ message: 'This webhook does not exist.' });
+                            return res.status(404).send({ message: 'This webhook does not exist.' });
                             
                         } else {
                         await collection.deleteOne({ sid: serverid, wid, wtoken });
-                        res.status(200).send({ message: 'Webhook deleted.' });
+                        return res.status(200).send({ message: 'Webhook deleted.' });
                         }
 
                         }else {
-                        res.status(400).send({ message: 'Invalid webhook URL.' });
+                        return res.status(400).send({ message: 'Invalid webhook URL.' });
                         }
 
               } else if (execute && serverid && content && user && avatar) {
@@ -118,18 +118,18 @@ const globalChat = async (req, res) => {
                   await axios.post(webhookUrl, { content: content, username: user, avatar_url: avatar });
                 }
         
-                res.status(200).send({ message: 'Messages sent.' });
+                return res.status(200).send({ message: 'Messages sent.' });
               } else if (execute && !serverid || !content || !user || !avatar) {
-                res.status(400).send({ message: 'The serverid, message, user and avatar parameters are required.' });
+                return res.status(400).send({ message: 'The serverid, message, user and avatar parameters are required.' });
               } else {
                 //console.log ({ register, token, createhook, serverid, execute, content, user, avatar });
-                res.status(500).send({ error: 'There was an error with your request. Please check your parameters and try again.' });
+                return res.status(500).send({ error: 'There was an error with your request. Please check your parameters and try again.' });
               }
             } else {
-              res.status(400).send({ message: 'Token could not be found.' });
+              return res.status(400).send({ message: 'Token could not be found.' });
             }
           } else {
-            res.status(400).send({ message: 'A token is required.' });
+            return res.status(400).send({ message: 'A token is required.' });
           }
         };
 

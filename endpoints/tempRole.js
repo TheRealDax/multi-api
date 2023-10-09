@@ -125,9 +125,10 @@ const tempRole = async (req, res) => {
 		};
 
 		removeRoleFunction = setInterval(removeRole, timeout);
-
+		client.destroy();
 		return res.status(200).json('Role added to user.');
 	} catch (error) {
+		client.destroy();
 		console.error('Error:', error);
 		return res.status(500).json({ error: `${error}` });
 	}

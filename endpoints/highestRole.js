@@ -73,14 +73,18 @@ const highestRole = async (req, res) => {
 			if (member) {
 				const highestRole = member.roles.highest.name;
                 const highestRoleId = member.roles.highest.id;
-				res.status(200).json({ Role: highestRole, RoleId: highestRoleId });
+				client.destroy();
+				return res.status(200).json({ Role: highestRole, RoleId: highestRoleId });
 			} else {
-				res.status(404).json({ error: 'Member not found' });
+				client.destroy();
+				return res.status(404).json({ error: 'Member not found' });
 			}
 		} else {
-			res.status(404).json({ error: 'Discord user not found' });
+			client.destroy();
+			return res.status(404).json({ error: 'Discord user not found' });
 		}
 	} catch (error) {
+		client.destroy();
 		console.error(error);
 		res.status(500).json({ error: `${error}` });
 	}

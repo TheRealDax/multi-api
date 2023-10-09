@@ -72,9 +72,9 @@ const replace = async (req, res) => {
         console.log(input);
 
 		if (input.length > 0) {
-			res.json({ result: input, match: true });
+			return res.json({ result: input, match: true });
 		} else {
-			res.status(404).json({
+			return res.status(404).json({
 				result: 'No match found.',
 				match: false,
 			});
