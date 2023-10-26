@@ -118,9 +118,11 @@ const tempRole = async (req, res) => {
 
 		const timeout = parseTimeToMilliseconds(time);
 
-		const removeRole = () => {
-			guild.members.removeRole({ user, role });
+		const removeRole = async () => {
+			await client.login(authToken);
+			await guild.members.removeRole({ user, role });
 			clearInterval(removeRoleFunction);
+			client.destroy();
 			return;
 		};
 
