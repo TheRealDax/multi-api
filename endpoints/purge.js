@@ -75,7 +75,7 @@ const purge = async (req, res) => {
 
         const messages = await channel.messages.fetch({ limit: count });
         await channel.bulkDelete(messages);
-
+        client.destroy();
         return res.status(200).json({ message: `Purged ${count} messages` });
     } catch (err) {
         if (err.code === 50034) {
