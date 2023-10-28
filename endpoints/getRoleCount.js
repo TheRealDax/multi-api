@@ -102,12 +102,7 @@ const getRoleCount = async (req, res) => {
     // Filter the members of the guild who have the specified role
     const roleCount = guild.members.cache.filter(member => member.roles.cache.has(role.id));
     const membersWithRole = roleCount.map(member => ({ displayname: member.displayName, userid: member.id }));
-    res.json({members: membersWithRole, count: roleCount.size});
-    
-    setTimeout(() => {
-      client.destroy();
-      return;
-    }, 3000);
+    return res.json({members: membersWithRole, count: roleCount.size});
 
   } catch (error) {
     console.error('Error:', error);

@@ -75,12 +75,7 @@ const highestRole = async (req, res) => {
                 const highestRoleId = member.roles.highest.id;
 				const highestRolePosition = member.roles.highest.position;
 				client.destroy();
-				res.status(200).json({ Role: highestRole, RoleId: highestRoleId, position: highestRolePosition });
-				//timeout to destroy client
-				setTimeout(() => {
-					client.destroy();
-				}, 3000);
-
+				return res.status(200).json({ Role: highestRole, RoleId: highestRoleId, position: highestRolePosition });
 			} else {
 				client.destroy();
 				return res.status(404).json({ error: 'Member not found' });
