@@ -89,12 +89,9 @@ const getRoleCount = async (req, res) => {
       return res.status(404).json({ error: 'Guild not found' });
     }
 
-    // Fetch members and roles to populate the cache
     await guild.members.fetch();
-    await guild.roles.fetch();
+    const role = await guild.roles.fetch(roleid);
 
-    // Get the role
-    const role = guild.roles.cache.get(roleid);
     if (!role) {
       return res.status(404).json({ error: 'Role not found' });
     }
@@ -102,7 +99,9 @@ const getRoleCount = async (req, res) => {
     // Filter the members of the guild who have the specified role
     const roleCount = guild.members.cache.filter(member => member.roles.cache.has(role.id));
     const membersWithRole = roleCount.map(member => ({ displayname: member.displayName, userid: member.id }));
-    return res.json({members: membersWithRole, count: roleCount.size});
+    res.json({members: membersWithRole, count: roleCount.size});
+    client.destroy();
+    return;
 
   } catch (error) {
     console.error('Error:', error);
