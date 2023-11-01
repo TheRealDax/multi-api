@@ -99,7 +99,7 @@ const getRoleCount = async (req, res) => {
 
   } catch (error) {
     console.error('Error:', error);
-    return res.status(500).json({ error: `${error}` + `Bot: ${client.user.tag} - ${client.user.id}` });
+    return res.status(500).json({ error: `${error}` + ` Bot: ${client.user.tag} - ${client.user.id}` });
   }
 };
 
