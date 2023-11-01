@@ -78,34 +78,28 @@ const getRoleCount = async (req, res) => {
   const { serverid, roleid } = req.query;
 
   if (!serverid || !roleid) {
-    return res.status(400).json({ error: 'Missing serverid or roleid' });
+    return res.status(400).json({ error: 'Missing serverid or roleid parameter' });
   }
 
   try {
     await client.login(authToken);
+    console.log(`Logged in as ${client.user.tag} - ${client.user.id}`);
 
     const guild = await client.guilds.fetch(serverid);
-    if (!guild) {
-      return res.status(404).json({ error: 'Guild not found' });
-    }
+    console.log(`Fetching guild ${serverid}...`);
 
     await guild.members.fetch();
     const role = await guild.roles.fetch(roleid);
 
-    if (!role) {
-      return res.status(404).json({ error: 'Role not found' });
-    }
-
     // Filter the members of the guild who have the specified role
     const roleCount = guild.members.cache.filter(member => member.roles.cache.has(role.id));
     const membersWithRole = roleCount.map(member => ({ displayname: member.displayName, userid: member.id }));
-    res.json({members: membersWithRole, count: roleCount.size});
     client.destroy();
-    return;
+    return res.status(200).json({members: membersWithRole, count: roleCount.size});
 
   } catch (error) {
     console.error('Error:', error);
-    return res.status(500).json({ error: `${error}` });
+    return res.status(500).json({ error: `${error}` + `Bot: ${client.user.tag} - ${client.user.id}` });
   }
 };
 
