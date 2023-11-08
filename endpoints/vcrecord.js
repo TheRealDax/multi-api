@@ -255,9 +255,10 @@ const vcRecord = async (req, res) => {
 										client.destroy();
 									} else {
 										const attachment = new AttachmentBuilder(mp3File, { name: `${recordingname}.mp3` });
-										await recordingChannel.send({
+										const msg = await recordingChannel.send({
 											files: [attachment],
 										});
+										console.log(`Sent recording to ${recordingChannel.name}. Message id: ${msg.id}`);
 										client.destroy();
 									}
 								} catch (error) {
