@@ -204,6 +204,7 @@ const vcRecord = async (req, res) => {
 								//check if pcmFile exists
 								if (!fs.existsSync(pcmFile)) {
 									connection.disconnect();
+									client.destroy();
 									return;
 								}
 								connection.disconnect();
@@ -225,7 +226,7 @@ const vcRecord = async (req, res) => {
 											} catch (error) {
 												console.log(error);
 											}
-										}, 10000);
+										}, 5000);
 									} catch (error) {
 										console.log(error);
 									}
@@ -270,7 +271,7 @@ const vcRecord = async (req, res) => {
 							client.destroy();
 							console.log(error);
 						}
-					}, 10000);
+					}, 5000);
 				}
 			}
 		});

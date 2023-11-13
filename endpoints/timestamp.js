@@ -58,7 +58,7 @@ const moment = require('moment');
 //generate a unix timestamp based on a specific date and time or days in the future
 const timestamp = async (req, res) => {
   try {
-    const { date, time, days, format, timestamp, offset} = req.body;
+    const { date, time = '00:00', days, format, timestamp, offset} = req.body;
   
     let convertedTimestamp;
   
