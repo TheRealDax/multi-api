@@ -52,8 +52,8 @@ const regex = async (req, res) => {
 			res.status(400).json({ error: 'string and regex must be declared and have a value' });
 			return;
 		}
-
-		const regexString = new RegExp(regex, 'gm');
+		
+		const regexString = new RegExp(req.body.regex, 'gm');
 		let matchedStrings;
 		const responses = [];
     	let numMatches = 0;
