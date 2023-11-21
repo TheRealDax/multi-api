@@ -237,6 +237,11 @@ const vcRecord = async (req, res) => {
 									fs.unlinkSync(pcmFile);
 									fs.unlinkSync(wavFile);
 
+									if (!client.isReady()){
+									console.log(`Client not ready, logging in...`);
+									await client.login(token);
+									}
+									
 									const stats = fs.statSync(mp3File);
 									const fileSizeInBytes = stats.size;
 									const fileSizeInMegabytes = fileSizeInBytes / (1024 * 1024);
