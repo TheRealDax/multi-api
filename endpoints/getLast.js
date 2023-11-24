@@ -43,7 +43,7 @@ const getLast = async (req, res) => {
   try {
     let { string, count } = req.body;
     let charcount;
-
+    console.log(string);
     if (string == undefined || count == undefined){
       res.status(400).json({ error: 'string and count must be declared and have a value' });
       return;
