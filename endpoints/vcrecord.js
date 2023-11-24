@@ -170,12 +170,8 @@ const vcRecord = async (req, res) => {
 			res.status(500).json({ error: 'Failed to join voice channel. Please try again' });
 			return;
 		}
-
 		console.log('Joined voice channel successfully');
-		/* 		const usersInChannel = channel.members.filter((member) => !member.user.bot).map((member) => member.user.id);
-		for (const userId of usersInChannel) {
-			console.log(`Subscribed to ${userId}`);
-		} */
+
 		const timestamp = new Date().getTime();
 		const tmpDir = '/tmp';
 		const filename = `${tmpDir}/${vcid}-${timestamp}`;
@@ -186,23 +182,22 @@ const vcRecord = async (req, res) => {
 		let decoder;
 		let out;
 
-		//detect when user joins voice channel //! not needed
-		/* 		client.on('voiceStateUpdate', async (oldState, newState) => {
-			if (newState.channelId === channel.id) {
-				console.log(`User ${newState.member.user.tag} joined voice channel`);
-				const userId = newState.member.id;
-			}
-		}); */
-
+		try{
 		connection.receiver.speaking.on('start', async (userId) => {
 			if (connection.receiver.subscriptions.size === 0) {
 				stream = connection.receiver.subscribe(userId, { end: { behavior: EndBehaviorType.AfterSilence, duration: 100 } });
 				out = fs.createWriteStream(pcmFile, { flags: 'a' });
 				decoder = new prism.opus.Decoder({ rate: 48000, channels: 2, frameSize: 960 });
 				stream.pipe(decoder).pipe(out);
-				//console.log(`User ${userId} started speaking`);
+				console.log(`User ${userId} started speaking`);
+			}
+			else{
+				console.log('Already recording' + "Size:" + connection.receiver.subscriptions.size);
 			}
 		});
+	} catch (error) {
+		console.log(error);
+	}
 
 		client.on('voiceStateUpdate', async (oldState, newState) => {
 			if (oldState.channelId === channel.id) {
