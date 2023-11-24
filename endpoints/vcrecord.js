@@ -121,6 +121,8 @@ const vcRecord = async (req, res) => {
 		const client = new Client({ intents });
 		await client.login(token);
 
+		console.log(`Logged in as ${client.user.tag}`);
+
 		const guild = await client.guilds.fetch(serverid);
 		const channel = await guild.channels.fetch(vcid);
 		const recordingChannel = await guild.channels.fetch(recordingchannelid);
@@ -157,12 +159,19 @@ const vcRecord = async (req, res) => {
 			adapterCreator: channel.guild.voiceAdapterCreator,
 		});
 
+		connection.on('error', (error) => {
+			console.error('Voice connection error:', error);
+		  });
+
 		await entersState(connection, VoiceConnectionStatus.Ready, 10000);
 		if (connection.state.status !== 'ready') {
 			connection.disconnect();
+			console.error('Failed to join voice channel. Connection status:', connection.state.status);
 			res.status(500).json({ error: 'Failed to join voice channel. Please try again' });
 			return;
 		}
+
+		console.log('Joined voice channel successfully');
 		/* 		const usersInChannel = channel.members.filter((member) => !member.user.bot).map((member) => member.user.id);
 		for (const userId of usersInChannel) {
 			console.log(`Subscribed to ${userId}`);
@@ -203,6 +212,7 @@ const vcRecord = async (req, res) => {
 							if (channel.members.size === 1) {
 								//check if pcmFile exists
 								if (!fs.existsSync(pcmFile)) {
+									console.log('No audio was detected and no file was created');
 									connection.disconnect();
 									client.destroy();
 									return;
@@ -219,7 +229,9 @@ const vcRecord = async (req, res) => {
 								pcm.on('close', async () => {
 									try {
 										await exec(`ffmpeg -i ${wavFile} ${mp3File}`);
+										console.log('Converted to mp3 successfully');
 										await sendFile();
+										console.log('Sent file successfully');
 										setTimeout(() => {
 											try {
 												fs.unlinkSync(mp3File);
@@ -282,7 +294,7 @@ const vcRecord = async (req, res) => {
 		});
 		res.status(200).json({ message: 'Joined voice channel successfully' });
 	} catch (error) {
-		console.error(error);
+		console.error('Error in vcRecord:', error);
 		return res.status(500).json({ error: 'Something went wrong, your recording was not saved.' });
 	}
 };
