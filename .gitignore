@@ -131,3 +131,6 @@ dist
 
 # package lock file
 package-lock.json
+
+# archives
+/archive

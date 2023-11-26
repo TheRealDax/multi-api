@@ -3,8 +3,6 @@ dotenv.config();
 
 const express = require('express');
 const swaggerui = require('swagger-ui-express');
-const path = require('path');
-const passport = require('passport');
 const specs = require('./config/swagger');
 const db = require('./functions/db');
 
@@ -13,15 +11,10 @@ const PORT = process.env.PORT || 3000;
 async function Init() {
 	await db.connect();
 
-	const authRoutes = require('./routes/auth-routes');
-	require('./config/passport');
-
 	const app = express();
 
 	app.use(express.json());
 	app.use(express.urlencoded({ extended: true }));
-
-	app.use(passport.initialize());
 
 	// Endpoints
 	const getFirst = require('./endpoints/getFirst');
@@ -37,18 +30,11 @@ async function Init() {
 	const tempRole = require('./endpoints/tempRole');
 	const random = require('./endpoints/random');
 	const memberRoles = require('./endpoints/memberRoles');
-	//const genTally = require('./Genbot/genTally');
 	const globalChat = require('./endpoints/globalChat');
 	const automod = require('./endpoints/automod.js');
-	//const getEmails = require('./functions/getEmails');
-	//const sendEmails = require('./Genbot/sendEmail');
 	const highestRole = require('./endpoints/highestRole');
-	//const getThreads = require('./endpoints/getThreads');
-	//const daStripe = require('./routes/DA_stripe');
 	const vcRecord = require('./endpoints/vcrecord');
 	const globalBan = require('./endpoints/globalban');
-	//const purge = require('./endpoints/purge');
-	const checkNum = require('./endpoints/checknum.js');
 	const replace = require('./endpoints/replace');
 	const base64 = require('./endpoints/base64');
 
@@ -73,23 +59,12 @@ async function Init() {
 	app.get('/memberroles', memberRoles);
 	app.get('/globalchat', globalChat);
 	app.get('/highestrole', highestRole);
-	//app.get('/getthread', getThreads);
 	app.get('/vcrecord', vcRecord);
 	app.get('/globalban', globalBan);
-	//app.get('/purge', purge);
-	app.get('/checknum', checkNum);
 
 	//Event listeners
-	//app.post('/gentally', genTally);
-	//app.post('/dastripe', daStripe);
-
-	//Google auth routes
-	app.use('/auth', authRoutes);
-	//app.get('/getmails', getEmails);
-	//app.post('/sendmail', sendEmails);
 
 	// Use requests
-	app.use('/public', express.static(path.join(__dirname, 'public')));
 	app.use('/docs', swaggerui.serve, swaggerui.setup(specs));
 
 	app.listen(PORT, () => {
@@ -97,3 +72,13 @@ async function Init() {
 	});
 }
 Init().catch(console.error);
+
+
+	//! Disabled code
+	//const getThreads = require('./endpoints/getThreads');
+	//const daStripe = require('./routes/DA_stripe');
+	//app.post('/dastripe', daStripe);
+	//app.get('/getthread', getThreads);
+	//const authRoutes = require('./routes/auth-routes');
+	//require('./config/passport');
+	//app.use(passport.initialize());

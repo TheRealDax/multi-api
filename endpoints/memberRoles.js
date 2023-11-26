@@ -4,8 +4,6 @@
  *   get:
  *     summary: Returns the roles of a user in a specific Discord server
  *     tags: [Discord]
- *     security:
- *       - bearerAuth: []
  *     parameters:
  *       - in: query
  *         name: serverid

@@ -7,8 +7,6 @@
  *     description: Retrieves the count and details of members who have a specific role in a Discord server.
  *     produces:
  *       - application/json
- *     security:
- *       - bearerAuth: []
  *     parameters:
  *       - name: serverid
  *         description: The ID of the Discord server

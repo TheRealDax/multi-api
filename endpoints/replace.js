@@ -69,8 +69,6 @@ const replace = async (req, res) => {
 
         input = input.replace(regex, replacewith);
 
-        console.log(input);
-
 		if (input.length > 0) {
 			return res.json({ result: input, match: true });
 		} else {

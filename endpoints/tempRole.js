@@ -7,8 +7,6 @@
  *     description: Assigns a temporary role to a user in a specified guild for a specified duration.
  *     produces:
  *       - application/json
- *     security:
- *       - bearerAuth: []
  *     parameters:
  *       - name: serverid
  *         in: query
