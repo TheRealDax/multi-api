@@ -42,7 +42,7 @@ async function Init() {
 	// POST requests
 	app.post('/regex', regex);
 	app.post('/getfirst', getFirst);
-	app.post('/getlast', getLast);
+	//app.post('/getlast', getLast);
 	app.post('/removelast', removeLast);
 	app.post('/getsubstring', getSubString);
 	app.post('/timestamp', timestamp);
@@ -50,6 +50,7 @@ async function Init() {
 	app.post('/automod', automod);
 	app.post('/replace', replace);
 	app.post('/base64', base64);
+	app.post('/upload', upload);
 
 	// GET requests
 	app.get('/temprole', tempRole);
@@ -62,7 +63,8 @@ async function Init() {
 	app.get('/highestrole', highestRole);
 	app.get('/vcrecord', vcRecord);
 	app.get('/globalban', globalBan);
-	app.get('/upload', upload);
+	app.get('/getlast', getLast);
+
 
 	//Event listeners
 

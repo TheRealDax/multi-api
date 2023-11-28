@@ -1,28 +1,29 @@
 /**
  * @swagger
- * /getlast:
- *   post:
+ * /api/getLast:
+ *   get:
  *     summary: Get the last n characters from a string
  *     tags: [String Manipulation]
- *     description: Retrieves the last n characters from a given string where n is the value passed to count.
- *     requestBody:
- *       required: true
- *       content:
- *         application/x-www-form-urlencoded:
- *           schema:
- *             type: object
- *             properties:
- *               string:
- *                 type: string
- *                 description: The input string
- *                 example: Hello, world!
- *               count:
- *                 type: integer
- *                 description: The number of characters to retrieve
- *                 example: 6
+ *     description: |
+ *       Retrieves the last n characters from a given string where n is the value passed to count.
+ *     parameters:
+ *       - in: query
+ *         name: string
+ *         description: The input string.
+ *         example: Hello, world!
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: count
+ *         description: The number of characters to retrieve
+ *         example: 6
+ *         required: true
+ *         schema:
+ *           type: integer
  *     responses:
- *       200:
- *         description: Successful request
+ *       '200':
+ *         description: Successful response
  *         content:
  *           application/json:
  *             schema:
@@ -30,22 +31,36 @@
  *               properties:
  *                 result:
  *                   type: string
- *                   description: The last n characters from the string
+ *                   description: The last characters of the input string.
  *                 charcount:
  *                   type: integer
- *                   description: The number of characters retrieved
- *       400:
- *         description: Missing or invalid parameters
+ *                   description: The number of characters in the result.
+ *       '400':
+ *         description: Bad request. The `string` and `count` parameters must be declared and have a value.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Error message.
+ *       '500':
+ *         description: Internal server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Error message.
  */
-
 //gets the last X characters in a string, where X is the number passed to count
 const getLast = async (req, res) => {
   try {
-    let { string, count } = req.body;
+    let { string, count } = req.query;
     let charcount;
-
-    console.log (string);
-    console.log (count);
     
     if (string == undefined || count == undefined){
       res.status(400).json({ error: 'string and count must be declared and have a value' });
