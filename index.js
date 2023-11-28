@@ -37,6 +37,7 @@ async function Init() {
 	const globalBan = require('./endpoints/globalban');
 	const replace = require('./endpoints/replace');
 	const base64 = require('./endpoints/base64');
+	const upload = require('./endpoints/upload');
 
 	// POST requests
 	app.post('/regex', regex);
@@ -61,6 +62,7 @@ async function Init() {
 	app.get('/highestrole', highestRole);
 	app.get('/vcrecord', vcRecord);
 	app.get('/globalban', globalBan);
+	app.get('/upload', upload);
 
 	//Event listeners
 
