@@ -34,6 +34,18 @@
  *         required: true
  *         schema:
  *           type: string
+ *       - in: query
+ *         name: name
+ *         description: The name of the file to be uploaded. This is optional, and will default to "filename" if not specified.
+ *         required: false
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: message
+ *         description: The message to be sent along with the file. This is optional, and will default to an empty message if not specified.
+ *         required: false
+ *         schema:
+ *           type: string
  *     responses:
  *       '200':
  *         description: The file was successfully uploaded to the Discord channel.
@@ -69,7 +81,6 @@ const { fromBuffer } = require('file-type-cjs-fix/file-type');
 MAX_FILE_SIZE = 1024 * 1024 * 8;
 
 const upload = async (req, res) => {
-	try {
 		const { authorization: token } = req.headers;
 		const serverid = req.query.serverid;
 		const channelid = req.query.channelid;
@@ -77,6 +88,10 @@ const upload = async (req, res) => {
 		const name = req.query.name || 'filename';
 		const message = req.query.message || '';
 
+	try {
+		if (!token) {
+			return res.status(400).json({ error: 'Missing Authorization header' });
+		}
 		const client = new Client({ intents });
 
 		client.login(token);
