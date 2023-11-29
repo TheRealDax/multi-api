@@ -41,12 +41,18 @@
  *           application/json:
  *             example:
  *               result: File send successful
- *       '404':
- *         description: The file extension was not detected, and the file was sent as a URL.
+ *       '400':
+ *         description: The file size is too large or an invalid file type was detected.
  *         content:
  *           application/json:
  *             example:
- *               result: File extension was not detected, file was sent as a URL
+ *               error: File size is too large or invalid file type
+ *       '404':
+ *         description: Invalid file type detected, and the file was sent as a URL.
+ *         content:
+ *           application/json:
+ *             example:
+ *               result: Invalid file type. File was sent to Discord as a URL
  *       '500':
  *         description: An error occurred during the file upload process.
  *         content:
@@ -59,6 +65,8 @@ const { Client, GatewayIntentBits, AttachmentBuilder } = require('discord.js');
 const axios = require('axios');
 const intents = [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages];
 const { fromBuffer } = require('file-type-cjs-fix/file-type');
+
+MAX_FILE_SIZE = 1024 * 1024 * 8;
 
 const upload = async (req, res) => {
 	try {
@@ -76,26 +84,39 @@ const upload = async (req, res) => {
 			console.log(`Logged in ${client.user.id}`);
 		});
 
-		const guild = await client.guilds.fetch(serverid);
-		console.log(`${guild.name} ${guild.id}`);
-		const channel = await client.channels.fetch(channelid);
-		const upload = await axios.get(file, { responseType: 'arraybuffer' });
-		const buffer = Buffer.from(upload.data);
-		const fileType = await fromBuffer(buffer);
-		if (fileType) {
-			const attachment = new AttachmentBuilder(buffer, { name: `${name}.${fileType.ext}` });
-			await channel.send({
-				content: message,
-				files: [attachment],
-			});
+		const response = await axios.head(file);
+
+		if (response.headers['content-type'].includes('text/html')) {
+			const guild = await client.guilds.fetch(serverid);
+			console.log(`${guild.name} ${guild.id}`);
+			const channel = await client.channels.fetch(channelid);
+
+			await channel.send(`${message}\n${file}`);
 			client.removeAllListeners();
 			client.destroy();
-			return res.status(200).json({ result: 'File send successful' });
+			return res.status(404).json({ result: 'Invalid file type. File was sent to Discord as a URL' });
 		} else {
-			await channel.send(`${message} ${file}`);
-			client.removeAllListeners();
-			client.destroy();
-			return res.status(404).json({ result: 'File extension was not detected, file was sent as a url' });
+			const fileSize = parseInt(response.headers['content-length']);
+			if (fileSize && fileSize > MAX_FILE_SIZE) {
+				return res.status(400).json({ error: 'File size is too large' });
+			}
+
+			const guild = await client.guilds.fetch(serverid);
+			console.log(`${guild.name} ${guild.id}`);
+			const channel = await client.channels.fetch(channelid);
+
+			const upload = await axios.get(file, { responseType: 'arraybuffer' });
+			const buffer = Buffer.from(upload.data);
+			const fileType = await fromBuffer(buffer);
+
+			const attachment = new AttachmentBuilder(buffer, { name: `${name}.${fileType.ext}` });
+				await channel.send({
+					content: message,
+					files: [attachment],
+				});
+				client.removeAllListeners();
+				client.destroy();
+				return res.status(200).json({ result: 'File send successful' });
 		}
 	} catch (error) {
 		console.log(error);
