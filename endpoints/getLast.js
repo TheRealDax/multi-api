@@ -1,6 +1,6 @@
 /**
  * @swagger
- * /api/getLast:
+ * /getLast:
  *   get:
  *     summary: Get the last n characters from a string
  *     tags: [String Manipulation]

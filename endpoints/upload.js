@@ -84,9 +84,13 @@ const upload = async (req, res) => {
 			await channel.send({
 				files: [attachment],
 			});
+			client.removeAllListeners();
+			client.destroy();
             return res.status(200).json({ result: 'File send successful' });
 		} else {
 			await channel.send(file);
+			client.removeAllListeners();
+			client.destroy();
             return res.status(404).json({ result: 'File extension was not detected, file was sent as a url' });
 		}
 	} catch (error) {
