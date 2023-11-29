@@ -66,6 +66,9 @@ const upload = async (req, res) => {
 		const serverid = req.query.serverid;
 		const channelid = req.query.channelid;
 		const file = req.query.file;
+		const name = req.query.name || 'filename';
+		const message = req.query.message || '';
+
 		const client = new Client({ intents });
 
 		client.login(token);
@@ -74,24 +77,25 @@ const upload = async (req, res) => {
 		});
 
 		const guild = await client.guilds.fetch(serverid);
-        console.log(`${guild.name} ${guild.id}`);
+		console.log(`${guild.name} ${guild.id}`);
 		const channel = await client.channels.fetch(channelid);
 		const upload = await axios.get(file, { responseType: 'arraybuffer' });
 		const buffer = Buffer.from(upload.data);
 		const fileType = await fromBuffer(buffer);
 		if (fileType) {
-			const attachment = new AttachmentBuilder(buffer, { name: `filename.${fileType.ext}` });
+			const attachment = new AttachmentBuilder(buffer, { name: `${name}.${fileType.ext}` });
 			await channel.send({
+				content: message,
 				files: [attachment],
 			});
 			client.removeAllListeners();
 			client.destroy();
-            return res.status(200).json({ result: 'File send successful' });
+			return res.status(200).json({ result: 'File send successful' });
 		} else {
-			await channel.send(file);
+			await channel.send(`${message} ${file}`);
 			client.removeAllListeners();
 			client.destroy();
-            return res.status(404).json({ result: 'File extension was not detected, file was sent as a url' });
+			return res.status(404).json({ result: 'File extension was not detected, file was sent as a url' });
 		}
 	} catch (error) {
 		console.log(error);
