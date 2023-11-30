@@ -112,6 +112,7 @@ const upload = async (req, res) => {
 			responseType: 'stream',
 		});
 
+
 		if (response.headers['content-type'].includes('text/html')) {
 			const guild = await client.guilds.fetch(serverid);
 			console.log(`${guild.name} ${guild.id}`);
@@ -131,16 +132,16 @@ const upload = async (req, res) => {
 			console.log(`MB: ${fileSizeInMegabytes}`);
 
 			const guild = await client.guilds.fetch(serverid);
-			console.log(`${guild.name} ${guild.id}`);
+			console.log(`Guild: ${guild.id}`);
 			const premium = guild.premiumTier;
 
 			let premiumLimit;
-			if (premium === 'NONE' || 'TIER_1' || 0 || 1) {
-				premiumLimit = 25;
+			if (premium === 'TIER_3' || 3) {
+				premiumLimit = 100;
 			} else if (premium === 'TIER_2' || 2) {
 				premiumLimit = 50;
-			} else if (premium === 'TIER_3' || 3) {
-				premiumLimit = 100;
+			} else {
+				premiumLimit = 25;
 			}
 			console.log(`Premium Tier: ${guild.premiumTier}`);
 			console.log(`Premium Limit: ${premiumLimit}`);
@@ -176,8 +177,11 @@ const upload = async (req, res) => {
 			return;
 		}
 	} catch (error) {
+		if (error.response && error.isAxiosError && error.contains(`ECONNREFUSED`)) {
+			return res.status(400).json({ error: 'Malformed URL' });
+		}
 		console.log(error);
-		return res.status(500).json({ error: 'Something went wrong: ', error });
+		return res.status(500).json({ error: 'Uncaught Exception'});
 	}
 };
 
