@@ -127,7 +127,7 @@ const upload = async (req, res) => {
 			if (fileSize && fileSize > MAX_FILE_SIZE) {
 				return res.status(400).json({ error: 'File size is too large' });
 			}
-			const fileSizeInMegabytes = Math.floor(fileSize/1024/1024);
+			const fileSizeInMegabytes = Math.floor(fileSize / 1024 / 1024);
 			console.log(`MB: ${fileSizeInMegabytes}`);
 
 			const guild = await client.guilds.fetch(serverid);
@@ -146,13 +146,23 @@ const upload = async (req, res) => {
 			console.log(`Premium Limit: ${premiumLimit}`);
 			if (fileSizeInMegabytes > premiumLimit) {
 				client.destroy();
-				return res.status(400).json({result: `Your server has a file upload limit of ${premiumLimit}MB and your recording is ${fileSizeInMegabytes.toFixed(2)}MB.`});
+				return res.status(400).json({ result: `Your server has a file upload limit of ${premiumLimit}MB and your recording is ${fileSizeInMegabytes.toFixed(2)}MB.` });
 			}
 
 			const channel = await client.channels.fetch(channelid);
 			res.status(200).json({ result: 'File is processing and should send to Discord shortly' });
 
-			const upload = await axios.get(file, { responseType: 'arraybuffer' });
+			const upload = await Axios({
+				url: file,
+				method: 'GET',
+				headers: {
+					'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+					Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+					'Accept-Encoding': 'gzip, deflate, br',
+					'Accept-Language': 'en-US,en;q=0.9',
+				},
+				responseType: 'arraybuffer',
+			});
 			const buffer = Buffer.from(upload.data);
 			const fileType = await fromBuffer(buffer);
 
