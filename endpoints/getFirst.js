@@ -59,7 +59,6 @@ const getFirst = async (req, res) => {
     return res.json({ result, charcount });
 
   } catch(err){
-    console.error('Error:', err);
     return res.status(500).json({ error: `${err}` });
   }};
 

@@ -90,7 +90,6 @@ const getSubString = async (req, res) => {
     res.json({ result, charcount });
 
   } catch(err){
-    console.error('Error:', err);
     return res.status(500).json({ error: `${err}` });
   }};
 
