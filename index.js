@@ -37,7 +37,7 @@ async function Init() {
 	const globalBan = require('./endpoints/globalban');
 	const replace = require('./endpoints/replace');
 	const base64 = require('./endpoints/base64');
-	const upload = require('./endpoints/upload');
+	//const upload = require('./endpoints/upload');
 
 	// POST requests
 	app.post('/regex', regex);
@@ -50,7 +50,7 @@ async function Init() {
 	app.post('/automod', automod);
 	app.post('/replace', replace);
 	app.post('/base64', base64);
-	app.post('/upload', upload);
+	//app.post('/upload', upload);
 
 	// GET requests
 	app.get('/temprole', tempRole);
