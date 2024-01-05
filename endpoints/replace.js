@@ -20,7 +20,6 @@
  *                 description: The text to replace the matched pattern with.
  *             required:
  *               - input
- *               - replacewith
  *     responses:
  *       200:
  *         description: Text replaced successfully.
@@ -63,14 +62,14 @@
 const replace = async (req, res) => {
 	try {
 		let input = req.body.input;
-		const replacewith = req.body.replacewith;
+		const replacewith = req.body.replacewith || "";
 
         const regex = /\[[^\]]+\]/g;
 
         input = input.replace(regex, replacewith);
 
 		if (input.length > 0) {
-			return res.json({ result: input, match: true });
+			return res.json({ result: input.trim(), match: true });
 		} else {
 			return res.status(404).json({
 				result: 'No match found.',
