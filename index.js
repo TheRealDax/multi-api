@@ -16,10 +16,10 @@ async function Init() {
 	app.use(express.urlencoded({ extended: true }));
 
 	// Endpoints
-	//const getFirst = require('./endpoints/getFirst');
-	//const getLast = require('./endpoints/getLast');
+	const getFirst = require('./endpoints/getFirst');
+	const getLast = require('./endpoints/getLast');
 	const removeLast = require('./endpoints/removeLast');
-	//const getSubString = require('./endpoints/getSubString');
+	const getSubString = require('./endpoints/getSubString');
 	const timestamp = require('./endpoints/timestamp');
 	const currencyFormat = require('./endpoints/currencyFormat');
 	const convertNum = require('./endpoints/convertNum');
@@ -40,10 +40,10 @@ async function Init() {
 
 	// POST requests
 	app.post('/regex', regex);
-	//app.post('/getfirst', getFirst);
-	//app.post('/getlast', getLast);
+	app.post('/getfirst', getFirst);
+	app.post('/getlast', getLast);
 	app.post('/removelast', removeLast);
-	//app.post('/getsubstring', getSubString);
+	app.post('/getsubstring', getSubString);
 	app.post('/timestamp', timestamp);
 	app.post('/transcript', transcript);
 	app.post('/automod', automod);
@@ -58,11 +58,11 @@ async function Init() {
 	app.get('/currencyformat', currencyFormat);
 	//app.get('/random', random);
 	app.get('/memberroles', memberRoles);
-	//app.get('/globalchat', globalChat);
+	app.get('/globalchat', globalChat);
 	app.get('/highestrole', highestRole);
 	app.get('/vcrecord', vcRecord);
 	app.get('/globalban', globalBan);
-	//app.get('/getlast', getLast);
+	app.get('/getlast', getLast);
 
 	//Event listeners
 
