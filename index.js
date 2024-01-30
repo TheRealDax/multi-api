@@ -58,7 +58,7 @@ async function Init() {
 	app.get('/currencyformat', currencyFormat);
 	//app.get('/random', random);
 	app.get('/memberroles', memberRoles);
-	app.get('/globalchat', globalChat);
+	//app.get('/globalchat', globalChat);
 	app.get('/highestrole', highestRole);
 	app.get('/vcrecord', vcRecord);
 	app.get('/globalban', globalBan);
