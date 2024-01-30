@@ -57,51 +57,48 @@ const moment = require('moment');
 
 //generate a unix timestamp based on a specific date and time or days in the future
 const timestamp = async (req, res) => {
-  try {
-    const { date, time = '00:00', days, format = 'EU', timestamp, offset} = req.body;
-  
-    let convertedTimestamp;
-  
-    if (date && time) {
-      const datetime = `${date} ${time}`;
-      const dateFormat = getDateFormat(format);
-      convertedTimestamp = moment(datetime, dateFormat).unix();
+	try {
+		const { date, time = '00:00', days, format = 'EU', timestamp, offset } = req.body;
 
-    } else if (days) {
-      const futureDate = moment().add(days, 'days');
-      convertedTimestamp = futureDate.unix();
+		let convertedTimestamp;
 
-    } else if (!date && !time && timestamp) {
-      if (offset) {
-        const offsetTimestamp = moment(timestamp).add(offset, 'hours');
-        convertedTimestamp = offsetTimestamp.format('DD-MM-YYYY HH:mm:ss');
-      } else {
-        convertedTimestamp = moment(timestamp).format('DD-MM-YYYY HH:mm:ss');
-      }
+		if (date && time) {
+			const datetime = `${date} ${time}`;
+			const dateFormat = getDateFormat(format);
+			convertedTimestamp = moment(datetime, dateFormat).unix();
+		} else if (days) {
+			const futureDate = moment().add(days, 'days');
+			convertedTimestamp = futureDate.unix();
+		} else if (!date && timestamp) {
+			if (offset) {
+				const offsetTimestamp = moment(timestamp).add(offset, 'hours');
+				convertedTimestamp = offsetTimestamp.format('DD-MM-YYYY HH:mm:ss');
+			} else {
+				convertedTimestamp = moment(timestamp).format('DD-MM-YYYY HH:mm:ss');
+			}
+		} else {
+			return res.status(400).json({ error: 'Invalid request. Please provide either date and time or days parameter.' });
+		}
 
-    } else {
-      return res.status(400).json({ error: 'Invalid request. Please provide either date and time or days parameter.' });
-    }
-  
-    return res.status(200).json({ convertedTimestamp });
+		return res.status(200).json({ convertedTimestamp });
+	} catch (err) {
+		console.error('Error:', err);
+		return res.status(500).json({ error: `${err}` });
+	}
+};
 
-  } catch(err){
-    console.error('Error:', err);
-    return res.status(500).json({ error: `${err}` });
-  }};
-
-  //funtion to decide the date/time format. Default is EU if format parameter is not passed.
+//funtion to decide the date/time format. Default is EU if format parameter is not passed.
 function getDateFormat(format) {
-    switch (format) {
-      case 'US':
-        return ['MM/DD/YYYY h:mmA', 'MM/DD/YYYY HH:mm'];
-      case 'EU':
-        return ['DD/MM/YYYY h:mmA', 'DD/MM/YYYY HH:mm'];
-      case 'ISO':
-        return ['YYYY-MM-DD HH:mm:ss'];
-      default:
-        return ['DD/MM/YYYY h:mmA', 'DD/MM/YYYY HH:mm'];
-    }
-  }
+	switch (format) {
+		case 'US':
+			return ['MM/DD/YYYY h:mmA', 'MM/DD/YYYY HH:mm'];
+		case 'EU':
+			return ['DD/MM/YYYY h:mmA', 'DD/MM/YYYY HH:mm'];
+		case 'ISO':
+			return ['YYYY-MM-DD HH:mm:ss'];
+		default:
+			return ['DD/MM/YYYY h:mmA', 'DD/MM/YYYY HH:mm'];
+	}
+}
 
-  module.exports = timestamp;
+module.exports = timestamp;
