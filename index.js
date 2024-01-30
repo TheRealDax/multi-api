@@ -67,6 +67,7 @@ async function Init() {
 	//Event listeners
 
 	// Use requests
+	app.use('/docs', swaggerui.serve, swaggerui.setup(specs));
 	app.use(function (req, res, next) {
 		if (!app.path(req, res)) {
 			return res.status(404).json({ response: 'Endpoint Not Found' });
@@ -74,8 +75,6 @@ async function Init() {
 			next();
 		}
 	});
-
-	app.use('/docs', swaggerui.serve, swaggerui.setup(specs));
 
 	app.listen(PORT, () => {
 		console.log(`Server is running on port ${PORT}`);
