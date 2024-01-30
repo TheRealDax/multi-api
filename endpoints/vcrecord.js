@@ -84,7 +84,6 @@
  *                   description: A description of the error.
  */
 
-
 // API endpoint using express that takes serverid, channelid as query parameters and connects to discord
 
 const { entersState, joinVoiceChannel, VoiceConnectionStatus, EndBehaviorType, getVoiceConnection } = require('@discordjs/voice');
@@ -161,7 +160,7 @@ const vcRecord = async (req, res) => {
 
 		connection.on('error', (error) => {
 			console.error('Voice connection error:', error);
-		  });
+		});
 
 		await entersState(connection, VoiceConnectionStatus.Ready, 10000);
 		if (connection.state.status !== 'ready') {
@@ -182,29 +181,28 @@ const vcRecord = async (req, res) => {
 		let decoder;
 		let out;
 
-		try{
-		connection.receiver.speaking.on('start', async (userId) => {
-			if (connection.receiver.subscriptions.size === 0) {
-				stream = connection.receiver.subscribe(userId, { end: { behavior: EndBehaviorType.AfterSilence, duration: 100 } });
-				out = fs.createWriteStream(pcmFile, { flags: 'a' });
-				decoder = new prism.opus.Decoder({ rate: 48000, channels: 2, frameSize: 960 });
-				stream.pipe(decoder).pipe(out);
-				console.log(`User ${userId} started speaking`);
-			}
-			else{
-				console.log('Already recording' + "Size:" + connection.receiver.subscriptions.size);
-			}
-		});
-	} catch (error) {
-		console.log(error);
-	}
+		try {
+			connection.receiver.speaking.on('start', async (userId) => {
+				if (connection.receiver.subscriptions.size === 0) {
+					stream = connection.receiver.subscribe(userId, { end: { behavior: EndBehaviorType.AfterSilence, duration: 100 } });
+					out = fs.createWriteStream(pcmFile, { flags: 'a' });
+					decoder = new prism.opus.Decoder({ rate: 48000, channels: 2, frameSize: 960 });
+					stream.pipe(decoder).pipe(out);
+					console.log(`User ${userId} started speaking`);
+				} else {
+					console.log('Already recording' + 'Size:' + connection.receiver.subscriptions.size);
+				}
+			});
+		} catch (error) {
+			console.log(error);
+		}
 
 		client.on('voiceStateUpdate', async (oldState, newState) => {
-			if (oldState.channelId === channel.id) {
-				if (channel.members.size === 1) {
+			if (oldState.channelId === channel.id || newState.channelId === null) {
+				if (channel.members.size === 1 || channel.members.size === 0) {
 					setTimeout(() => {
 						try {
-							if (channel.members.size === 1) {
+							if (channel.members.size === 1 || channel.members.size === 0) {
 								//check if pcmFile exists
 								if (!fs.existsSync(pcmFile)) {
 									console.log('No audio was detected and no file was created');
@@ -244,11 +242,11 @@ const vcRecord = async (req, res) => {
 									fs.unlinkSync(pcmFile);
 									fs.unlinkSync(wavFile);
 
-									if (!client.isReady()){
-									console.log(`Client not ready, logging in...`);
-									await client.login(token);
+									if (!client.isReady()) {
+										console.log(`Client not ready, logging in...`);
+										await client.login(token);
 									}
-									
+
 									const stats = fs.statSync(mp3File);
 									const fileSizeInBytes = stats.size;
 									const fileSizeInMegabytes = fileSizeInBytes / (1024 * 1024);

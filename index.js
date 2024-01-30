@@ -6,7 +6,6 @@ const swaggerui = require('swagger-ui-express');
 const specs = require('./config/swagger');
 const db = require('./functions/db');
 
-
 const PORT = process.env.PORT || 3000;
 async function Init() {
 	await db.connect();
@@ -17,10 +16,10 @@ async function Init() {
 	app.use(express.urlencoded({ extended: true }));
 
 	// Endpoints
-	const getFirst = require('./endpoints/getFirst');
-	const getLast = require('./endpoints/getLast');
+	//const getFirst = require('./endpoints/getFirst');
+	//const getLast = require('./endpoints/getLast');
 	const removeLast = require('./endpoints/removeLast');
-	const getSubString = require('./endpoints/getSubString');
+	//const getSubString = require('./endpoints/getSubString');
 	const timestamp = require('./endpoints/timestamp');
 	const currencyFormat = require('./endpoints/currencyFormat');
 	const convertNum = require('./endpoints/convertNum');
@@ -28,9 +27,9 @@ async function Init() {
 	const regex = require('./endpoints/regex');
 	const getRoleCount = require('./endpoints/getRoleCount');
 	const tempRole = require('./endpoints/tempRole');
-	const random = require('./endpoints/random');
+	//const random = require('./endpoints/random');
 	const memberRoles = require('./endpoints/memberRoles');
-	const globalChat = require('./endpoints/globalChat');
+	//const globalChat = require('./endpoints/globalChat');
 	const automod = require('./endpoints/automod.js');
 	const highestRole = require('./endpoints/highestRole');
 	const vcRecord = require('./endpoints/vcrecord');
@@ -41,10 +40,10 @@ async function Init() {
 
 	// POST requests
 	app.post('/regex', regex);
-	app.post('/getfirst', getFirst);
+	//app.post('/getfirst', getFirst);
 	//app.post('/getlast', getLast);
 	app.post('/removelast', removeLast);
-	app.post('/getsubstring', getSubString);
+	//app.post('/getsubstring', getSubString);
 	app.post('/timestamp', timestamp);
 	app.post('/transcript', transcript);
 	app.post('/automod', automod);
@@ -57,18 +56,25 @@ async function Init() {
 	app.get('/getrolecount', getRoleCount);
 	app.get('/convertnum', convertNum);
 	app.get('/currencyformat', currencyFormat);
-	app.get('/random', random);
+	//app.get('/random', random);
 	app.get('/memberroles', memberRoles);
-	app.get('/globalchat', globalChat);
+	//app.get('/globalchat', globalChat);
 	app.get('/highestrole', highestRole);
 	app.get('/vcrecord', vcRecord);
 	app.get('/globalban', globalBan);
-	app.get('/getlast', getLast);
-
+	//app.get('/getlast', getLast);
 
 	//Event listeners
 
 	// Use requests
+	app.use(function (req, res, next) {
+		if (!app.path(req, res)) {
+			return res.status(404).json({ response: 'Endpoint Not Found' });
+		} else {
+			next();
+		}
+	});
+
 	app.use('/docs', swaggerui.serve, swaggerui.setup(specs));
 
 	app.listen(PORT, () => {
@@ -76,13 +82,3 @@ async function Init() {
 	});
 }
 Init().catch(console.error);
-
-
-	//! Disabled code
-	//const getThreads = require('./endpoints/getThreads');
-	//const daStripe = require('./routes/DA_stripe');
-	//app.post('/dastripe', daStripe);
-	//app.get('/getthread', getThreads);
-	//const authRoutes = require('./routes/auth-routes');
-	//require('./config/passport');
-	//app.use(passport.initialize());
