@@ -24,57 +24,31 @@ async function Init() {
 	const currencyFormat = require('./endpoints/currencyFormat');
 	const convertNum = require('./endpoints/convertNum');
 	const transcript = require('./endpoints/transcript');
-	const regex = require('./endpoints/regex');
 	const getRoleCount = require('./endpoints/getRoleCount');
-	const tempRole = require('./endpoints/tempRole');
-	//const random = require('./endpoints/random');
 	const memberRoles = require('./endpoints/memberRoles');
-	//const globalChat = require('./endpoints/globalChat');
-	const automod = require('./endpoints/automod.js');
 	const highestRole = require('./endpoints/highestRole');
 	const vcRecord = require('./endpoints/vcrecord');
-	const globalBan = require('./endpoints/globalban');
-	const replace = require('./endpoints/replace');
 	const base64 = require('./endpoints/base64');
-	//const upload = require('./endpoints/upload');
 
 	// POST requests
-	app.post('/regex', regex);
 	app.post('/getfirst', getFirst);
 	app.post('/getlast', getLast);
 	app.post('/removelast', removeLast);
 	app.post('/getsubstring', getSubString);
 	app.post('/timestamp', timestamp);
 	app.post('/transcript', transcript);
-	app.post('/automod', automod);
-	app.post('/replace', replace);
 	app.post('/base64', base64);
-	//app.post('/upload', upload);
 
 	// GET requests
-	app.get('/temprole', tempRole);
 	app.get('/getrolecount', getRoleCount);
 	app.get('/convertnum', convertNum);
 	app.get('/currencyformat', currencyFormat);
-	//app.get('/random', random);
 	app.get('/memberroles', memberRoles);
-	//app.get('/globalchat', globalChat);
 	app.get('/highestrole', highestRole);
 	app.get('/vcrecord', vcRecord);
-	app.get('/globalban', globalBan);
-	app.get('/getlast', getLast);
-
-	//Event listeners
 
 	// Use requests
 	app.use('/docs', swaggerui.serve, swaggerui.setup(specs));
-	app.use(function (req, res, next) {
-		if (!app.path(req, res)) {
-			return res.status(404).json({ response: 'Endpoint Not Found' });
-		} else {
-			next();
-		}
-	});
 
 	app.listen(PORT, () => {
 		console.log(`Server is running on port ${PORT}`);
