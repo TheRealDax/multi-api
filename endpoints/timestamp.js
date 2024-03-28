@@ -74,7 +74,7 @@ const timestamp = async (req, res) => {
 				const offsetTimestamp = moment(timestamp).add(offset, 'hours');
 				convertedTimestamp = offsetTimestamp.format('DD-MM-YYYY HH:mm:ss');
 			} else {
-				convertedTimestamp = moment(timestamp).format('DD-MM-YYYY HH:mm:ss');
+				convertedTimestamp = moment.unix(timestamp).format('DD-MM-YYYY HH:mm:ss');
 			}
 		} else {
 			return res.status(400).json({ error: 'Invalid request. Please provide either date and time or days parameter.' });
