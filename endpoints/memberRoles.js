@@ -93,6 +93,7 @@ const memberRoles = async (req, res) => {
 		const roleids = member.roles.cache.filter((role) => role.id !== serverid).map((role) => role.id);
 		const roleidsFormatted = roleids.map((id) => `${id}`).join(', ');
 		const roletags = member.roles.cache.filter((roles) => roles.id !== serverid).map((roles) => `<@&${roles.id}>`);
+		client.destroy();
 		return res.status(200).json({ roles: roles, roleids: roleids, roleidsformatted: roleidsFormatted, roletags: roletags, rolecount: roleids.length });
 	} catch (error) {
 		client.destroy();

@@ -2,10 +2,10 @@
  * @swagger
  * /transcript:
  *   post:
- *     summary: Generates HTML transcripts for Discord tickets. - Contact @therealdax on Discord for more information and for setup instructions
+ *     summary: Generates HTML transcripts for Discord tickets. - Contact @therealdax on Discord for more information
  *     tags: [Discord]
  *     description: |
- *       This endpoint is reserved for special use cases. Please contact @therealdax on Discord for more information on how to use this endpoint effectively.
+ *       This endpoint is reserved for special use cases. Please contact @therealdax on Discord for more information
  *
  *       **Note**: The details of this endpoint are not provided in the Swagger documentation. Reach out to @therealdax for assistance and guidance.
  *
@@ -32,82 +32,82 @@ const s3Client = new S3Client({ region: process.env.AWS_REGION });
 
 // Endpoint to add content to transcripts
 const transcript = async (req, res) => {
-    const { serverid, channelid, messageid, content, close, channelname, user, usericon, eventtype, emoji } = req.body;
-    const bucketName = process.env.BUCKET_NAME;
-    const s3Key = `transcripts/${serverid}-${channelid}.html`;
-    const timeNow = new Date();
-    const url = `https://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/${s3Key}`;
-  
-    if (!serverid || !channelid) {
-      res.status(400).json({ error: 'Missing required parameters. Please ensure you are using serverid and channelid parameters in all requests' });
-      return;
-    }
-    else if (typeof serverid == 'number' || typeof channelid == 'number' || typeof messageid == 'number'){
-      console.log(`User attempted to transcript without quotes - ServerID: ${serverid}`)
-      return res.status(400).json({ error: 'Serverid or channelid or messageid missing \"\" (quotes) in value.' });
-    }
-  
-     try {
-      // Retrieve the existing transcript file from S3 or create a new one if it doesn't exist
-      const getObjectCommand = new GetObjectCommand({ Bucket: bucketName, Key: s3Key });
-      const existingObject = await s3Client.send(getObjectCommand);
-  
-      // Stream and collect the existing content
-      const chunks = [];
-      existingObject.Body.on('data', (chunk) => {
-        chunks.push(chunk);
-      });
-  
-      existingObject.Body.on('end', async () => {
-      const existingContent = Buffer.concat(chunks).toString();
-      const $ = cheerio.load(existingContent, { decodeEntities: false });
-  
-      let updatedContent;
-      let match = false;
-      
-      if (!eventtype) {
-          // Check if messageid exists in the existing content
-          const messageSelector = `.messages .msg:has(.hidden:contains(${messageid}))`;
-          const messageElement = $(messageSelector);
-  
-          if (messageElement.length > 0) {
-            // If messageid exists, update the content of the message
-              const editedContent = `<p><strong><font color="#fcba03">Message was edited:</font></strong> ${content}</p>`;
-              const lastEditElement = messageElement.find('.right p:contains("Message was edited:")').last();
-      
-              if (lastEditElement.length > 0) {
-              lastEditElement.after(editedContent);
-              } else {
-          messageElement.find('.right p').last().after(editedContent);
-      }
-      match = true;
-    }
-        } else if (eventtype === 'delete') {
-          // Check if messageid exists in the existing content
-          const messageSelector = `.hidden:contains(${messageid})`;
-          const messageElement = $(messageSelector);
-  
-          if (messageElement.length > 0) {
-            // If messageid exists and eventtype = delete, mark the message as deleted
-            const editedContent = `<p><strong><font color="#f0210a">This message was deleted.</font></strong></p>`;
-            messageElement.after(editedContent);
-            match = true;
-          }
-        } else if (eventtype === 'reaction') {
-        // Check if messageid exists in the existing content
-        const messageSelector = `.hidden:contains(${messageid})`;
-        const messageElement = $(messageSelector);
-  
-        if (messageElement.length > 0) {
-          // If messageid exists and eventtype = reaction, mark the message as being reacted to
-          const editedContent = `<p><strong><font color="#72d92e">A reaction was added by ${user}: ${emoji}</font></strong></p>`;
-          messageElement.after(editedContent);
-          match = true;
-        }
-      }
-  
-        if (!match) {
-          const newMessageContent = `
+	const { serverid, channelid, messageid, content, close, channelname, user, usericon, eventtype, emoji } = req.body;
+	const bucketName = process.env.BUCKET_NAME;
+	const s3Key = `transcripts/${serverid}-${channelid}.html`;
+	const timeNow = new Date();
+	const url = `https://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/${s3Key}`;
+
+	if (!serverid || !channelid) {
+		res.status(400).json({ error: 'Missing required parameters. Please ensure you are using serverid and channelid parameters in all requests' });
+		return;
+	} else if (typeof serverid == 'number' || typeof channelid == 'number' || typeof messageid == 'number') {
+		console.log(`User attempted to transcript without quotes - ServerID: ${serverid}`);
+		return res.status(400).json({ error: 'Serverid or channelid or messageid missing "" (quotes) in value.' });
+	}
+
+	console.log(`Server ID: ${serverid}, Channel ID: ${channelid}`);
+	try {
+		// Retrieve the existing transcript file from S3 or create a new one if it doesn't exist
+		const getObjectCommand = new GetObjectCommand({ Bucket: bucketName, Key: s3Key });
+		const existingObject = await s3Client.send(getObjectCommand);
+
+		// Stream and collect the existing content
+		const chunks = [];
+		existingObject.Body.on('data', (chunk) => {
+			chunks.push(chunk);
+		});
+
+		existingObject.Body.on('end', async () => {
+			const existingContent = Buffer.concat(chunks).toString();
+			const $ = cheerio.load(existingContent, { decodeEntities: false });
+
+			let updatedContent;
+			let match = false;
+
+			if (!eventtype) {
+				// Check if messageid exists in the existing content
+				const messageSelector = `.messages .msg:has(.hidden:contains(${messageid}))`;
+				const messageElement = $(messageSelector);
+
+				if (messageElement.length > 0) {
+					// If messageid exists, update the content of the message
+					const editedContent = `<p><strong><font color="#fcba03">Message was edited:</font></strong> ${content}</p>`;
+					const lastEditElement = messageElement.find('.right p:contains("Message was edited:")').last();
+
+					if (lastEditElement.length > 0) {
+						lastEditElement.after(editedContent);
+					} else {
+						messageElement.find('.right p').last().after(editedContent);
+					}
+					match = true;
+				}
+			} else if (eventtype === 'delete') {
+				// Check if messageid exists in the existing content
+				const messageSelector = `.hidden:contains(${messageid})`;
+				const messageElement = $(messageSelector);
+
+				if (messageElement.length > 0) {
+					// If messageid exists and eventtype = delete, mark the message as deleted
+					const editedContent = `<p><strong><font color="#f0210a">This message was deleted.</font></strong></p>`;
+					messageElement.after(editedContent);
+					match = true;
+				}
+			} else if (eventtype === 'reaction') {
+				// Check if messageid exists in the existing content
+				const messageSelector = `.hidden:contains(${messageid})`;
+				const messageElement = $(messageSelector);
+
+				if (messageElement.length > 0) {
+					// If messageid exists and eventtype = reaction, mark the message as being reacted to
+					const editedContent = `<p><strong><font color="#72d92e">A reaction was added by ${user}: ${emoji}</font></strong></p>`;
+					messageElement.after(editedContent);
+					match = true;
+				}
+			}
+
+			if (!match) {
+				const newMessageContent = `
             <div class='msg'>
               <div class='left'><img src='${usericon}'></div>
               <div class='right'>
@@ -117,41 +117,40 @@ const transcript = async (req, res) => {
               </div>
             </div>
           `;
-          $('.messages').append(newMessageContent);
-        }
-  
-        updatedContent = $.html();
-  
-        // Upload the updated content to S3
-        if (content && !close) {
-          const putObjectCommand = new PutObjectCommand({
-            Bucket: bucketName,
-            Key: s3Key,
-            Body: updatedContent,
-            ContentType: 'text/html; charset=utf-8'
-          });
-          await s3Client.send(putObjectCommand);
-        }
-  
-        if (close) {
-          const putObjectCommand = new PutObjectCommand({
-            Bucket: bucketName,
-            Key: s3Key,
-            Body: updatedContent,
-            ContentType: 'text/html; charset=utf-8'
-          });
-          await s3Client.send(putObjectCommand);
+				$('.messages').append(newMessageContent);
+			}
 
-          res.json({ message: 'Transcript closed and updated.', url });
-        } else {
-          res.json({ message: 'Transcript updated.', url });
-        }
-      });
+			updatedContent = $.html();
 
-    } catch (error) {
-      // Create a new transcript file if it doesn't exist
-      if (error.name === 'NoSuchKey') {
-        const fileContent = `<ticket-info>
+			// Upload the updated content to S3
+			if (content && !close) {
+				const putObjectCommand = new PutObjectCommand({
+					Bucket: bucketName,
+					Key: s3Key,
+					Body: updatedContent,
+					ContentType: 'text/html; charset=utf-8',
+				});
+				await s3Client.send(putObjectCommand);
+			}
+
+			if (close) {
+				const putObjectCommand = new PutObjectCommand({
+					Bucket: bucketName,
+					Key: s3Key,
+					Body: updatedContent,
+					ContentType: 'text/html; charset=utf-8',
+				});
+				await s3Client.send(putObjectCommand);
+
+				res.json({ message: 'Transcript closed and updated.', url });
+			} else {
+				res.json({ message: 'Transcript updated.', url });
+			}
+		});
+	} catch (error) {
+		// Create a new transcript file if it doesn't exist
+		if (error.name === 'NoSuchKey') {
+			const fileContent = `<ticket-info>
         Ticket Creator | ${user}
         Ticket Name    | ${channelname}
         Created        | ${timeNow}
@@ -172,16 +171,16 @@ const transcript = async (req, res) => {
                         <span class='hidden'>${messageid}</span>
                     </div>
                 </div>`;
-  
-        const putObjectCommand = new PutObjectCommand({ Bucket: bucketName, Key: s3Key, Body: fileContent, ContentType: 'text/html' });
-        await s3Client.send(putObjectCommand);
 
-        return res.json({ message: 'Transcript created.', url });
-      } else {
-        console.error(`Error updating transcript: ${error.message}`);
-        return res.status(500).json({ error: 'Failed to update transcript.' });
-      }
-    }
-  };
+			const putObjectCommand = new PutObjectCommand({ Bucket: bucketName, Key: s3Key, Body: fileContent, ContentType: 'text/html' });
+			await s3Client.send(putObjectCommand);
 
-  module.exports = transcript;
+			return res.json({ message: 'Transcript created.', url });
+		} else {
+			console.error(`Error updating transcript: ${error.message}`);
+			return res.status(500).json({ error: 'Failed to update transcript.' });
+		}
+	}
+};
+
+module.exports = transcript;
