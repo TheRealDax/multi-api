@@ -27,6 +27,7 @@
 
 const cheerio = require('cheerio');
 const { S3Client, PutObjectCommand, GetObjectCommand } = require('@aws-sdk/client-s3');
+const isBanned = require('../banned.js');
 
 const s3Client = new S3Client({ region: process.env.AWS_REGION });
 
@@ -44,6 +45,12 @@ const transcript = async (req, res) => {
 	} else if (typeof serverid == 'number' || typeof channelid == 'number' || typeof messageid == 'number') {
 		console.log(`User attempted to transcript without quotes - ServerID: ${serverid}`);
 		return res.status(400).json({ error: 'Serverid or channelid or messageid missing "" (quotes) in value.' });
+	}
+
+	const banned = await isBanned(serverid);
+	if (banned) {
+		console.log(`BANNED USER: ${serverid}`);
+		return res.status(401).json({ error: 'You are banned from using this endpoint.' });
 	}
 
 	console.log(`Server ID: ${serverid}, Channel ID: ${channelid}`);
