@@ -68,12 +68,6 @@ const client = new Client({ intents });
 
 // Gets the number of members who have a role
 const getRoleCount = async (req, res) => {
-	const banned = await isBanned(serverid);
-	if (banned) {
-		console.log(`BANNED USER: ${serverid}`);
-		return res.status(401).json({ error: 'You are banned from using this endpoint.' });
-	}
-
 	const authToken = req.headers.authorization;
 	if (!authToken) {
 		return res.status(401).json({ error: 'Unauthorized' });
@@ -83,6 +77,12 @@ const getRoleCount = async (req, res) => {
 
 	if (!serverid || !roleid) {
 		return res.status(400).json({ error: 'Missing serverid or roleid parameter' });
+	}
+
+	const banned = await isBanned(serverid);
+	if (banned) {
+		console.log(`BANNED USER: ${serverid}`);
+		return res.status(401).json({ error: 'You are banned from using this endpoint.' });
 	}
 
 	try {
