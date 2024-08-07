@@ -60,45 +60,50 @@
  *         description: Internal server error
  */
 
-const {Client, GatewayIntentBits} = require('discord.js');
+const { Client, GatewayIntentBits } = require('discord.js');
 const intents = [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers];
+const isBanned = require('../banned.js');
 
 const client = new Client({ intents });
 
 // Gets the number of members who have a role
 const getRoleCount = async (req, res) => {
+	const banned = await isBanned(serverid);
+	if (banned) {
+		console.log(`BANNED USER: ${serverid}`);
+		return res.status(401).json({ error: 'You are banned from using this endpoint.' });
+	}
 
-  const authToken = req.headers.authorization;
-  if (!authToken) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
+	const authToken = req.headers.authorization;
+	if (!authToken) {
+		return res.status(401).json({ error: 'Unauthorized' });
+	}
 
-  const { serverid, roleid } = req.query;
+	const { serverid, roleid } = req.query;
 
-  if (!serverid || !roleid) {
-    return res.status(400).json({ error: 'Missing serverid or roleid parameter' });
-  }
+	if (!serverid || !roleid) {
+		return res.status(400).json({ error: 'Missing serverid or roleid parameter' });
+	}
 
-  try {
-    await client.login(authToken);
-    console.log(`Logged in as ${client.user.tag} - ${client.user.id}`);
+	try {
+		await client.login(authToken);
+		console.log(`Logged in as ${client.user.tag} - ${client.user.id}`);
 
-    const guild = await client.guilds.fetch(serverid);
-    console.log(`Fetching guild ${serverid}...`);
+		const guild = await client.guilds.fetch(serverid);
+		console.log(`Fetching guild ${serverid}...`);
 
-    await guild.members.fetch();
-    const role = await guild.roles.fetch(roleid);
+		await guild.members.fetch();
+		const role = await guild.roles.fetch(roleid);
 
-    // Filter the members of the guild who have the specified role
-    const roleCount = guild.members.cache.filter(member => member.roles.cache.has(role.id));
-    const membersWithRole = roleCount.map(member => ({ displayname: member.displayName, userid: member.id }));
-    client.destroy();
-    return res.status(200).json({members: membersWithRole, count: roleCount.size});
-
-  } catch (error) {
-    console.error('Error:', error);
-    return res.status(500).json({ error: `${error}` + ` Bot: ${client.user.tag} - ${client.user.id}` });
-  }
+		// Filter the members of the guild who have the specified role
+		const roleCount = guild.members.cache.filter((member) => member.roles.cache.has(role.id));
+		const membersWithRole = roleCount.map((member) => ({ displayname: member.displayName, userid: member.id }));
+		client.destroy();
+		return res.status(200).json({ members: membersWithRole, count: roleCount.size });
+	} catch (error) {
+		console.error('Error:', error);
+		return res.status(500).json({ error: `${error}` + ` Bot: ${client.user.tag} - ${client.user.id}` });
+	}
 };
 
 module.exports = getRoleCount;
